@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Card, CardTitle } from "@/components/ui/Card";
+import { GenomeMap } from "@/components/GenomeMap";
+import { HeadlineStat } from "@/components/HeadlineStat";
+import { LineageCard } from "@/components/LineageCard";
+import { LowConfidenceNotice } from "@/components/LowConfidenceNotice";
+import { ParetoChart } from "@/components/ParetoChart";
+import { TopicDossier } from "@/components/TopicDossier";
 import { Pill } from "@/components/ui/Pill";
+import { analyze } from "@/lib/analysis";
+import { paperOrder } from "@/lib/analysis/papers";
 import { loadSession } from "@/lib/extract/session";
 import type { ExtractionOutcome } from "@/lib/types";
 
-/**
- * Phase 2 landing point: confirms the pipeline produced a real corpus.
- * The analysis engine (Phase 3) and the results interface (Phase 4) replace
- * the body of this page.
- */
 export default function AnalyzePage() {
   const [outcome, setOutcome] = useState<ExtractionOutcome | null>(null);
   const [ready, setReady] = useState(false);
@@ -21,9 +23,17 @@ export default function AnalyzePage() {
     setReady(true);
   }, []);
 
+  // The whole analysis is pure and synchronous, so it runs here rather than
+  // being carried through the session — the corpus is the only state worth
+  // persisting, and recomputing costs nothing (REQ-008).
+  const result = useMemo(
+    () => (outcome ? analyze(outcome.questions) : null),
+    [outcome],
+  );
+
   if (!ready) return null;
 
-  if (!outcome) {
+  if (!outcome || !result) {
     return (
       <main className="page-shell py-[64px]">
         <h1 className="text-heading-sm font-bold">Nothing to analyze yet</h1>
@@ -40,54 +50,113 @@ export default function AnalyzePage() {
     );
   }
 
-  const { questions, progress, partial } = outcome;
-  const papers = [...new Set(questions.map((q) => q.paper.label))];
-  const topics = [...new Set(questions.map((q) => q.topic))];
+  const { progress, partial } = outcome;
+  const papers = paperOrder(result.questions);
+  const crossDept = result.lineages.filter((l) => l.crossDepartment).length;
 
   return (
-    <main className="page-shell py-[64px]">
-      <Link href="/" className="text-body-sm font-medium text-notion-blue">
-        ← New analysis
-      </Link>
+    <>
+      {/* Elevation is permitted here and nowhere else (PAT-002). */}
+      <header
+        className="sticky top-0 z-20 bg-pure-white"
+        style={{ boxShadow: "var(--elevation-nav)" }}
+      >
+        <div className="page-shell flex flex-wrap items-center justify-between gap-[16px] py-[12px]">
+          <Link
+            href="/"
+            className="text-body-sm font-medium text-notion-blue"
+          >
+            ← New analysis
+          </Link>
+          <p className="text-caption text-graphite tabular-nums">
+            {result.questionCount} questions · {papers.length} paper
+            {papers.length === 1 ? "" : "s"} · {result.stats.length} topics ·{" "}
+            {result.lineages.length} lineage
+            {result.lineages.length === 1 ? "" : "s"}
+          </p>
+        </div>
+      </header>
 
-      <h1 className="mt-[24px] text-display-sm font-medium tracking-[-1.89px]">
-        {questions.length} questions extracted
-      </h1>
-      <p className="mt-[16px] text-body text-graphite">
-        Across {papers.length} paper{papers.length === 1 ? "" : "s"} and{" "}
-        {topics.length} distinct topic{topics.length === 1 ? "" : "s"}.
-      </p>
+      <main className="page-shell section-stack py-[64px]">
+        <section>
+          {/* Course names are long and often one unbreakable word, so the
+              display size steps down before it can push the page sideways. */}
+          <h1 className="text-heading-sm sm:text-heading-lg md:text-display-sm font-medium tracking-[-0.242px] md:tracking-[-1.89px] break-words text-ink-black">
+            The genome of{" "}
+            {result.questions[0]?.course?.trim() || "your corpus"}
+          </h1>
 
-      {partial && (
-        <p className="mt-[16px] text-body-sm text-vermillion">
-          {progress.pagesDone} of {progress.pagesTotal} pages analyzed —{" "}
-          {progress.pagesFailed} could not be read.
-        </p>
-      )}
+          <div className="mt-[24px] flex flex-wrap gap-[8px]">
+            {papers.map((paper) => (
+              <Pill key={paper.label} tone="neutral">
+                {paper.label}
+                {paper.type === "CT" ? " · CT" : " · Final"}
+              </Pill>
+            ))}
+          </div>
 
-      <div className="mt-[64px] flex flex-wrap gap-[8px]">
-        {papers.map((label) => (
-          <Pill key={label} tone="sky-tint">
-            {label}
-          </Pill>
-        ))}
-      </div>
+          {partial && (
+            <p className="mt-[24px] text-body-sm text-vermillion">
+              {progress.pagesDone} of {progress.pagesTotal} pages analyzed —{" "}
+              {progress.pagesFailed} page
+              {progress.pagesFailed === 1 ? "" : "s"} could not be read. Every
+              figure below is computed from what was successfully extracted.
+            </p>
+          )}
 
-      <div className="mt-[24px] grid gap-[24px] md:grid-cols-2">
-        {questions.slice(0, 12).map((q) => (
-          <Card key={q.id + q.text.slice(0, 24)}>
-            <div className="flex items-center gap-[8px]">
-              <Pill tone="neutral">{q.paper.label}</Pill>
-              <Pill tone="marigold">{q.topic}</Pill>
+          <div className="mt-[24px]">
+            <LowConfidenceNotice
+              lowConfidence={result.lowConfidence}
+              paperCount={result.paperCount}
+            />
+          </div>
+
+          <div className="mt-[24px]">
+            <HeadlineStat
+              stats={result.stats}
+              pareto={result.pareto}
+              questionCount={result.questionCount}
+            />
+          </div>
+        </section>
+
+        <section>
+          <GenomeMap questions={result.questions} stats={result.stats} />
+        </section>
+
+        <section>
+          <ParetoChart pareto={result.pareto} />
+        </section>
+
+        <section>
+          <div className="flex flex-wrap items-baseline justify-between gap-[16px]">
+            <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+              Question lineage
+            </h2>
+            <p className="text-body-sm text-graphite">
+              {result.lineages.length === 0
+                ? "No recurring question found in this corpus."
+                : `${result.lineages.length} recurring question${result.lineages.length === 1 ? "" : "s"} detected${crossDept > 0 ? `, ${crossDept} spanning more than one course code` : ""}.`}
+            </p>
+          </div>
+
+          {result.lineages.length > 0 && (
+            <div className="mt-[24px] grid min-w-0 gap-[24px] xl:grid-cols-2">
+              {result.lineages.map((cluster, index) => (
+                <LineageCard key={`${cluster.id}-${index}`} cluster={cluster} />
+              ))}
             </div>
-            <CardTitle className="mt-[12px] text-body font-medium">
-              {q.qNo}
-              {q.marks !== null ? ` · ${q.marks} marks` : ""}
-            </CardTitle>
-            <p className="mt-[8px] text-body-sm text-graphite">{q.text}</p>
-          </Card>
-        ))}
-      </div>
-    </main>
+          )}
+        </section>
+
+        <section>
+          <TopicDossier
+            stats={result.stats}
+            expectedMarks={result.expectedMarks}
+            totalQuestions={result.questionCount}
+          />
+        </section>
+      </main>
+    </>
   );
 }

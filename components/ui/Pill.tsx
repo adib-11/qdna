@@ -23,15 +23,27 @@ const TONE_CLASS: Record<PillTone, string> = {
 export function Pill({
   tone = "neutral",
   className = "",
+  title,
+  wrap = false,
   children,
 }: {
   tone?: PillTone;
   className?: string;
+  title?: string;
+  /**
+   * Allow the label to break across lines. Off by default — a pill is a tag and
+   * should read as one line — but a pill carrying a long inferred topic name has
+   * to wrap rather than push the page into horizontal scroll at 375 px.
+   */
+  wrap?: boolean;
   children: ReactNode;
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-[var(--radius-full)] px-[12px] py-[4px] text-caption font-medium tracking-[0.12px] whitespace-nowrap ${TONE_CLASS[tone]} ${className}`}
+      title={title}
+      className={`inline-flex items-center rounded-[var(--radius-full)] px-[12px] py-[4px] text-caption font-medium tracking-[0.12px] ${
+        wrap ? "max-w-full text-left" : "whitespace-nowrap"
+      } ${TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </span>

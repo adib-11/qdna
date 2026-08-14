@@ -22,10 +22,11 @@ Browser                              Server                    Gemini
 ───────                              ──────                    ──────
 PDF → canvas → JPEG pages
   → blank-page filter
-  → batches of 4 pages  ──POST──▶  /api/extract  ──vision──▶  structured JSON
+  → batches of 2 pages  ──POST──▶  /api/extract  ──vision──▶  structured JSON
   ◀── questions ──────────────────      ◀──────────────────
   → SHA-256 content cache
   → deterministic analysis (zero API calls)
+  → genome map · Pareto · lineage · dossier
 ```
 
 Pages are rasterised **in the browser** — no PDF is ever uploaded or persisted
@@ -35,6 +36,21 @@ quota, and a failed batch never discards the batches that succeeded.
 
 The statistics are ours; Gemini is the sensor. Rankings are counts over a
 corpus that vision made countable, not a model's opinion about what matters.
+
+### What you get back
+
+- **Headline stat** — one computed sentence, e.g. *"7 topics out of 17 cover
+  74.5% of every question asked."*
+- **Genome map** — topics down, papers across, cell density by question count.
+- **Pareto curve** — topic bars with cumulative coverage and the 70% threshold.
+- **Lineage cards** — each recurring question with all its variants, the source
+  paper of each, the similarity score, and the numbers that changed highlighted.
+  Clusters spanning two course codes are badged *appears across departments*.
+- **Topic dossier** — every topic expands to the questions behind its count, so
+  nothing above it is unauditable.
+
+Fewer than three papers and the view says so up front: the counts are still
+shown, described as a count over that corpus rather than as recurrence.
 
 ### What the free tier actually allows
 
@@ -77,7 +93,7 @@ and never gets committed.
 |-------|-------|-------|
 | 1 | Repository, deploy pipeline, design system | ✅ shipped |
 | 2 | Client render → batch → extract → cache pipeline | ✅ shipped |
-| 3 | Deterministic analysis engine | planned |
-| 4 | Results interface | planned |
+| 3 | Deterministic analysis engine | ✅ shipped |
+| 4 | Results interface | ✅ shipped |
 | 5 | Grounded tutor and paper generation | planned |
 | 6 | Sample corpora and backtest | planned |
