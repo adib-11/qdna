@@ -27,6 +27,9 @@ PDF → canvas → JPEG pages
   → SHA-256 content cache
   → deterministic analysis (zero API calls)
   → genome map · Pareto · lineage · dossier
+
+  measured paper shape + ranked topics  ──POST──▶  /api/predict  ──▶  practice paper
+  one question + its recurrence         ──POST──▶  /api/tutor    ──▶  hint, not solution
 ```
 
 Pages are rasterised **in the browser** — no PDF is ever uploaded or persisted
@@ -47,7 +50,13 @@ corpus that vision made countable, not a model's opinion about what matters.
   paper of each, the similarity score, and the numbers that changed highlighted.
   Clusters spanning two course codes are badged *appears across departments*.
 - **Topic dossier** — every topic expands to the questions behind its count, so
-  nothing above it is unauditable.
+  nothing above it is unauditable. Any question there opens a **hint** — the
+  approach and the governing principle, never the final answer.
+- **Practice paper** — a paper written in the corpus's own shape: the sections,
+  question counts, and mark denominations are measured from the uploads and
+  sent to the model as a constraint, so the structure is arithmetic and only
+  the wording is generated. Each question carries the recurrence evidence that
+  put it there, looked up locally by topic.
 
 Fewer than three papers and the view says so up front: the counts are still
 shown, described as a count over that corpus rather than as recurrence.
@@ -95,5 +104,5 @@ and never gets committed.
 | 2 | Client render → batch → extract → cache pipeline | ✅ shipped |
 | 3 | Deterministic analysis engine | ✅ shipped |
 | 4 | Results interface | ✅ shipped |
-| 5 | Grounded tutor and paper generation | planned |
+| 5 | Grounded tutor and paper generation | ✅ shipped |
 | 6 | Sample corpora and backtest | planned |

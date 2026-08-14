@@ -8,6 +8,7 @@ import { analyze } from "@/lib/analysis";
 import { expectedMarks } from "@/lib/analysis/expectedMarks";
 import { clusterLineages, similarity } from "@/lib/analysis/lineage";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
+import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { paretoCoverage, topicsToReach } from "@/lib/analysis/pareto";
 import { topicFrequency } from "@/lib/analysis/frequency";
 import type { Question } from "@/lib/types";
@@ -306,5 +307,85 @@ describe("analyze", () => {
     expect(result.pareto).toEqual([]);
     expect(result.lineages).toEqual([]);
     expect(result.lowConfidence).toBe(true);
+  });
+});
+
+describe("inferPaperShape", () => {
+  const sectioned = (
+    label: string,
+    section: string,
+    count: number,
+    marks: number | null,
+  ): Question[] =>
+    Array.from({ length: count }, (_, i) =>
+      question({
+        id: `${label}-${section}-${i}`,
+        paper: { type: "Final", label, section, year: 2024 },
+        marks,
+      }),
+    );
+
+  it("returns null for an empty corpus", () => {
+    expect(inferPaperShape([])).toBeNull();
+  });
+
+  it("takes the median question count per section, not the sum", () => {
+    const shape = inferPaperShape([
+      ...sectioned("2023 Final", "A", 4, 10),
+      ...sectioned("2023 Final", "B", 3, 5),
+      ...sectioned("2024 Final", "A", 4, 10),
+      ...sectioned("2024 Final", "B", 3, 5),
+    ]);
+
+    expect(shape?.sections.map((s) => s.name)).toEqual(["A", "B"]);
+    expect(shape?.sections[0].questionsPerPaper).toBe(4);
+    expect(shape?.sections[1].questionsPerPaper).toBe(3);
+    expect(shape?.questionsPerPaper).toBe(7);
+    expect(shape?.marksPerPaper).toBe(55);
+  });
+
+  it("does not dilute a section that only some papers carry", () => {
+    const shape = inferPaperShape([
+      ...sectioned("CT1", "A", 2, null),
+      ...sectioned("2024 Final", "A", 2, null),
+      ...sectioned("2024 Final", "B", 6, null),
+    ]);
+
+    // B appears in one paper of two; averaging over both would halve it.
+    expect(shape?.sections.find((s) => s.name === "B")?.questionsPerPaper).toBe(
+      6,
+    );
+    expect(shape?.marksPerPaper).toBeNull();
+  });
+
+  it("reports the mark denominations the examiner actually uses", () => {
+    const shape = inferPaperShape([
+      ...sectioned("2024 Final", "A", 3, 10),
+      ...sectioned("2024 Final", "A", 1, 7),
+    ]);
+
+    expect(shape?.sections[0].markValues).toEqual([10, 7]);
+  });
+
+  it("sorts unsectioned questions last", () => {
+    const shape = inferPaperShape([
+      ...sectioned("2024 Final", "B", 1, null),
+      ...EMF_QUESTIONS.slice(0, 1).map((q) => ({
+        ...q,
+        paper: { ...q.paper, label: "2024 Final", section: null },
+      })),
+    ]);
+
+    expect(shape?.sections.at(-1)?.name).toBe(UNSECTIONED);
+  });
+
+  it("measures the real EMF corpus", () => {
+    const shape = inferPaperShape(EMF_QUESTIONS);
+
+    expect(shape?.paperCount).toBe(11);
+    expect(shape?.course).toBe("Electromagnetic Fields and Waves");
+    expect(shape?.type).toBe("CT");
+    expect(shape?.questionsPerPaper).toBeGreaterThan(0);
+    expect(shape?.sections.length).toBeGreaterThan(0);
   });
 });

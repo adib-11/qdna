@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { TutorPanel } from "@/components/TutorPanel";
 import { Pill } from "@/components/ui/Pill";
-import type { TopicStat } from "@/lib/types";
+import type { Question, TopicStat } from "@/lib/types";
 
 /**
  * The evidence table (REQ-009). Every number shown anywhere else in the results
@@ -17,12 +18,14 @@ function TopicRow({
   totalQuestions,
   expectedMarks,
   defaultOpen,
+  onAskTutor,
 }: {
   stat: TopicStat;
   rank: number;
   totalQuestions: number;
   expectedMarks: number | null;
   defaultOpen: boolean;
+  onAskTutor: (question: Question) => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
@@ -78,8 +81,11 @@ function TopicRow({
                 <th scope="col" className="py-[8px] pr-[16px] font-medium">
                   Type
                 </th>
-                <th scope="col" className="py-[8px] font-medium">
+                <th scope="col" className="py-[8px] pr-[16px] font-medium">
                   Question
+                </th>
+                <th scope="col" className="py-[8px] font-medium">
+                  <span className="sr-only">Hint</span>
                 </th>
               </tr>
             </thead>
@@ -106,8 +112,17 @@ function TopicRow({
                   <td className="py-[12px] pr-[16px] text-caption text-graphite whitespace-nowrap">
                     {question.isNumerical ? "Numerical" : "Theory"}
                   </td>
-                  <td className="py-[12px] text-body-sm break-words text-graphite">
+                  <td className="py-[12px] pr-[16px] text-body-sm break-words text-graphite">
                     {question.text}
+                  </td>
+                  <td className="py-[12px]">
+                    <button
+                      type="button"
+                      onClick={() => onAskTutor(question)}
+                      className="whitespace-nowrap rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd]"
+                    >
+                      Hint
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -128,6 +143,11 @@ export function TopicDossier({
   expectedMarks: Record<string, number | null>;
   totalQuestions: number;
 }) {
+  const [asked, setAsked] = useState<{
+    question: Question;
+    stat: TopicStat;
+  } | null>(null);
+
   if (stats.length === 0) return null;
 
   return (
@@ -151,9 +171,18 @@ export function TopicDossier({
             totalQuestions={totalQuestions}
             expectedMarks={expectedMarks[stat.topic] ?? null}
             defaultOpen={index === 0}
+            onAskTutor={(question) => setAsked({ question, stat })}
           />
         ))}
       </div>
+
+      {asked && (
+        <TutorPanel
+          question={asked.question}
+          stat={asked.stat}
+          onClose={() => setAsked(null)}
+        />
+      )}
     </div>
   );
 }

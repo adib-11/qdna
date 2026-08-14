@@ -91,6 +91,50 @@ export interface ParetoPoint {
   cumulativePct: number;
 }
 
+export interface SectionShape {
+  /** Section name as printed, or "—" for questions under no section. */
+  name: string;
+  /** Median number of questions this section carries in one paper. */
+  questionsPerPaper: number;
+  /** How many papers in the corpus contain this section. */
+  papersPresentIn: number;
+  /** Mark denominations observed in this section, most common first. */
+  markValues: number[];
+}
+
+/** The structure of a typical paper in the corpus, measured from the corpus. */
+export interface PaperShape {
+  course: string;
+  courseCodes: string[];
+  /** The paper type most of the corpus is. */
+  type: PaperType;
+  sections: SectionShape[];
+  questionsPerPaper: number;
+  /** Median total marks per paper, or null when no marks were recorded. */
+  marksPerPaper: number | null;
+  paperCount: number;
+}
+
+export interface PredictedQuestion {
+  qNo: string;
+  /** One of the section names in the corpus's own PaperShape. */
+  section: string;
+  text: string;
+  marks: number | null;
+  /** Always an existing corpus topic, so its evidence can be looked up. */
+  topic: string;
+  isNumerical: boolean;
+  /** Why this question is on the paper, in the model's words. */
+  rationale: string;
+}
+
+export interface PredictedPaper {
+  title: string;
+  /** Rubric line, e.g. "Answer any three of the following." */
+  instructions: string;
+  questions: PredictedQuestion[];
+}
+
 export interface AnalysisResult {
   questions: Question[];
   stats: TopicStat[];

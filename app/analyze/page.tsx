@@ -7,6 +7,7 @@ import { HeadlineStat } from "@/components/HeadlineStat";
 import { LineageCard } from "@/components/LineageCard";
 import { LowConfidenceNotice } from "@/components/LowConfidenceNotice";
 import { ParetoChart } from "@/components/ParetoChart";
+import { PredictedPaper } from "@/components/PredictedPaper";
 import { TopicDossier } from "@/components/TopicDossier";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
@@ -147,6 +148,10 @@ export default function AnalyzePage() {
               ))}
             </div>
           )}
+        </section>
+
+        <section>
+          <PredictedPaper result={result} />
         </section>
 
         <section>

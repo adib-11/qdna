@@ -94,6 +94,18 @@ export const MIN_TOKENS_FOR_CONTAINMENT = 8;
  */
 export const NUMERIC_BONUS = 0.15;
 
+/**
+ * How much of the corpus the practice paper is written from.
+ *
+ * The paper is meant to concentrate revision on what recurs, so the tail is
+ * deliberately excluded — and a shorter request is a faster, cheaper one
+ * against the binding daily quota. Examples per topic are what teach the model
+ * the examiner's register, so a few full questions beat many truncated ones.
+ */
+export const PREDICT_TOPIC_LIMIT = 8;
+export const PREDICT_EXAMPLES_PER_TOPIC = 3;
+export const PREDICT_EXAMPLE_CHARS = 400;
+
 /** Coverage target marked on the Pareto curve. */
 export const PARETO_TARGET_PCT = 70;
 

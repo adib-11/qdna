@@ -88,3 +88,80 @@ export const EXTRACTION_SCHEMA = {
   },
   required: ["questions"],
 } as const;
+
+/**
+ * Structured-output contract for the practice paper.
+ *
+ * Topics and section names are enumerated from the corpus rather than left
+ * free-form. That is what makes the evidence trail possible: a generated
+ * question's topic is guaranteed to resolve against a real TopicStat, so the
+ * frequency shown beneath it is looked up, never invented (GUD-006).
+ */
+export function predictionSchema(topics: string[], sections: string[]) {
+  return {
+    type: Type.OBJECT,
+    properties: {
+      title: {
+        type: Type.STRING,
+        description:
+          "Paper heading in the corpus's own style, e.g. 'ECE 3121 — Practice Final'.",
+      },
+      instructions: {
+        type: Type.STRING,
+        description:
+          "Rubric line as printed on the source papers, e.g. 'Answer any three questions.'",
+      },
+      questions: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            section: {
+              type: Type.STRING,
+              enum: sections,
+              description: "Section this question sits under.",
+            },
+            qNo: {
+              type: Type.STRING,
+              description: "Question number in the source papers' style.",
+            },
+            text: {
+              type: Type.STRING,
+              description:
+                "The question, in the examiner's register and notation.",
+            },
+            marks: {
+              type: Type.NUMBER,
+              nullable: true,
+              description: "A mark value observed in this section.",
+            },
+            topic: {
+              type: Type.STRING,
+              enum: topics,
+              description: "The corpus topic this question examines.",
+            },
+            isNumerical: {
+              type: Type.BOOLEAN,
+              description: "True when the question asks for a computed value.",
+            },
+            rationale: {
+              type: Type.STRING,
+              description:
+                "One sentence citing the recurrence evidence behind this question.",
+            },
+          },
+          required: [
+            "section",
+            "qNo",
+            "text",
+            "marks",
+            "topic",
+            "isNumerical",
+            "rationale",
+          ],
+        },
+      },
+    },
+    required: ["title", "instructions", "questions"],
+  };
+}
