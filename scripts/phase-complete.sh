@@ -19,6 +19,21 @@ POLL_TIMEOUT=600
 
 cd "$(git rev-parse --show-toplevel)"
 
+# Newest production deployment as "<url> <state>".
+#
+# `vercel ls` prints its table to *stderr* and only the bare URL list to
+# stdout, so stderr must be folded in or there is no status column to read at
+# all. The state renders as "● Ready", so the bullet is stripped before the
+# columns are split. Rows are identified by the Age column leading with a
+# digit, which excludes both the header and the trailing URL list.
+newest_deployment() {
+  vercel ls --prod 2>&1 | tr -d '●' | awk '
+    /^[[:space:]]*[0-9]/ {
+      for (i = 1; i <= NF; i++)
+        if ($i ~ /^https:\/\//) { print $i, $(i + 1); exit }
+    }'
+}
+
 # 1. The plan file must record this phase's completion before the phase closes.
 #    The plan is git-ignored (it is working material, not shipped code), so the
 #    check is on the file itself rather than on the index.
@@ -30,14 +45,24 @@ if [[ -f "$PLAN_FILE" ]]; then
   fi
 fi
 
-# 2. A phase never ships a broken build.
+# 2. A phase never ships a broken build or a failing test.
 echo "→ npm run build"
 npm run build
+echo "→ npm test"
+npm test
 
 # 3. Commit and push.
+#    The newest production URL is recorded first so that step 4 can tell a
+#    fresh deployment apart from the one that was already live — otherwise the
+#    poll reports READY instantly against the previous phase's build.
+PREV_URL="$(newest_deployment | awk '{print $1}')"
+
 git add -A
 if git diff --cached --quiet; then
+  # No new commit means no new deployment, so the currently live one is the
+  # one to verify.
   echo "→ nothing to commit; using existing HEAD"
+  PREV_URL=""
 else
   git commit -m "$MESSAGE"
 fi
@@ -48,9 +73,15 @@ git push origin main
 echo "→ polling vercel ls --prod"
 DEADLINE=$(( $(date +%s) + POLL_TIMEOUT ))
 while :; do
-  LINE="$(vercel ls --prod 2>/dev/null | grep -Eo 'https://[^[:space:]]+[[:space:]]+[A-Za-z]+' | head -1 || true)"
+  LINE="$(newest_deployment || true)"
   URL="$(printf '%s' "$LINE" | awk '{print $1}')"
   STATE="$(printf '%s' "$LINE" | awk '{print $2}')"
+
+  # A URL unchanged since before the push is the *previous* deployment; the new
+  # one has not been registered yet, whatever state this one reports.
+  if [[ -n "$PREV_URL" && "$URL" == "$PREV_URL" ]]; then
+    STATE="Queued"
+  fi
 
   case "$STATE" in
     Ready|READY)
