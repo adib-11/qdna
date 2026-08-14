@@ -67,6 +67,36 @@ export const VARIANT_THRESHOLD = 0.55;
 /** Similarity at or above which two questions are effectively the same question. */
 export const NEAR_IDENTICAL_THRESHOLD = 0.85;
 
+/**
+ * Split of the lexical similarity score between Jaccard and containment.
+ *
+ * Jaccard alone punishes the common real case where an examiner reuses a
+ * question and bolts a bookwork part onto the front of it: the shared stem is
+ * identical but the longer version's extra tokens inflate the union. Asking
+ * instead what fraction of the *shorter* question reappears in the longer one
+ * catches that; keeping Jaccard in the mix stops a two-word question matching
+ * everything. Weights sum to 1.
+ */
+export const JACCARD_WEIGHT = 0.4;
+export const CONTAINMENT_WEIGHT = 0.6;
+
+/**
+ * Below this token count a question is too short for containment to mean
+ * anything — "What is an electric dipole?" is contained in half the corpus —
+ * so such pairs are scored on Jaccard alone.
+ */
+export const MIN_TOKENS_FOR_CONTAINMENT = 8;
+
+/**
+ * How much shared numeric literals may lift a pair's score. Applied to the
+ * headroom above the lexical score, so it can never push a pair past 1 and
+ * never penalises a question that carries no numbers at all.
+ */
+export const NUMERIC_BONUS = 0.15;
+
+/** Coverage target marked on the Pareto curve. */
+export const PARETO_TARGET_PCT = 70;
+
 export const EXTRACTION_MODEL = "gemini-flash-latest";
 export const REASONING_MODEL = "gemini-flash-latest";
 
