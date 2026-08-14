@@ -1,5 +1,5 @@
 import { Card, CardBody, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { UploadZone } from "@/components/UploadZone";
 import { HighlightPill, Pill } from "@/components/ui/Pill";
 
 export default function Home() {
@@ -22,23 +22,7 @@ export default function Home() {
       </section>
 
       <section className="mt-[64px]">
-        <div className="rounded-[var(--radius-xl)] border border-dashed border-[rgba(0,0,0,0.2)] bg-pure-white p-[64px] text-center">
-          <p className="text-subheading font-medium text-[rgba(0,0,0,0.4)]">
-            Drop your exam paper PDFs here
-          </p>
-          <p className="mt-[16px] text-body-sm text-graphite">
-            Pages are rendered in your browser and sent in small batches. Files
-            are never stored on a server.
-          </p>
-          <div className="mt-[24px]">
-            <Button variant="primary" disabled>
-              Analyze papers
-            </Button>
-          </div>
-          <p className="mt-[16px] text-caption text-stone">
-            Upload pipeline lands in the next phase.
-          </p>
-        </div>
+        <UploadZone />
       </section>
 
       <section className="mt-[80px] grid gap-[24px] md:grid-cols-3">

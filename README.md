@@ -36,6 +36,20 @@ quota, and a failed batch never discards the batches that succeeded.
 The statistics are ours; Gemini is the sensor. Rankings are counts over a
 corpus that vision made countable, not a model's opinion about what matters.
 
+### What the free tier actually allows
+
+Measured, not assumed. The free tier meters requests-per-day **per model**, at
+20/day for `gemini-flash-latest` — not enough for one 35-page paper on its own.
+Three things follow, and all three are in the code:
+
+- Requests carry 2 pages. Fewer pages per request would run out of daily quota
+  before the paper ends; more than two stops returning inside the function
+  window, because verbatim transcription of a dense page is 25–47s of output.
+- Extraction walks a chain of flash models. A `429` moves to the next model,
+  which has its own daily budget, so quota is pooled rather than capped at 20.
+- Results are cached by page-image SHA-256, so the same pages are never paid
+  for twice.
+
 ## Stack
 
 - Next.js (App Router) + TypeScript + Tailwind CSS v4
@@ -62,7 +76,7 @@ and never gets committed.
 | Phase | Scope | State |
 |-------|-------|-------|
 | 1 | Repository, deploy pipeline, design system | ✅ shipped |
-| 2 | Client render → batch → extract → cache pipeline | in progress |
+| 2 | Client render → batch → extract → cache pipeline | ✅ shipped |
 | 3 | Deterministic analysis engine | planned |
 | 4 | Results interface | planned |
 | 5 | Grounded tutor and paper generation | planned |
