@@ -135,6 +135,27 @@ export interface PredictedPaper {
   questions: PredictedQuestion[];
 }
 
+export interface BacktestResult {
+  /** Paper label withheld from the ranking. */
+  heldOutPaper: string;
+  /** Paper labels the ranking was built from. */
+  trainingPapers: string[];
+  /** Topics the ranking named, from the training papers alone. */
+  predictedTopics: TopicStat[];
+  /** Topics the held-out paper actually asked. */
+  actualTopics: TopicStat[];
+  /** Actual topics the ranking named. */
+  hits: TopicStat[];
+  /** Actual topics the ranking missed. */
+  misses: TopicStat[];
+  /** Share of held-out questions whose topic the ranking named, 0–100. */
+  overlapPct: number;
+  questionsCovered: number;
+  questionsHeldOut: number;
+  /** Lineage clusters straddling the held-out paper and the training papers. */
+  matchedLineages: LineageCluster[];
+}
+
 export interface AnalysisResult {
   questions: Question[];
   stats: TopicStat[];

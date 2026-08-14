@@ -52,11 +52,23 @@ corpus that vision made countable, not a model's opinion about what matters.
 - **Topic dossier** — every topic expands to the questions behind its count, so
   nothing above it is unauditable. Any question there opens a **hint** — the
   approach and the governing principle, never the final answer.
+- **Backtest** — hide a paper, rebuild the ranking from the rest, then reveal
+  it. The ranking is allowed to name exactly as many topics as the headline
+  stat tells you to study, and coverage is counted in questions, not labels.
+  On the bundled Software Engineering corpus, holding out the 2024 final: the
+  21 topics ranked from the six earlier papers covered **37.5%** of it, and 11
+  of its 24 questions were variants of a question asked before.
 - **Practice paper** — a paper written in the corpus's own shape: the sections,
   question counts, and mark denominations are measured from the uploads and
   sent to the model as a constraint, so the structure is arithmetic and only
   the wording is generated. Each question carries the recurrence evidence that
   put it there, looked up locally by topic.
+
+Three corpora ship in `data/`, extracted with the same pipeline from real RUET
+papers, so the tool can be tried without an upload, without an API key, and
+without a network call. They were produced by `scripts/extract-corpus.mjs`,
+which rasterises with `pdftoppm` and then uses the same prompt, schema, batch
+size, and model chain as the browser path.
 
 Fewer than three papers and the view says so up front: the counts are still
 shown, described as a count over that corpus rather than as recurrence.
@@ -105,4 +117,5 @@ and never gets committed.
 | 3 | Deterministic analysis engine | ✅ shipped |
 | 4 | Results interface | ✅ shipped |
 | 5 | Grounded tutor and paper generation | ✅ shipped |
-| 6 | Sample corpora and backtest | planned |
+| 6 | Sample corpora and backtest | ✅ shipped |
+| 7 | Documentation sync and submission | planned |

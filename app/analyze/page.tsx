@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { BacktestPanel } from "@/components/BacktestPanel";
 import { GenomeMap } from "@/components/GenomeMap";
 import { HeadlineStat } from "@/components/HeadlineStat";
 import { LineageCard } from "@/components/LineageCard";
@@ -11,9 +12,20 @@ import { PredictedPaper } from "@/components/PredictedPaper";
 import { TopicDossier } from "@/components/TopicDossier";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
-import { paperOrder } from "@/lib/analysis/papers";
+import { corpusCourses, paperOrder } from "@/lib/analysis/papers";
 import { loadSession } from "@/lib/extract/session";
 import type { ExtractionOutcome } from "@/lib/types";
+
+/**
+ * What this corpus is, in the heading. One course names itself; a bundle of
+ * several says so rather than borrowing the first paper's name.
+ */
+function corpusTitle(courses: string[]): string {
+  if (courses.length === 0) return "your corpus";
+  if (courses.length === 1) return courses[0];
+  if (courses.length === 2) return `${courses[0]} and ${courses[1]}`;
+  return `${courses.length} courses`;
+}
 
 export default function AnalyzePage() {
   const [outcome, setOutcome] = useState<ExtractionOutcome | null>(null);
@@ -53,6 +65,7 @@ export default function AnalyzePage() {
 
   const { progress, partial } = outcome;
   const papers = paperOrder(result.questions);
+  const courses = corpusCourses(result.questions);
   const crossDept = result.lineages.filter((l) => l.crossDepartment).length;
 
   return (
@@ -83,8 +96,7 @@ export default function AnalyzePage() {
           {/* Course names are long and often one unbreakable word, so the
               display size steps down before it can push the page sideways. */}
           <h1 className="text-heading-sm sm:text-heading-lg md:text-display-sm font-medium tracking-[-0.242px] md:tracking-[-1.89px] break-words text-ink-black">
-            The genome of{" "}
-            {result.questions[0]?.course?.trim() || "your corpus"}
+            The genome of {corpusTitle(courses)}
           </h1>
 
           <div className="mt-[24px] flex flex-wrap gap-[8px]">
@@ -148,6 +160,10 @@ export default function AnalyzePage() {
               ))}
             </div>
           )}
+        </section>
+
+        <section>
+          <BacktestPanel result={result} />
         </section>
 
         <section>

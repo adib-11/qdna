@@ -5,10 +5,13 @@ import {
   POLARIZATION_PAIR,
 } from "@/tests/fixtures/emf";
 import { analyze } from "@/lib/analysis";
+import { backtest, defaultHeldOutPaper } from "@/lib/analysis/backtest";
 import { expectedMarks } from "@/lib/analysis/expectedMarks";
 import { clusterLineages, similarity } from "@/lib/analysis/lineage";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
+import { corpusCourses } from "@/lib/analysis/papers";
+import { canonicalizeTopics } from "@/lib/analysis/topics";
 import { paretoCoverage, topicsToReach } from "@/lib/analysis/pareto";
 import { topicFrequency } from "@/lib/analysis/frequency";
 import type { Question } from "@/lib/types";
@@ -387,5 +390,167 @@ describe("inferPaperShape", () => {
     expect(shape?.type).toBe("CT");
     expect(shape?.questionsPerPaper).toBeGreaterThan(0);
     expect(shape?.sections.length).toBeGreaterThan(0);
+  });
+});
+
+describe("backtest", () => {
+  const heldOut = defaultHeldOutPaper(EMF_QUESTIONS)!;
+
+  it("holds out the most recent paper by default", () => {
+    expect(heldOut).toBeTruthy();
+    expect(EMF_QUESTIONS.some((q) => q.paper.label === heldOut)).toBe(true);
+  });
+
+  it("builds the ranking without ever seeing the held-out paper", () => {
+    const report = backtest(EMF_QUESTIONS, heldOut);
+
+    expect(report.trainingPapers).not.toContain(heldOut);
+    for (const stat of report.predictedTopics) {
+      expect(stat.papers).not.toContain(heldOut);
+    }
+  });
+
+  it("returns a coverage percentage for the EMF corpus", () => {
+    const report = backtest(EMF_QUESTIONS, heldOut);
+
+    expect(report.overlapPct).toBeGreaterThan(0);
+    expect(report.overlapPct).toBeLessThanOrEqual(100);
+    expect(report.questionsCovered).toBe(
+      report.hits.reduce((sum, stat) => sum + stat.count, 0),
+    );
+    expect(report.questionsHeldOut).toBe(
+      EMF_QUESTIONS.filter((q) => q.paper.label === heldOut).length,
+    );
+    // Coverage is question-weighted, so it must follow the questions.
+    expect(report.overlapPct).toBeCloseTo(
+      (report.questionsCovered / report.questionsHeldOut) * 100,
+      6,
+    );
+  });
+
+  it("splits the held-out paper's topics into hits and misses exactly once", () => {
+    const report = backtest(EMF_QUESTIONS, heldOut);
+
+    expect(report.hits.length + report.misses.length).toBe(
+      report.actualTopics.length,
+    );
+  });
+
+  it("counts only lineages that straddle the held-out boundary", () => {
+    const report = backtest(EMF_QUESTIONS, heldOut);
+
+    for (const cluster of report.matchedLineages) {
+      const inside = cluster.members.filter((m) => m.paper.label === heldOut);
+      expect(inside.length).toBeGreaterThan(0);
+      expect(inside.length).toBeLessThan(cluster.members.length);
+    }
+  });
+});
+
+describe("corpusCourses", () => {
+  const withCourse = (course: string, id: string) =>
+    question({ id, course, text: "placeholder" });
+
+  it("folds spellings that differ only in '&' versus 'and'", () => {
+    expect(
+      corpusCourses([
+        withCourse("Electromagnetic Fields & Waves", "a"),
+        withCourse("Electromagnetic Fields and Waves", "b"),
+        withCourse("Electromagnetic Fields and Waves", "c"),
+      ]),
+    ).toEqual(["Electromagnetic Fields and Waves"]);
+  });
+
+  it("ranks courses by how much of the corpus each carries", () => {
+    expect(
+      corpusCourses([
+        withCourse("Basic Mechanical Engineering", "a"),
+        withCourse("Electronics II", "b"),
+        withCourse("Electronics II", "c"),
+      ]),
+    ).toEqual(["Electronics II", "Basic Mechanical Engineering"]);
+  });
+
+  it("ignores questions carrying no course name", () => {
+    expect(corpusCourses([withCourse("  ", "a"), withCourse("Optics", "b")])).toEqual([
+      "Optics",
+    ]);
+  });
+});
+
+describe("canonicalizeTopics", () => {
+  const topical = (topic: string, id: string) => question({ id, topic });
+
+  it("folds a restatement into the label the corpus uses most", () => {
+    const folded = canonicalizeTopics([
+      topical("Data Flow Diagrams", "a"),
+      topical("Data Flow Diagrams", "b"),
+      topical("Data Flow Diagram", "c"),
+    ]);
+
+    expect(folded.map((q) => q.topic)).toEqual([
+      "Data Flow Diagrams",
+      "Data Flow Diagrams",
+      "Data Flow Diagrams",
+    ]);
+  });
+
+  it("leaves labels that merely share a word apart", () => {
+    const folded = canonicalizeTopics([
+      topical("Software Testing", "a"),
+      topical("Software Metrics", "b"),
+    ]);
+
+    expect(new Set(folded.map((q) => q.topic)).size).toBe(2);
+  });
+
+  it("does not chain merges through an intermediate label", () => {
+    // B folds into A; C is close to B but not to A, and must not follow it.
+    const folded = canonicalizeTopics([
+      topical("Cache Memory", "a"),
+      topical("Cache Memory", "b"),
+      topical("Cache Memory Design", "c"),
+      topical("Memory Design Tradeoffs", "d"),
+    ]);
+
+    expect(folded.find((q) => q.id === "c")?.topic).toBe("Cache Memory");
+    expect(folded.find((q) => q.id === "d")?.topic).toBe(
+      "Memory Design Tradeoffs",
+    );
+  });
+
+  it("does not depend on the order questions arrive in", () => {
+    const input = [
+      topical("Pipeline Performance", "a"),
+      topical("Pipeline Performance", "b"),
+      topical("Pipelining Performance", "c"),
+    ];
+    const forward = canonicalizeTopics(input).map((q) => q.topic).sort();
+    const reversed = canonicalizeTopics([...input].reverse())
+      .map((q) => q.topic)
+      .sort();
+
+    expect(forward).toEqual(reversed);
+  });
+});
+
+describe("corpusCourses, contained names", () => {
+  it("treats a name contained in another as the same course", () => {
+    expect(
+      corpusCourses([
+        question({ id: "a", course: "Software Engineering and Information System Design" }),
+        question({ id: "b", course: "Software Engineering and Information System Design" }),
+        question({ id: "c", course: "Software Engineering" }),
+      ]),
+    ).toEqual(["Software Engineering and Information System Design"]);
+  });
+
+  it("keeps courses that merely share a word", () => {
+    expect(
+      corpusCourses([
+        question({ id: "a", course: "Digital Electronics I" }),
+        question({ id: "b", course: "Electronics II" }),
+      ]).length,
+    ).toBe(2);
   });
 });

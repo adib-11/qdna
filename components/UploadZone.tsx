@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/Pill";
 import { runExtraction } from "@/lib/extract/runExtraction";
 import { saveSession } from "@/lib/extract/session";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
+import { SAMPLES, sampleOutcome } from "@/lib/samples";
 import type { ExtractionProgress } from "@/lib/types";
 
 type Phase = "idle" | "working" | "failed";
@@ -20,6 +21,7 @@ export function UploadZone() {
   const [dragging, setDragging] = useState(false);
   const [progress, setProgress] = useState<ExtractionProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadingSample, setLoadingSample] = useState<string | null>(null);
 
   const addFiles = useCallback((incoming: FileList | null) => {
     if (!incoming) return;
@@ -56,6 +58,22 @@ export function UploadZone() {
     } catch (err) {
       setPhase("failed");
       setError(err instanceof Error ? err.message : "Extraction failed.");
+    }
+  }
+
+  /** No extraction, no network: the corpus is already in the bundle. */
+  async function openSample(id: string) {
+    const sample = SAMPLES.find((s) => s.id === id);
+    if (!sample) return;
+    setError(null);
+    setLoadingSample(id);
+
+    try {
+      saveSession(sampleOutcome(await sample.load()));
+      router.push("/analyze");
+    } catch {
+      setLoadingSample(null);
+      setError(`The ${sample.name} sample could not be loaded.`);
     }
   }
 
@@ -133,6 +151,25 @@ export function UploadZone() {
           </p>
         )}
       </div>
+
+      {!working && (
+        <div className="mt-[24px] flex flex-wrap items-center gap-[8px]">
+          <span className="text-body-sm text-graphite">
+            Or open a corpus we already extracted:
+          </span>
+          {SAMPLES.map((sample) => (
+            <Button
+              key={sample.id}
+              variant="ghost"
+              title={sample.blurb}
+              onClick={() => openSample(sample.id)}
+              disabled={loadingSample !== null}
+            >
+              {loadingSample === sample.id ? "Opening…" : sample.name}
+            </Button>
+          ))}
+        </div>
+      )}
 
       {working && (
         <div className="mt-[24px] rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[24px]">

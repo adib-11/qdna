@@ -64,6 +64,18 @@ export const MIN_PAPERS_FOR_CONFIDENCE = 3;
 /** Similarity at or above which two questions are the same lineage. */
 export const VARIANT_THRESHOLD = 0.55;
 
+/**
+ * Similarity at or above which two topic labels are folded into one.
+ *
+ * Higher than the question threshold on purpose. Topic labels are two to five
+ * words, so every token carries far more weight than it does in a paragraph of
+ * question text: "Software Testing" and "Software Metrics" already share half
+ * their tokens without naming the same subject. This catches the restatements
+ * that independent batches produce — a plural, an added qualifier — and leaves
+ * genuinely different labels apart.
+ */
+export const TOPIC_MERGE_THRESHOLD = 0.65;
+
 /** Similarity at or above which two questions are effectively the same question. */
 export const NEAR_IDENTICAL_THRESHOLD = 0.85;
 

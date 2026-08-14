@@ -1,0 +1,2942 @@
+[
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "1(a)",
+    "marks": 3,
+    "text": "Why secondary is necessary? Discuss about SSD.",
+    "topic": "Memory Hierarchy",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "1(b)",
+    "marks": 3,
+    "text": "Draw a parallel adder to add the following values. How much time is saved here compared to serial adder? x = 11 y = 1010",
+    "topic": "Digital Arithmetic",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "What will happen if exponent is not biased? Determine the bias for single and double precision with explanation.",
+    "topic": "Floating Point Representation",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "2(a)",
+    "marks": 3,
+    "text": "Differentiate between base-index and base relative plus index addressing modes with example.",
+    "topic": "Addressing Modes",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "2(b)",
+    "marks": 3,
+    "text": "What is the micro operation for the following case? (The content from a particular address will be moved to register BX)",
+    "topic": "Micro-operations",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "2(c)",
+    "marks": 4,
+    "text": "Write only the necessary parts of floating point algorithms for adding the two numbers. Don't mention the steps that doesn't need to be executed. 4.002 x 10^-2 & 20.23 x 10^-5",
+    "topic": "Floating Point Arithmetic",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "3(a)",
+    "marks": 5,
+    "text": "Suppose a PC has the following configuration. Main memory size = 64kB Cache size = 4kB Block size = 16 bytes Calculate the - i) number of cache block ii) number of sets in main memory iii) bits for tag iv) number of bits for offset v) number of bits in main memory for fully associative and one way set associative.",
+    "topic": "Cache Memory Design",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "3(b)",
+    "marks": 5,
+    "text": "The worst case of one way set associative is an ideal case for two way set associative - justify this statement.",
+    "topic": "Cache Memory Design",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "4(a)",
+    "marks": 6,
+    "text": "Divide (14)10 by (3)10 in 4-bit binary 2's complement notation by using unsigned binary division algorithm.",
+    "topic": "Digital Arithmetic",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "A",
+      "year": 2024
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "Write your answer with explanation for the followings: (i) Given a memory system with 32-bit words and byte addressing how many address bits are needed to access 4GB of memory. (ii) In a word addressable system with 16-bit words and 64 KB memory, how many unique addresses are there?",
+    "topic": "Memory Addressing",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "5(a)",
+    "marks": 3,
+    "text": "A PC was transferring data quickly but become unresponsive during large transfers because the CPU couldn't use the bus. Engineers switched to a slower method that let CPU stay active. What is the new method & what are the advantages of it?",
+    "topic": "I/O Systems",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "5(b)",
+    "marks": 5,
+    "text": "Define DMA. Discuss the sequence of DMA operations.",
+    "topic": "DMA",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "5(c)",
+    "marks": 2,
+    "text": "Can booth's algorithm perform signed multiplication and division?",
+    "topic": "Digital Arithmetic",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "6(a)",
+    "marks": 3,
+    "text": "What is MIPS? Discuss different types of instruction format of MIPS.",
+    "topic": "MIPS Architecture",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "Convert the following C code into MIPS instructions. if (i == j) { a = i + j; } else { a = i - j; }",
+    "topic": "MIPS Assembly",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "6(c)",
+    "marks": 3,
+    "text": "What are sequencing in MIPS? Convert the following C code into MIPS format. for (i = 0; i < 20; i++) { a = a + i; }",
+    "topic": "MIPS Assembly",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "A student writes two MIPS function. One function overwrites registers used by other, and the return address gets lost after nested call. There is also confusion in passing and restoring values. What is the solution to avoid such problem.",
+    "topic": "MIPS Procedure Calls",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "7(b)",
+    "marks": 3,
+    "text": "Discuss about FPGA and HDL.",
+    "topic": "Hardware Design",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "7(c)",
+    "marks": 3,
+    "text": "When microcontroller is preferred over FPGA? Explain briefly.",
+    "topic": "Hardware Design",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "8(a)",
+    "marks": 4,
+    "text": "Consider execution of 2 million instructions on a 600 MHz processor. The program consists of four major type of instructions. The instruction mix and the CPI for each instruction type are given below. [Table provided] Now calculate the average CPI and corresponding MIPS rate when the program is executed on a microprocessor.",
+    "topic": "Performance Analysis",
+    "isNumerical": true,
+    "id": "2024 Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "8(b)",
+    "marks": 3,
+    "text": "Differentiate between multiprogramming and multiprocessing.",
+    "topic": "Operating Systems",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2024 Final ECE 3119",
+      "section": "B",
+      "year": 2024
+    },
+    "qNo": "8(c)",
+    "marks": 3,
+    "text": "Distinguish between ASCI and FPGA.",
+    "topic": "Hardware Design",
+    "isNumerical": false,
+    "id": "2024 Final ECE 3119::8(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "1(a)",
+    "marks": 3,
+    "text": "Explain the application of the most necessary parts of a computer.",
+    "topic": "Computer Components",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "1(b)",
+    "marks": 3,
+    "text": "Write short note on Von Neumann and Havard architecture.",
+    "topic": "Computer Architecture",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "Multiply (5 × 2) using Booth's algorithm.",
+    "topic": "Booth's Algorithm",
+    "isNumerical": true,
+    "id": "2023 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "2(a)",
+    "marks": 4,
+    "text": "Draw and discuss the Instruction cycle state diagram.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "2(b)",
+    "marks": 3,
+    "text": "Convert (-10.25) in single precision.",
+    "topic": "Floating Point Representation",
+    "isNumerical": true,
+    "id": "2023 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "2(c)",
+    "marks": 3,
+    "text": "Write the necessary part of floating-point algorithms to add the following numbers\n(i) 4.02 × 10³\n(ii) -4.0 × 10³",
+    "topic": "Floating Point Arithmetic",
+    "isNumerical": true,
+    "id": "2023 Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "3(a)",
+    "marks": 3,
+    "text": "Define pipelining. Calculate the number of cycles for a six-stage pipelined and non-pipelined system.",
+    "topic": "Pipelining",
+    "isNumerical": true,
+    "id": "2023 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "3(b)",
+    "marks": 4,
+    "text": "An array starting from 2000. You want data from 2040, 2080, 3000. Which addressing mode will you use? And if you need data from 2010 to 2100, what would be the best addressing mode for that? Explain with appropriate code.",
+    "topic": "Addressing Modes",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "3(c)",
+    "marks": 3,
+    "text": "Explain the instruction cycle state transition diagram.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::3(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "4(a)",
+    "marks": 2,
+    "text": "What is the difference between assembler and compiler?",
+    "topic": "Assembler vs Compiler",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "4(b)",
+    "marks": 5,
+    "text": "Make a comparative analysis of zero, one, two and three-addresses machines considering the expression Y = (A + C * B)/(D - E)",
+    "topic": "Instruction Formats",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "A",
+      "year": 2023
+    },
+    "qNo": "4(c)",
+    "marks": 3,
+    "text": "Explain the advantages of using DMA over interrupt-driven I/O in terms of performance and CPU overhead.",
+    "topic": "DMA vs Interrupt-driven I/O",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "5(a)",
+    "marks": 3,
+    "text": "Differentiate between fully associated mapping and one way set associative in terms of tag, search and hit ratio with necessary diagram.",
+    "topic": "Cache Mapping",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "5(b)",
+    "marks": 4,
+    "text": "Define cache memory mapping. Explain the memory hierarchy in terms of storage and speed.",
+    "topic": "Memory Hierarchy",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "5(c)",
+    "marks": 3,
+    "text": "Define paging. How the hit ratio of a computer is so high?",
+    "topic": "Paging and Hit Ratio",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "6(a)",
+    "marks": 3,
+    "text": "Explain the difference between behavioral, dataflow and structural modeling in HDL/VHDL. Discuss with short example.",
+    "topic": "HDL Modeling Styles",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "Write HDL/VHDL code for a 3-to-8 decoder.",
+    "topic": "HDL Coding",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "6(c)",
+    "marks": 3,
+    "text": "Compare FPGA microcontroller, flexibility, cost and power consumption.",
+    "topic": "FPGA vs Microcontroller",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "7(a)",
+    "marks": 3,
+    "text": "Between cycle stealing method and processor transfer method, which one will you choose? Justify your answer.",
+    "topic": "DMA Transfer Modes",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "7(b)",
+    "marks": 3,
+    "text": "Define DMA. Describe the steps of DMA.",
+    "topic": "Direct Memory Access (DMA)",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "7(c)",
+    "marks": 4,
+    "text": "Write the MIPS instruction for the following program:\nif (x > y){\n  z = x - y;\n}",
+    "topic": "MIPS Assembly",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "8(a)",
+    "marks": 4,
+    "text": "Consider two different machines with two different instruction sets, both of which have a clock rate of 100 MHz. The following measurements are recorded on the two machines running a given set of benchmark programs:\n\nInstruction Type | Instruction Count (Millions) | Cycles per Instruction\nMachine A\nArithmetic and logic | 8 | 1\nLoad and store | 4 | 3\nBranch | 2 | 4\nOthers | 4 | 3\nMachine B\nArithmetic and logic | 10 | 1\nLoad and store | 6 | 2\nBranch | 8 | 3\nOthers | 4 | 4\n\nDetermine the effective CPI, MIPS rate and execution time for each machine. Also, comment on the results.",
+    "topic": "Performance Measurement",
+    "isNumerical": true,
+    "id": "2023 Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "8(b)",
+    "marks": 2,
+    "text": "What is the importance of MIPS?",
+    "topic": "Performance Metrics",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2023 Final ECE 3119",
+      "section": "B",
+      "year": 2023
+    },
+    "qNo": "8(c)",
+    "marks": 4,
+    "text": "Define HDL and VHDL. Between FPGA & microcontroller, which is better?",
+    "topic": "HDL and Hardware Platforms",
+    "isNumerical": false,
+    "id": "2023 Final ECE 3119::8(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "Describe the application of the main components of a computer.",
+    "topic": "Computer Components",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Why the exponent is biased in floating point numbers? Also explain why the bias value is 127 for single precision?",
+    "topic": "Floating Point Representation",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "Why 2's compliment is best method for representation of signed numbers? Justify your answer.",
+    "topic": "Number Representation",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "2(a)",
+    "marks": 4,
+    "text": "Explain the Von Neumann architecture.",
+    "topic": "Von Neumann Architecture",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "2(b)",
+    "marks": 4,
+    "text": "What is address number? Show that the execution of the instruction, Y = (A+B-C) / (D+E) by using one address instruction.",
+    "topic": "Instruction Formats",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "2(c)",
+    "marks": 4,
+    "text": "Discuss the dataflow of fetch and interrupt cycles with neat sketch.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "3(a)",
+    "marks": 5,
+    "text": "Explain the situation when overflow and zero condition occur in floating point addition using necessary code with example.",
+    "topic": "Floating Point Arithmetic",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "3(b)",
+    "marks": 3,
+    "text": "Why do we prefer Booth's algorithm for multiplication and division?",
+    "topic": "Booth's Algorithm",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "3(c)",
+    "marks": 4,
+    "text": "Define pipelining. Which hazard in pipelining can be solved by RISC? Briefly explain.",
+    "topic": "Pipelining and Hazards",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::3(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "What is meant by (i) SISD (ii) SIMD (iii) MIMD and (iv) MISD",
+    "topic": "Flynn's Taxonomy",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "Divide (6/3) using Booth's algorithm using non-restoring technique.",
+    "topic": "Division Algorithms",
+    "isNumerical": true,
+    "id": "2022 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "A",
+      "year": 2022
+    },
+    "qNo": "4(c)",
+    "marks": 4,
+    "text": "Define (i) WAR and (ii) RAW. Explain why is it necessary to know about WAR and RAW?",
+    "topic": "Data Hazards",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "5(a)",
+    "marks": 4,
+    "text": "What is MIPS instruction? Discuss about MIPS calling convention.",
+    "topic": "MIPS Architecture",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "5(b)",
+    "marks": 8,
+    "text": "Write MIPS instruction for the following code.\n(i) for (j=0; j<20; j++){\nif(i==j)\nc++;\nelse\nc--;\n}\n(ii) main(){\nif(a==8)\nc=update(a); }\nUse procedure call and update is a function here.",
+    "topic": "MIPS Assembly Language",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "Why do we use stack in MIPS procedure call?",
+    "topic": "MIPS Procedure Call",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "6(b)",
+    "marks": 6,
+    "text": "Write micro instruction for the following instructions:\n(i) For register addressing mode\n(ii) For indirect addressing mode\nTake any example for the mentioned addressing mode.",
+    "topic": "Microinstructions",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "6(c)",
+    "marks": 2,
+    "text": "What is HDL? Give an example.",
+    "topic": "Hardware Description Language",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "Draw and explain the hardware structure for addition and subtraction with an example.",
+    "topic": "Computer Arithmetic Hardware",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "7(b)",
+    "marks": 5,
+    "text": "Consider 4 instructions to execute (I_1, I_2, I_3, I_4) and each instruction has 4 parts (F, D, O, W). Assuming each part takes 2 clock cycles to execute , compare the performance of\n(i) Pipelining\n(ii) Super pipelining\n(iii) Super-scalar pipelining",
+    "topic": "Pipeline Performance",
+    "isNumerical": true,
+    "id": "2022 Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "7(c)",
+    "marks": 3,
+    "text": "What are the basic differences between X86 architecture and MIPS architecture?",
+    "topic": "Processor Architecture Comparison",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "8(a)",
+    "marks": 2,
+    "text": "How the hit ratio of the processor is so high?",
+    "topic": "Cache Memory",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "When should we use microcontroller instead of FPGA? Which one is better?",
+    "topic": "Microcontroller vs FPGA",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2022 Final ECE 3119",
+      "section": "B",
+      "year": 2022
+    },
+    "qNo": "8(c)",
+    "marks": 6,
+    "text": "Discuss different types of indirect addressing mode modes with example.",
+    "topic": "Addressing Modes",
+    "isNumerical": false,
+    "id": "2022 Final ECE 3119::8(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "What is Von Neuman architecture? Explain it with necessary diagram.",
+    "topic": "Von Neumann Architecture",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Differentiate between:\n(i) Assembler and Decoder\n(ii) Assembler and Compiler",
+    "topic": "Language Translators",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "Which method is used to represent signed number and why?",
+    "topic": "Number Representation",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "2(a)",
+    "marks": 3,
+    "text": "Convert the numbers into the mentioned form\n(i) From 2's complement into decimal:\n101, 0111\n(ii) From decimal into 2's complement:\n-26, 15",
+    "topic": "Number Representation Conversion",
+    "isNumerical": true,
+    "id": "2021 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "2(b)",
+    "marks": 4,
+    "text": "To multiply two 3-bit numbers what should be the size of accumulator, multiplier and multiplicand for Booth's algorithm? Explain with necessary diagram.",
+    "topic": "Booth's Algorithm",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "2(c)",
+    "marks": 5,
+    "text": "Divide (-7/3) using Booth's algorithm (restoring division).",
+    "topic": "Division Algorithms",
+    "isNumerical": true,
+    "id": "2021 Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "3(a)",
+    "marks": 5,
+    "text": "Define swapping and partitioning of the memory. How paging helps to overcome the lack of physical memory issues? Discuss about the free frame allocation by using paging technique with necessary diagram.",
+    "topic": "Memory Management",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "3(b)",
+    "marks": 5,
+    "text": "How segmentation helps to improve the performance of a computer system? Discuss about the virtual memory address translation for small pages in a system.",
+    "topic": "Memory Management",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "3(c)",
+    "marks": 2,
+    "text": "Describe in brief about, (i) Memory Hierarchy (ii) SRAM and (iii) DRAM",
+    "topic": "Memory Hierarchy",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::3(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "Differentiate between microcontroller and FPGA. How FPGA can be used in replace of microcontroller for designing a small control system.",
+    "topic": "Microcontroller vs FPGA",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "4(b)",
+    "marks": 5,
+    "text": "How FPGA can help to design a machine that can perform arithmetic operation on variable length of binary bits. Discuss about the fabrication of a block RAM cell.",
+    "topic": "FPGA Architecture",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "A",
+      "year": 2021
+    },
+    "qNo": "4(c)",
+    "marks": 3,
+    "text": "Write short notes on HDL and VHDL. List some appropriate application areas of FPGA.",
+    "topic": "Hardware Description Language",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "5(a)",
+    "marks": 3,
+    "text": "What is meant by addressing mode? Explain DMA operation during I/O from/to a peripheral device.",
+    "topic": "Addressing Modes and DMA",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "5(b)",
+    "marks": 6,
+    "text": "Discuss about the immediate addressing mode, register addressing mode and register indirect addressing mode for two given variable X and Y. Assume the initial value of X and Y are 10 and 20.",
+    "topic": "Addressing Modes",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "5(c)",
+    "marks": 3,
+    "text": "Show the execution process of the instruction, I=(A-B)/(C+D*E) using two address instruction.",
+    "topic": "Instruction Formats",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "Define page replacement algorithm. Discuss page fault, thrashing and TLB.",
+    "topic": "Memory Management",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "What are the micro instruction for the following instruction\nmov BL, [2000H]",
+    "topic": "Microinstructions",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "6(c)",
+    "marks": 4,
+    "text": "Write the instruction to add the contents of BL and CL. Store the result in CL and add 100H to CL. Finally, store the result in the location 4000H. Mention the addressing mode of each steps",
+    "topic": "Assembly Programming",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "What is the use of the constant semaphore? Draw and discuss the Daisy chaining approach for handling the interrupts from multiple devices in a serially connected system.",
+    "topic": "Interrupts and Semaphores",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "7(b)",
+    "marks": 3,
+    "text": "Discuss about the Booth's algorithm for multiplying the binary numbers.",
+    "topic": "Booth's Algorithm",
+    "isNumerical": false,
+    "id": "2021 Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture and Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ECE 3119",
+      "section": "B",
+      "year": 2021
+    },
+    "qNo": "7(c)",
+    "marks": 5,
+    "text": "Consider 6 instructions to be executed (I_1, I_2, I_3, I_4, I_5 and I_6) and each of the instruction has 4 part (F, D, O and W). Assuming that each part takes 2 clock cycle to execute and there are intermediate storage buffer after each stage and the delay of each buffer is 0 click cycle. Compare the performance of the following architecture\n(i) Non-pipelining architecture\n(ii) Pipelining architecture\n(iii) Super-pipelining architecture",
+    "topic": "Pipeline Performance",
+    "isNumerical": true,
+    "id": "2021 Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "What are the relationship between computer architecture and organization? Explain briefly.",
+    "topic": "Architecture vs Organization",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "1(b)",
+    "marks": 2,
+    "text": "Define the following terms: (i) PC, (ii) IR, (iii) MAR, (iv) MBR",
+    "topic": "CPU Components",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "1(c)",
+    "marks": 6,
+    "text": "Perform the following operations by showing program execution: A program fragment that adds the contents of the memory word at address 940 to the contents of the memory word at address 941 and stores the result in the later section. Also shows the contents of AC, PC, IR for each step.",
+    "topic": "Program Execution",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "2(a)",
+    "marks": 6,
+    "text": "A benchmark program is run on an 80 MHz processor. The executed program consists of 10,0000 instruction executions, with the following instruction mix and clock cycle count: Instruction Type: Integer arithmetic (45,000, 1), Data transfer (32,000, 2), Floating point (15,000, 2), Control transfer (8,000, 2). Determine the effective CPI, MIPS rate, and execution time for this program.",
+    "topic": "Performance Analysis",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "2(b)",
+    "marks": 4,
+    "text": "List and briefly explain two approaches to dealing with multiple interrupts.",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "2(c)",
+    "marks": 2,
+    "text": "Consider a µp generating a 16-bit address and having a 16-bit data bus. What is the maximum memory address space that the processor can access directly if it is connected to a 16-bit memory?",
+    "topic": "Memory Addressing",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "3(a)",
+    "marks": 5,
+    "text": "Draw the flowchart for unsigned binary division and solve the problem where 7 divided by 3.",
+    "topic": "Binary Division",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "3(b)",
+    "marks": 4,
+    "text": "Represent 263.3 in IEEE 754 32-Bit floating point notation.",
+    "topic": "Floating Point Representation",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "3(c)",
+    "marks": 3,
+    "text": "Consider a 32 bit hexadecimal value 12345678 and that it is stored in a 32 bit word in byte addressable memory at byte location 184. Store this value using both big ending and little endian techniques.",
+    "topic": "Endianness",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::3(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "4(a)",
+    "marks": 5,
+    "text": "Briefly define the seven RAID levels.",
+    "topic": "RAID Levels",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "Write down the hardware events occur when an I/O device completes an I/O operation in the case of interrupt-driven I/O.",
+    "topic": "Interrupt-driven I/O",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "A",
+      "year": 2020
+    },
+    "qNo": "4(c)",
+    "marks": 3,
+    "text": "What are the drawbacks of programmed and Interrupt-driven I/O? What is the function of DMA?",
+    "topic": "I/O Techniques",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "B",
+      "year": 2020
+    },
+    "qNo": "5(a)",
+    "marks": 2,
+    "text": "What is the purpose of translation lookaside buffers?",
+    "topic": "Memory Management",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "B",
+      "year": 2020
+    },
+    "qNo": "5(b)",
+    "marks": 3,
+    "text": "What are the differences between big ending and little ending?",
+    "topic": "Endianness",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "B",
+      "year": 2020
+    },
+    "qNo": "5(c)",
+    "marks": 7,
+    "text": "Compare zero, one, two and three- addresses machines by writing programs to compute X=(A+B x C)/(D-E x F) for each of the four machines.",
+    "topic": "Instruction Set Architecture",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "B",
+      "year": 2020
+    },
+    "qNo": "6(a)",
+    "marks": 3,
+    "text": "Show the instruction formats of R-type, I-type, and J-type.",
+    "topic": "MIPS Instruction Formats",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": "B",
+      "year": 2020
+    },
+    "qNo": "6(b)",
+    "marks": 9,
+    "text": "Writing MIPS code for the following C code: (i) while(save[i]==k)i+=1 where i is in $S3, base address of save is in $S6, k is in $S5 (ii) if (A[6]==c[6]) f[8]=g[8]+c[5]+A[A[2]] else f[9]=g[5]+c[3] where base address of A is $S0, c is $S2, f is $S3 and g is $S1. (iii) A[12]=h+A[8] where h is in $S2, base address of A is in $S3.",
+    "topic": "MIPS Assembly Programming",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": null,
+      "year": 2020
+    },
+    "qNo": "8(a)",
+    "marks": 3,
+    "text": "A register file and memory are given below: Register File: R4=10, R5=20, R6=16. Memory: Address 16=40, 20=45, 24=50. What will be the value of R5 and R6 register after executing the following MIPS instruction? lw R6, 4(R5)",
+    "topic": "MIPS Instruction Execution",
+    "isNumerical": true,
+    "id": "2020 Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": null,
+      "year": 2020
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "Write the MIPS instruction for the following program. for(i=0; i<5; i++){ c=c+i; }",
+    "topic": "MIPS Assembly Programming",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": null,
+      "year": 2020
+    },
+    "qNo": "8(c)",
+    "marks": 2,
+    "text": "What is HDL? Give an example.",
+    "topic": "Hardware Description Language",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::8(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3119",
+      "section": null,
+      "year": 2020
+    },
+    "qNo": "8(d)",
+    "marks": 3,
+    "text": "Why do we need stack in the MIPS procedure call?",
+    "topic": "MIPS Procedure Calls",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3119::8(d)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "1(a)",
+    "marks": 3,
+    "text": "What do you mean by computer organization and computer architecture?",
+    "topic": "Computer Architecture Basics",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "List and briefly define some of the techniques used in contemporary processors to increase speed.",
+    "topic": "Processor Performance",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "1(c)",
+    "marks": 3,
+    "text": "Explain the differences between multicore systems and MICs.",
+    "topic": "Multicore Systems",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "1(d)",
+    "marks": 2,
+    "text": "What are the basis measures used to express the computer performance?",
+    "topic": "Computer Performance",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::1(d)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "2(a)",
+    "marks": 5,
+    "text": "What is Moore's law? What is the importance of performance balancement?",
+    "topic": "Moore's Law",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "2(b)",
+    "marks": 7,
+    "text": "A benchmark program is run on an 80 MHz processor. The executed program consists of 1,00,000 instructions with the following: Instruction Type: Integer arithmetic, Count: 45000, CPI: 1; Data transfer, Count: 32000, CPI: 2; Floating point, Count: 15000, CPI: 2; Control transfer, Count: 8000, CPI: 2. Determine the effective CPI, MIPS rate and execution time for this program.",
+    "topic": "Performance Calculation",
+    "isNumerical": true,
+    "id": "2019 Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "3(a)",
+    "marks": null,
+    "text": "Describe the Instruction cycle state diagram.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "3(b)",
+    "marks": 4,
+    "text": "What is an interrupt? Draw the program flow diagram for the both case of short I/O wait and long I/O wait with interrupt system.",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::3(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "3(c)",
+    "marks": 4,
+    "text": "Give an example of for the approach of priority interrupt technique to handle multiple interrupts and explain it.",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::3(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "4(a)",
+    "marks": 3,
+    "text": "What is the general relationship among access time, memory cost and capacity?",
+    "topic": "Memory Hierarchy",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "4(b)",
+    "marks": 5,
+    "text": "Briefly explain direct mapping, associative mapping and set-associative mapping.",
+    "topic": "Cache Mapping",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "A",
+      "year": 2019
+    },
+    "qNo": "4(c)",
+    "marks": 4,
+    "text": "What are the differences between DRAM and SRAM in terms of characteristics such as speed size and cost?",
+    "topic": "Memory Types",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "5(a)",
+    "marks": 4,
+    "text": "List and briefly explain five important instruction set,design issues.",
+    "topic": "Instruction Set Design",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "5(b)",
+    "marks": 4,
+    "text": "Draw the instruction cycle state diagram with proper labeling.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "5(c)",
+    "marks": 4,
+    "text": "Briefly explain with necessary drawings direct addressing and relative addressing.",
+    "topic": "Addressing Modes",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "6(a)",
+    "marks": 6,
+    "text": "Consider that five instructions to execute I1, I2, I3, I4 and I5. Each has 4 steps (F,D,E,W). Each part has 1.5 clock cycles to execute. Compare the performance of (i) Pipelining (ii) Super pipelining (iii) Scalar pipelining",
+    "topic": "Pipelining Performance",
+    "isNumerical": true,
+    "id": "2019 Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "Briefly describe MAR, MBR, PC and IR with figure.",
+    "topic": "CPU Registers",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "6(c)",
+    "marks": 2,
+    "text": "What do you mean by RAID?",
+    "topic": "Storage Systems",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "What are some typical distinguishing characteristics of RISC organization and CISC organization?",
+    "topic": "RISC vs CISC",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "7(b)",
+    "marks": 6,
+    "text": "Consider the following high level instruction: Result=2A+3B-C. Now write down the assembly instructions for above expression considering both RISC and CISC organization.",
+    "topic": "Assembly Programming",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "7(c)",
+    "marks": 2,
+    "text": "Write short note on operating system call.",
+    "topic": "Operating Systems",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "8(a)",
+    "marks": 2,
+    "text": "What is instruction-level parallelism?",
+    "topic": "Parallel Processing",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "What is FPGA? Draw a simple FPGA logic block.",
+    "topic": "FPGA Architecture",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "8(c)",
+    "marks": 2,
+    "text": "What is virtual memory? Discuss paging.",
+    "topic": "Memory Management",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::8(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2019 Final ECE 3119",
+      "section": "B",
+      "year": 2019
+    },
+    "qNo": "8(d)",
+    "marks": 4,
+    "text": "Discuss the working procedure of cash memory to speed up the µp operation.",
+    "topic": "Cache Memory",
+    "isNumerical": false,
+    "id": "2019 Final ECE 3119::8(d)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "Identify the write-read, write-write and read-write dependencies in the following sequence: I1: R1=50, I2: R1=R3+R4, I3: R2=R4-10, I4: R4=R1+R2, I5: R2=R1+45",
+    "topic": "Instruction Dependencies",
+    "isNumerical": false,
+    "id": "CT CAD::7(a)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "7(b)",
+    "marks": 3,
+    "text": "Differentiate between multiprogramming and multiprocessing.",
+    "topic": "System Architecture",
+    "isNumerical": false,
+    "id": "CT CAD::7(b)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "7(c)",
+    "marks": 5,
+    "text": "Explain the taxonomy of parallel processor architecture.",
+    "topic": "Parallel Processing",
+    "isNumerical": false,
+    "id": "CT CAD::7(c)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "8(a)",
+    "marks": 5,
+    "text": "Define FPGA. Draw and explain the basic architecture of FPGA.",
+    "topic": "FPGA Architecture",
+    "isNumerical": false,
+    "id": "CT CAD::8(a)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "Explain some real-world applications of FPGA.",
+    "topic": "FPGA Applications",
+    "isNumerical": false,
+    "id": "CT CAD::8(b)"
+  },
+  {
+    "course": "Computer Aided Design",
+    "courseCodes": [],
+    "paper": {
+      "type": "CT",
+      "label": "CT CAD",
+      "section": null,
+      "year": null
+    },
+    "qNo": "8(c)",
+    "marks": 3,
+    "text": "Distinguish between ASCI and FPGA.",
+    "topic": "ASIC vs FPGA",
+    "isNumerical": false,
+    "id": "CT CAD::8(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "1(a)",
+    "marks": 3,
+    "text": "What do you mean by computer architecture? Specify some architectural attributes that have direct impact on the logical execution of a program.",
+    "topic": "Computer Architecture Basics",
+    "isNumerical": false,
+    "id": "Final ECE 3119::1(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Describe the basic functions of the major structural components of CPU.",
+    "topic": "CPU Components",
+    "isNumerical": false,
+    "id": "Final ECE 3119::1(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "1(c)",
+    "marks": 5,
+    "text": "What is interrupt? Draw the flow diagram showing the flow of data during interrupt cycle.",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "Final ECE 3119::1(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "2(a)",
+    "marks": 7.5,
+    "text": "Represent the decimal values -128, -127, -27, 100, 128 as signed, 8-bit numbers in the following binary formats: (i) Sign-magnitude representation, (ii) 1's complement representation, (iii) 2's complement representation.",
+    "topic": "Binary Representation",
+    "isNumerical": true,
+    "id": "Final ECE 3119::2(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "2(b)",
+    "marks": 2.5,
+    "text": "What are the advantages of 2's complement representation over sign-magnitude representation and 1's complement representation?",
+    "topic": "Binary Representation",
+    "isNumerical": false,
+    "id": "Final ECE 3119::2(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "2(c)",
+    "marks": 2,
+    "text": "Explain how to determine if a number is negative in the following representations: (i) Sign-magnitude (ii) 1's complement (iii) 2's complement",
+    "topic": "Binary Representation",
+    "isNumerical": false,
+    "id": "Final ECE 3119::2(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "3(a)",
+    "marks": 12,
+    "text": "Determine whether the following statements are true or false. Provide some logic to support your answers: (i) Pipelining results in an individual instruction being executed faster. (ii) Maximum number of addresses might be needed in a machine instruction is four. (iii) Fewer addresses per instruction always speed up the execution of the entire program.",
+    "topic": "Instruction Set Architecture",
+    "isNumerical": false,
+    "id": "Final ECE 3119::3(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "Express the following numbers in IEEE 32-bit floating point format: (i) -3.5 (ii) 5/16;",
+    "topic": "Floating Point Representation",
+    "isNumerical": true,
+    "id": "Final ECE 3119::4(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "4(b)",
+    "marks": 5,
+    "text": "Divide (13)10 by (3)10 in 4-bit binary 2's complement notation by using unsigned binary division algorithm.",
+    "topic": "Binary Arithmetic",
+    "isNumerical": true,
+    "id": "Final ECE 3119::4(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "A",
+      "year": null
+    },
+    "qNo": "4(c)",
+    "marks": 3,
+    "text": "What is machine instruction? What are the typical elements of a machine instruction?",
+    "topic": "Instruction Set Architecture",
+    "isNumerical": false,
+    "id": "Final ECE 3119::4(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "5(a)",
+    "marks": 4,
+    "text": "Distinguish between computer organization & computer architecture with proper example.",
+    "topic": "Computer Architecture Basics",
+    "isNumerical": false,
+    "id": "Final ECE 3119::5(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "5(b)",
+    "marks": 4,
+    "text": "Identify the performance factor associated with processor execution time. Show their relation with the system attributes.",
+    "topic": "Processor Performance",
+    "isNumerical": false,
+    "id": "Final ECE 3119::5(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "5(c)",
+    "marks": 4,
+    "text": "Briefly describe the approaches used in multiple interrupt handling with illustration of transfer of control.",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "Final ECE 3119::5(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "\"If a large number of devices are connected to the bus performance will suffer\"-is this statement true? If so then mention the reasons why?",
+    "topic": "Bus Systems",
+    "isNumerical": false,
+    "id": "Final ECE 3119::6(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "Draw and explain the instruction state diagram with interrupts.",
+    "topic": "Instruction Cycle",
+    "isNumerical": false,
+    "id": "Final ECE 3119::6(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "6(c)",
+    "marks": 4,
+    "text": "Consider execution of 2 million instructions on a 600 MHz processor. The program consists of four major type of instructions. The instruction mix and the CPI for each instruction type are given below. Now calculate the average CPI and corresponding MIPS rate when the program is executed on a uniprocessor.",
+    "topic": "Processor Performance",
+    "isNumerical": true,
+    "id": "Final ECE 3119::6(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "7(a)",
+    "marks": 3,
+    "text": "Briefly explain the timing of synchronous bus operation.",
+    "topic": "Bus Systems",
+    "isNumerical": false,
+    "id": "Final ECE 3119::7(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "7(b)",
+    "marks": 4,
+    "text": "Explain read and write operation in static RAM cell with proper diagram.",
+    "topic": "Memory Systems",
+    "isNumerical": false,
+    "id": "Final ECE 3119::7(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "7(c)",
+    "marks": 5,
+    "text": "Consider a hard disk with an average seek time of 5 ms, rotation speed of 60,000 rpm. Each sector size is 4096 byte and there are 512 sectors in every track. Calculate the total average time if a 16MB file is read sequentially and randomly. Which technique do you think is better?",
+    "topic": "Memory Systems",
+    "isNumerical": true,
+    "id": "Final ECE 3119::7(c)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "8(a)",
+    "marks": 3,
+    "text": "Write down the differences between dedicated bus and multiplexed bus.",
+    "topic": "Bus Systems",
+    "isNumerical": false,
+    "id": "Final ECE 3119::8(a)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "Briefly explain how interrupt signal improves processor's efficiency (with suitable example).",
+    "topic": "Interrupt Handling",
+    "isNumerical": false,
+    "id": "Final ECE 3119::8(b)"
+  },
+  {
+    "course": "Computer Architecture & Design",
+    "courseCodes": [
+      "ECE 3119"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "Final ECE 3119",
+      "section": "B",
+      "year": null
+    },
+    "qNo": "8(c)",
+    "marks": 5,
+    "text": "What is RAID? Write short notes on the following RAID levels: (i) RAID 0 (ii) RAID 1 (iii) RAID 3 (iv) RAID 6",
+    "topic": "Memory Systems",
+    "isNumerical": false,
+    "id": "Final ECE 3119::8(c)"
+  }
+]
