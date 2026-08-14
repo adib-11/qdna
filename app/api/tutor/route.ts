@@ -5,10 +5,13 @@ import { errorResponseInit, generateWithFallback } from "@/lib/gemini/generate";
 import { TUTOR_PROMPT } from "@/lib/gemini/prompts";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+// Raised from the planned 30s. A hint is a short answer, but a thinking flash
+// model still spent 13s on one in local measurement and blew a 20s attempt cap
+// in production, and 30s of budget leaves no room to try a second model.
+export const maxDuration = 60;
 
-/** Longest a single model attempt may run. A hint is short; it should be quick. */
-const MAX_ATTEMPT_MS = 20_000;
+/** Longest a single model attempt may run. */
+const MAX_ATTEMPT_MS = 25_000;
 
 interface TutorRequest {
   question?: {

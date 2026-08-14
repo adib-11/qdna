@@ -52,16 +52,21 @@ export async function generateWithFallback(
       });
       return response.text;
     } catch (error) {
-      const status = extractStatus(error);
       // 429 walks the chain too: the daily ceiling is metered per model, so
-      // the next model has its own budget even when this one is spent.
-      if (status !== 503 && status !== 404 && status !== 429) throw error;
+      // the next model has its own budget even when this one is spent. So does
+      // a deadline — a model instance that will not answer inside the attempt
+      // cap is exactly the case another model can rescue, and the walk is
+      // bounded by the budget regardless.
+      if (!WALKABLE.has(extractStatus(error) ?? 0)) throw error;
       lastError = error;
     }
   }
 
   throw lastError ?? new Error("No model answered within the function window");
 }
+
+/** Upstream statuses another model may still answer. */
+const WALKABLE = new Set([429, 503, 504, 404]);
 
 export function extractStatus(error: unknown): number | null {
   if (typeof error !== "object" || error === null) return null;
@@ -73,6 +78,7 @@ export function extractStatus(error: unknown): number | null {
   if (typeof e.message === "string") {
     if (/\b429\b|RESOURCE_EXHAUSTED/.test(e.message)) return 429;
     if (/\b503\b|UNAVAILABLE/.test(e.message)) return 503;
+    if (/\b504\b|DEADLINE_EXCEEDED/.test(e.message)) return 504;
     if (/\b404\b|NOT_FOUND/.test(e.message)) return 404;
   }
   return null;
