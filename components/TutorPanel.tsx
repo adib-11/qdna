@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
+import { browserModelClient } from "@/lib/gemini/browserClient";
+import { writeHint } from "@/lib/gemini/hint";
+import { handleModelError } from "@/lib/key/ownKey";
 import type { Question, TopicStat } from "@/lib/types";
 
 interface TutorState {
@@ -22,10 +25,13 @@ interface TutorState {
 export function TutorPanel({
   question,
   stat,
+  apiKey,
   onClose,
 }: {
   question: Question;
   stat?: TopicStat;
+  /** The student's own key; the hint is asked for from this browser. */
+  apiKey: string;
   onClose: () => void;
 }) {
   const [state, setState] = useState<TutorState>({
@@ -40,11 +46,9 @@ export function TutorPanel({
     async function run() {
       setState({ status: "loading", hint: "", error: "" });
       try {
-        const response = await fetch("/api/tutor", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: controller.signal,
-          body: JSON.stringify({
+        const hint = await writeHint(
+          browserModelClient(apiKey),
+          {
             question: {
               text: question.text,
               qNo: question.qNo,
@@ -55,30 +59,16 @@ export function TutorPanel({
             topicContext: stat
               ? { topic: stat.topic, count: stat.count, papers: stat.papers }
               : { topic: question.topic },
-          }),
-        });
-
-        const data = (await response.json()) as {
-          hint?: string;
-          error?: string;
-        };
-
-        if (!response.ok || !data.hint) {
-          throw new Error(
-            response.status === 429
-              ? "The model is rate limited right now. Try again in a moment."
-              : (data.error ?? "The hint could not be generated."),
-          );
-        }
-
-        setState({ status: "ready", hint: data.hint, error: "" });
+          },
+          controller.signal,
+        );
+        setState({ status: "ready", hint, error: "" });
       } catch (error) {
         if (controller.signal.aborted) return;
         setState({
           status: "error",
           hint: "",
-          error:
-            error instanceof Error ? error.message : "The hint request failed.",
+          error: handleModelError(error, "The hint request failed."),
         });
       }
     }
@@ -86,7 +76,7 @@ export function TutorPanel({
     void run();
     return () => controller.abort();
     // Re-runs when the user opens a different question from the same panel.
-  }, [question, stat]);
+  }, [question, stat, apiKey]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

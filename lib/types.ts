@@ -31,12 +31,14 @@ export interface Question {
   isNumerical: boolean;
 }
 
-/** A rasterised PDF page awaiting extraction. */
+/** A page awaiting extraction: a rasterised PDF page, or a photo of one. */
 export interface PageImage {
   /** Zero-based index in the source document, after blank pages are dropped. */
   pageIndex: number;
-  /** Base64-encoded JPEG, without the data-URL prefix. */
+  /** Base64-encoded image, without the data-URL prefix. */
   base64: string;
+  /** "image/jpeg" for rendered PDF pages; a photo keeps its own type. */
+  mimeType: string;
   /** Byte length of the base64 payload, used for batch packing. */
   bytes: number;
 }
@@ -51,8 +53,10 @@ export interface ExtractionProgress {
   pagesTotal: number;
   questionsFound: number;
   batchesFailed: number;
-  /** Pages belonging to batches that failed outright. */
+  /** Pages belonging to batches that failed outright, including any too large to send. */
   pagesFailed: number;
+  /** Pages skipped for being over Gemini's inline size limit. */
+  pagesTooLarge?: number;
 }
 
 export interface ExtractionOutcome {
@@ -115,7 +119,7 @@ export interface PaperShape {
   paperCount: number;
 }
 
-export interface PredictedQuestion {
+export interface PracticeQuestion {
   qNo: string;
   /** One of the section names in the corpus's own PaperShape. */
   section: string;
@@ -128,11 +132,12 @@ export interface PredictedQuestion {
   rationale: string;
 }
 
-export interface PredictedPaper {
+/** A generated revision aid in the corpus's measured shape. Never a forecast. */
+export interface PracticePaper {
   title: string;
   /** Rubric line, e.g. "Answer any three of the following." */
   instructions: string;
-  questions: PredictedQuestion[];
+  questions: PracticeQuestion[];
 }
 
 export interface BacktestResult {
@@ -141,7 +146,7 @@ export interface BacktestResult {
   /** Paper labels the ranking was built from. */
   trainingPapers: string[];
   /** Topics the ranking named, from the training papers alone. */
-  predictedTopics: TopicStat[];
+  rankedTopics: TopicStat[];
   /** Topics the held-out paper actually asked. */
   actualTopics: TopicStat[];
   /** Actual topics the ranking named. */

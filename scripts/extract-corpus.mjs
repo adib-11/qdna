@@ -4,11 +4,10 @@
  *
  *   node scripts/extract-corpus.mjs <pdf> <out.json> ["course hint"]
  *
- * The shipped path renders pages with pdf.js in a canvas and posts them to
- * /api/extract. Neither exists here, so rasterisation is pdftoppm and the
- * Gemini call is made directly — but the prompt, the schema, the batch size,
- * the byte ceiling and the model-fallback walk are all imported from the same
- * modules the route uses, so a corpus produced here is the corpus a user would
+ * The shipped path renders pages with pdf.js in a canvas and sends them to
+ * Gemini from the browser. Neither exists here, so rasterisation is pdftoppm —
+ * but the prompt, the schema, the batch size, the byte ceiling and the
+ * model-fallback walk are all imported from the same modules the browser uses, so a corpus produced here is the corpus a user would
  * get from uploading the same file.
  *
  * Every batch is cached on disk by content hash. A run that dies on quota
@@ -39,7 +38,7 @@ import { EXTRACTION_SCHEMA } from "../lib/gemini/schema.ts";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CACHE_DIR = path.join(ROOT, ".cache", "extract");
 
-/** Matches the route's own budget: 60s total, 45s per model attempt. */
+/** Matches the browser's budget: 60s total, 45s per model attempt. */
 const BUDGET_MS = 60_000;
 const MAX_ATTEMPT_MS = 45_000;
 
@@ -225,7 +224,7 @@ function writeCache(hash, questions) {
   );
 }
 
-/** The id the route assigns, so bundled corpora are shaped like live ones. */
+/** The id the app assigns, so bundled corpora are shaped like live ones. */
 function withId(question, index) {
   return { ...question, id: `${question.paper?.label ?? "unknown"}::${question.qNo ?? index}` };
 }

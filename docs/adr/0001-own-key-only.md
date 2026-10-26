@@ -11,4 +11,4 @@ qDNA calls models only with the student's own Gemini API key. We considered a sh
 - Rate limiting, bot checks and server-side quota accounting are not needed, so we don't build them.
 - A student must create a key before extracting their own papers. The bundled sample corpora stay usable without one, because analysis runs locally.
 - Each student's quota is their own, so requests per paper decide how many papers a student can extract per day.
-- The server routes (`/api/extract`, `/api/tutor`, `/api/predict`) stay in the codebase but hold no key. A paid tier may come later, where we supply the key and students pay for the requests. If it does, the routes come back with our key, and rate limiting and authentication must come back with them.
+- The server routes (`/api/extract`, `/api/tutor`, `/api/practice-paper`) stay in the codebase but hold no key. A paid tier may come later, where we supply the key and students pay for the requests. If it does, the routes come back with our key, and rate limiting and authentication must come back with them.
