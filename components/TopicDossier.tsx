@@ -31,19 +31,29 @@ function TopicRow({
   defaultOpen: boolean;
   onAskTutor: (question: Question) => void;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
   const id = topicAnchor(rank);
+  // Rows mount only after the corpus is read from browser storage, so the
+  // URL is always there to check.
+  const [open, setOpen] = useState(
+    () => defaultOpen || window.location.hash === `#${id}`,
+  );
+  const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
 
-  // A link to this topic opens it: on load, and on every click, since
-  // clicking a link to the hash already in the URL fires no hashchange.
+  // A link to this topic opens it. Clicks are heard directly, since clicking
+  // a link to the hash already in the URL fires no hashchange.
   useEffect(() => {
-    if (window.location.hash === `#${id}`) setOpen(true);
     const onClick = (event: MouseEvent) => {
       if ((event.target as Element).closest?.(`a[href="#${id}"]`)) setOpen(true);
     };
+    const onHashChange = () => {
+      if (window.location.hash === `#${id}`) setOpen(true);
+    };
     document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("hashchange", onHashChange);
+    };
   }, [id]);
 
   return (
