@@ -1,0 +1,236 @@
+{
+  "course": "Electrical Machine-II",
+  "courseCodes": ["ECE 3107"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "DC Machine Construction & Types",
+    "DC Generator Voltage Build-up & OCC",
+    "DC Motor Operation & Speed Control",
+    "Armature Reaction",
+    "Parallel Operation of DC Generators",
+    "Alternator Construction & Windings",
+    "Synchronous Generator Performance",
+    "Synchronisation & Infinite Bus",
+    "Synchronous Motors",
+    "Special Machines (Servo & Stepper)"
+  ],
+  "papers": [
+    {
+      "label": "2018 Final ECE 3107",
+      "exam": "B.Sc. Engineering 3rd Year Odd Semester Examination, 2018",
+      "year": 2018,
+      "source": {
+        "file": "machine.pdf",
+        "pages": [1, 2],
+        "capture": "scan",
+        "textLayer": true
+      },
+      "notes": [
+        "Scan with an OCR text layer on pages 1–2 (\"Rajshaht University of End gin eerin\", \"QZ (a)\"): present but noisy. Drafted from that layer and a model pass, checked against a read of each page.",
+        "Full marks 72: every question totals 12."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the essential parts of a dc machine?",
+          "topic": "DC Machine Construction & Types"
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Classify the dc machines. Also draw their electrical equivalent circuits.",
+          "topic": "DC Machine Construction & Types"
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 2,
+          "text": "Why the armature core but not the magnetic pole core in a dc machine is constructed with laminated steel sheets instead of solid metal blocks?",
+          "topic": "DC Machine Construction & Types"
+        },
+        {
+          "qNo": "1(d)",
+          "section": "A",
+          "marks": 2,
+          "text": "What are cumulative and differentially compound dc machines?",
+          "topic": "DC Machine Construction & Types"
+        },
+        {
+          "qNo": "2(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "Describe the voltage build up process of a self excited shunt generator.",
+          "topic": "DC Generator Voltage Build-up & OCC"
+        },
+        {
+          "qNo": "2(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "List the causes for the failure of a dc generator to self excite.",
+          "topic": "DC Generator Voltage Build-up & OCC"
+        },
+        {
+          "qNo": "2(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "A train is driven by a dc generator with separately excited field. The OCC of the machine at 1500 rpm has been measured as follows: EA (volts): 50 420 780 950 1120 1180 1260 If (A): 0 4.0 8.0 10.0 12.8 14.4 28.8 (i) Draw the OCC of the machine and determine the value of critical resistance. (ii) Why is a voltage in the armature at zero field current? (iii) Why does the induced voltage at high field currents not increase proportional to field current? (iv) What should be the field resistance for an armature induced voltage of 1000 volts?",
+          "topic": "DC Generator Voltage Build-up & OCC"
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 2,
+          "text": "What are base speed and back emf of a dc motor?",
+          "topic": "DC Motor Operation & Speed Control"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "Explain the effect of change in shaft load on a dc shunt motor.",
+          "topic": "DC Motor Operation & Speed Control"
+        },
+        {
+          "qNo": "3(c)",
+          "section": "A",
+          "marks": 3,
+          "text": "Why is it recommended to never unload a dc series motor while running?",
+          "topic": "DC Motor Operation & Speed Control"
+        },
+        {
+          "qNo": "3(d)",
+          "section": "A",
+          "marks": 4,
+          "text": "Explain two basic speed control scheme of dc shunt motor.",
+          "topic": "DC Motor Operation & Speed Control"
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What is armature reaction? Describe the effect of brush shifting.",
+          "topic": "Armature Reaction"
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the conditions of parallel operation of dc generators?",
+          "topic": "Parallel Operation of DC Generators"
+        },
+        {
+          "qNo": "4(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Two shunt wound generators running in parallel each have armature resistance of 0.03Ω and field resistance of 60Ω. The combined external load is 4500A. The field of the generators are so excited that the induced voltage of one machine is 500v & another is 510v. Calculate, (i) bus bar voltage (ii) generated power",
+          "topic": "Parallel Operation of DC Generators"
+        },
+        {
+          "qNo": "5(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "State various advantages of stationary armature in an alternator. Also differentiate between salient and non-salient pole synchronous machines.",
+          "topic": "Alternator Construction & Windings"
+        },
+        {
+          "qNo": "5(b)",
+          "section": "B",
+          "marks": 2,
+          "text": "What is a fractional pitch winding and why is it used in synchronous machines?",
+          "topic": "Alternator Construction & Windings"
+        },
+        {
+          "qNo": "5(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Define pitch factor and distribute factor. Also derive their equations.",
+          "topic": "Alternator Construction & Windings"
+        },
+        {
+          "qNo": "5(d)",
+          "section": "B",
+          "marks": 3,
+          "text": "What is torque angle? Derive the equation of output power of a synchronous generator in terms of the torque angle of the machine.",
+          "topic": "Synchronous Generator Performance"
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 5,
+          "text": "Explain the loading effect on the generated voltage of the alternator operating at lagging pf, with necessary diagrams.",
+          "topic": "Synchronous Generator Performance"
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 7,
+          "text": "A 3-φ synchronous generator is driven by a gas turbine. The synchronous reactance/phase is 4Ω and the armature resistance is zero. It has first been connected to an infinite bus with a phase voltage of 20 kv and a frequency of 50 Hz in a proper way. (i) What do you mean by infinite bus? (ii) What are the conditions that have to be satisfied before a synchronous machine can be connected to the bus? (iii) What is the induced voltage just at the time of connecting the machine with the bus? (iv) If the field current is doubled while the power remains the same as in (iii) determine the armature current. (v) If the power is increased to 300 MW while the field current remains the same as in (iv), calculate the torque/load angle.",
+          "topic": "Synchronisation & Infinite Bus",
+          "uncertain": "The phase symbol prints like \"3-ω\" (a Symbol-font φ); recorded as 3-φ. Sub-part (v) carries no numeral in the OCR layer but is printed (v) on the page."
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 3.5,
+          "text": "Explain the principle of operation of 3φ synchronous motor in brief.",
+          "topic": "Synchronous Motors",
+          "uncertain": "Marks printed as 3½. Phase symbol prints like \"3ω\"; recorded as 3φ."
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 3.5,
+          "text": "What is synchronizing? Describe one method of synchronizing.",
+          "topic": "Synchronisation & Infinite Bus",
+          "uncertain": "Marks printed as 3½."
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "With a constant load on a synchronous motor, what are the effects produced by increasing the dc field current?",
+          "topic": "Synchronous Motors"
+        },
+        {
+          "qNo": "7(d)",
+          "section": "B",
+          "marks": 1,
+          "text": "What do you mean by V-curve of a synchronous motor?",
+          "topic": "Synchronous Motors"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is servo motor? Write its applications.",
+          "topic": "Special Machines (Servo & Stepper)"
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Explain the operation of a steeper motor.",
+          "topic": "Special Machines (Servo & Stepper)",
+          "uncertain": "\"steeper\" is printed (stepper); recorded verbatim."
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 3,
+          "text": "\"The speed regulation of a synchronous motor is 0% over its operating range\".- Explain.",
+          "topic": "Synchronous Motors"
+        },
+        {
+          "qNo": "8(d)",
+          "section": "B",
+          "marks": 2,
+          "text": "What is synchronous condenser and why is it used?",
+          "topic": "Synchronous Motors"
+        }
+      ]
+    }
+  ]
+}

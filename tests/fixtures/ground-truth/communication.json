@@ -1,0 +1,214 @@
+{
+  "course": "Communication Engineering",
+  "courseCodes": ["ECE 3207"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "Communication System Fundamentals",
+    "Noise",
+    "Amplitude Modulation",
+    "AM Detection",
+    "Superheterodyne Receivers",
+    "Frequency Modulation",
+    "Sampling & Quantisation",
+    "Pulse Code & Delta Modulation",
+    "Digital Modulation (ASK, PSK, FSK)",
+    "Multiplexing & Broadcasting"
+  ],
+  "papers": [
+    {
+      "label": "2018 Final ECE 3207",
+      "exam": "B.Sc. Engineering 3rd Year Even Semester Examination, 2018",
+      "year": 2018,
+      "source": {
+        "file": "pyq.pdf",
+        "pages": [1],
+        "capture": "scan",
+        "textLayer": true
+      },
+      "notes": [
+        "Clean scan with a real text layer on page 1: headings and most lines extract cleanly, though some lines come out interleaved with their neighbours (\"marksfrom\", Q.4–Q.7). Drafted from that layer and a read of the page: the model pass on this page failed twice (aborted).",
+        "Full marks 72: every question totals 12."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "Draw the block diagram of communication system and explain the functions of each block.",
+          "topic": "Communication System Fundamentals"
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Classify channels based on fading, interference and antenna configuration at the transmitter and receiver.",
+          "topic": "Communication System Fundamentals"
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the advantages and disadvantages of digital communication over analog communication?",
+          "topic": "Communication System Fundamentals"
+        },
+        {
+          "qNo": "2(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "Discuss the types, causes and effects of the various forms of noise which may be created within an amplifier or receiver.",
+          "topic": "Noise"
+        },
+        {
+          "qNo": "2(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Briefly discuss an envelope detector circuit with necessary diagrams.",
+          "topic": "AM Detection"
+        },
+        {
+          "qNo": "2(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Derive the relation between the output power of an AM transmitter and the depth of modulation. Hence, show that, ηmax = 1/3.",
+          "topic": "Amplitude Modulation"
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "State and explain sampling theorem.",
+          "topic": "Sampling & Quantisation"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 5,
+          "text": "A receiver connected to an antenna whose resistance is 50Ω has an equivalent noise resistance of 30Ω. Calculate the receiver's noise figure in decibels and its equivalent noise temperature.",
+          "topic": "Noise"
+        },
+        {
+          "qNo": "3(c)",
+          "section": "A",
+          "marks": 3,
+          "text": "Describe quantizing process with necessary diagram.",
+          "topic": "Sampling & Quantisation",
+          "uncertain": "A smudge covers part of \"quantizing\"; the reading is from context."
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "Explain the function of each of the blocks in the superheterodyne receiver. Also give example.",
+          "topic": "Superheterodyne Receivers"
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Draw a diode detector circuit used for AM demodulation. Discuss the operation in brief.",
+          "topic": "AM Detection"
+        },
+        {
+          "qNo": "4(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "When a superheterodyne receiver is tuned to 555kHz, its local oscillator provides the mixer with an input at 1010kHz. What is the image frequency? The antenna of this receiver is connected to the mixer via a tuned circuit whose loaded Q is 40. What will be the rejection ratio for the calculated image frequency?",
+          "topic": "Superheterodyne Receivers"
+        },
+        {
+          "qNo": "5(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "What are the differences between amplitude modulation and frequency modulation?",
+          "topic": "Frequency Modulation",
+          "uncertain": "Topic: compares AM with FM, so it could sit under Amplitude Modulation instead."
+        },
+        {
+          "qNo": "5(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "Calculate the percentage power saving when the carrier and one of the sidebands are suppressed in an AM wave modulated to a depth of 100 percent.",
+          "topic": "Amplitude Modulation"
+        },
+        {
+          "qNo": "5(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Derive the expression of amplitude modulated signal from the expressions of base-band and carrier signals.",
+          "topic": "Amplitude Modulation"
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "What are the elements of PCM system? Draw the basic block diagram of PCM transmitter, transmission path and receiver.",
+          "topic": "Pulse Code & Delta Modulation"
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is DM? Draw the basic block diagram of DM and explain the functions of each block.",
+          "topic": "Pulse Code & Delta Modulation"
+        },
+        {
+          "qNo": "6(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Briefly describe ASK, PSK and FSK modulation schemes with neat sketch.",
+          "topic": "Digital Modulation (ASK, PSK, FSK)"
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "Draw the sample & hold circuit and explain its principle.",
+          "topic": "Sampling & Quantisation"
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "Derive the equation for a narrow band frequency modulator (NBFM). Hence, define its modulation index and frequency deviation.",
+          "topic": "Frequency Modulation"
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Define (i) image frequency, (ii) tracking error, (iii) sensitivity and (iv) selectivity.",
+          "topic": "Superheterodyne Receivers"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "What is multiplexing? Why is it important?",
+          "topic": "Multiplexing & Broadcasting"
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Explain TDM. Also mention its application.",
+          "topic": "Multiplexing & Broadcasting"
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Write down the advantages and disadvantages of analog and digital modulation.",
+          "topic": "Digital Modulation (ASK, PSK, FSK)",
+          "uncertain": "Topic: could equally be Communication System Fundamentals, alongside 1(c)."
+        },
+        {
+          "qNo": "8(d)",
+          "section": "B",
+          "marks": 2,
+          "text": "What are the differences between Broadcasting and Multicasting?",
+          "topic": "Multiplexing & Broadcasting"
+        }
+      ]
+    }
+  ]
+}
