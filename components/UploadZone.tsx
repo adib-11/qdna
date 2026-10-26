@@ -14,13 +14,14 @@ import {
 import { UPLOAD_ACCEPT, uploadKind } from "@/lib/extract/uploads";
 import { saveSession } from "@/lib/extract/session";
 import { sampleCorpusId } from "@/lib/corpus/store";
+import { groupSavedCorpus } from "@/lib/corpus/useCorpora";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { extractQuestions } from "@/lib/gemini/extract";
-import { handleModelError } from "@/lib/key/ownKey";
+import { handleModelError, ownKeyStore } from "@/lib/key/ownKey";
 import { SAMPLES, sampleOutcome } from "@/lib/samples";
 
-type Phase = "idle" | "working" | "cancelled" | "failed";
+type Phase = "idle" | "working" | "grouping" | "cancelled" | "failed";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
@@ -94,7 +95,7 @@ export function UploadZone() {
         return;
       }
 
-      openOutcome(run);
+      await openOutcome(run);
     } catch (err) {
       setPhase("failed");
       setError(handleModelError(err, "Extraction failed."));
@@ -103,8 +104,19 @@ export function UploadZone() {
     }
   }
 
-  function openOutcome(run: ExtractionRun) {
-    saveSession(run.outcome);
+  /** Save what was extracted, group its topics while the key is at hand, and open it. */
+  async function openOutcome(run: ExtractionRun) {
+    const saved = saveSession(run.outcome);
+    const apiKey = ownKeyStore().get();
+    if (saved && apiKey) {
+      const controller = new AbortController();
+      cancelRef.current = controller;
+      setPhase("grouping");
+      // A failed or skipped grouping is not a failed extraction: the analysis
+      // offers "Group topics" as a pending action until one succeeds.
+      await groupSavedCorpus(saved.id, apiKey, controller.signal).catch(() => {});
+      cancelRef.current = null;
+    }
     router.push("/analyze");
   }
 
@@ -129,6 +141,7 @@ export function UploadZone() {
   }
 
   const working = phase === "working";
+  const grouping = phase === "grouping";
   const kept = stopped?.outcome;
 
   return (
@@ -142,7 +155,7 @@ export function UploadZone() {
         onDrop={(e) => {
           e.preventDefault();
           setDragging(false);
-          if (!working) addFiles(e.dataTransfer.files);
+          if (!working && !grouping) addFiles(e.dataTransfer.files);
         }}
         className={`rounded-[var(--radius-xl)] border border-dashed bg-pure-white p-[36px] text-center transition-colors ${
           dragging ? "border-notion-blue bg-sky-tint" : "border-[rgba(0,0,0,0.2)]"
@@ -173,7 +186,7 @@ export function UploadZone() {
           <Button
             variant="ghost"
             onClick={() => inputRef.current?.click()}
-            disabled={working}
+            disabled={working || grouping}
           >
             Choose files
           </Button>
@@ -181,6 +194,13 @@ export function UploadZone() {
             <Button variant="outlined" onClick={() => cancelRef.current?.abort()}>
               Cancel extraction
             </Button>
+          ) : grouping ? (
+            <>
+              <Button disabled>Grouping topics…</Button>
+              <Button variant="outlined" onClick={() => cancelRef.current?.abort()}>
+                Skip topic grouping
+              </Button>
+            </>
           ) : (
             <Button onClick={analyze} disabled={files.length === 0}>
               Analyze papers
@@ -251,7 +271,7 @@ export function UploadZone() {
             this browser, so analyzing again will not pay for them.
           </p>
           {kept.questions.length > 0 && (
-            <Button variant="ghost" className="mt-[12px]" onClick={() => openOutcome(stopped)}>
+            <Button variant="ghost" className="mt-[12px]" onClick={() => void openOutcome(stopped)}>
               Open the {plural(kept.questions.length, "question")} extracted so far
             </Button>
           )}

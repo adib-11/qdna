@@ -1,0 +1,524 @@
+[
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "What is the importance of microprocessor in microprocessor-based computer system? How does a microprocessor differ with a microcontroller?",
+    "topic": "Microprocessor vs Microcontroller",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::1(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Draw and discuss the organization of 8088 microprocessor system design.",
+    "topic": "8088 Microprocessor Architecture",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::1(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "Write down the specific use of general purpose registers and control flags.",
+    "topic": "Registers and Flags",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::1(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(a)",
+    "marks": 2.5,
+    "text": "Explain why the system with multi-core processor is better than the system with single core processor?",
+    "topic": "Multi-core Processors",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::2(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(b)",
+    "marks": 1.5,
+    "text": "How many cores are available in the following processor family? (i) Core i3 (ii) Core i5 (iii) Core i7",
+    "topic": "Processor Cores",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3111::2(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(c)",
+    "marks": 6,
+    "text": "Draw and describe the system block diagram of Microprocessor system design.",
+    "topic": "Microprocessor System Design",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::2(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(d)",
+    "marks": 2,
+    "text": "Find the unknowns value for each of the following physical addresses. Assume all numbers are hexadecimal numbers. (i) 6765 : ? = DABC0 (ii) ? : CD21 = 32D21",
+    "topic": "Physical Address Calculation",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3111::2(d)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(a)",
+    "marks": 4,
+    "text": "What are the differences between CISC and RISC? Write down the instruction codes both for RISC and CISC processor of the statement a[i] = a[i]+b[i]:",
+    "topic": "CISC vs RISC",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::3(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(b)",
+    "marks": 4,
+    "text": "What are the advantages of pipelining in the process of instruction execution by a microprocessor? Discuss briefly the pipelining process.",
+    "topic": "Pipelining",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::3(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(c)",
+    "marks": 4,
+    "text": "Discuss about the components of a microprocessor with necessary diagram.",
+    "topic": "Microprocessor Components",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::3(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(a)",
+    "marks": 5,
+    "text": "How can the overhead to access memory by processor be reduced? Discuss briefly about such kind device and its process with necessary diagram if exist.",
+    "topic": "Memory Access Optimization",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::4(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(b)",
+    "marks": 3,
+    "text": "Suppose AL contains 11001010b. Give the new contents of AL and CF after each of the following instruction is executed. (i) ROL AL, CL where CL contains 2 (ii) ROR AL, CL where CL contains 2",
+    "topic": "Shift and Rotate Instructions",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3111::4(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(c)",
+    "marks": 2,
+    "text": "Which components of a microprocessor need to be redesigned to speed up the processing speed? Write your opinion.",
+    "topic": "Microprocessor Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::4(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(d)",
+    "marks": 2,
+    "text": "As larger size RAM is better for good performance but still why we can't install any larger size RAM as we want? Answer briefly.",
+    "topic": "RAM Limitations",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::4(d)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(a)",
+    "marks": 2,
+    "text": "Distinguish between memory mapped I/O and Isolated I/O.",
+    "topic": "I/O Mapping",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::5(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(b)",
+    "marks": 4,
+    "text": "What is the mode and I/O configuration A, B and C of an 8255 PPI chip after it's control register loaded with 82H.",
+    "topic": "8255 PPI Configuration",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3111::5(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(c)",
+    "marks": 4,
+    "text": "Write an assembly code to calculate the factorial of a given number.",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::5(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(d)",
+    "marks": 2,
+    "text": "Why DMA mode is faster than the instruction mode?",
+    "topic": "Direct Memory Access (DMA)",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::5(d)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "Write down a sequence of instructions to perform following problem. Put the sum 100+95+90+....+5 in AX.",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::6(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "6(b)",
+    "marks": 6,
+    "text": "Write assembly code for each of the following decision structure. (i) IF AL<0 THEN Put FFh in AH ELSE Put 0 in AH END_IF (ii) IF (AX<BX) OR (BX<CX) THEN Put 0 in DX ELSE Put 1 in DX END_IF",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::6(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "6(c)",
+    "marks": 2,
+    "text": "Suppose DX register contains a number which may be positive or negative. Now write down the ways to reverse the sign of the number only.",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::6(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(a)",
+    "marks": 2,
+    "text": "What is the basic difference between AND and TEST instructions?",
+    "topic": "Logical Instructions",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::7(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(b)",
+    "marks": 4,
+    "text": "Write down an assembly program which will take a single digit as input and will calculate the sum of all one bits of its ASCII value.",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::7(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(c)",
+    "marks": 4,
+    "text": "Write a procedure to take a string up to new line and another procedure to reversely display the string using stack. The two procedures will then be called by main procedure.",
+    "topic": "Assembly Language Programming",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::7(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(d)",
+    "marks": 2,
+    "text": "What are the restrictions on MOV and XCHG instructions in assembly language?",
+    "topic": "Data Transfer Instructions",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::7(d)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(a)",
+    "marks": 3,
+    "text": "Discuss what happens when the PC is powered up.",
+    "topic": "Boot Process",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::8(a)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(b)",
+    "marks": 3,
+    "text": "Briefly describe how an assembly instruction is executed?",
+    "topic": "Instruction Execution Cycle",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::8(b)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(c)",
+    "marks": 3,
+    "text": "How a 20-bit physical address for 8086 is handled by 16-bit register.",
+    "topic": "Memory Segmentation",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::8(c)"
+  },
+  {
+    "course": "Microprocessors & Assembly Language",
+    "courseCodes": [
+      "ECE 3111"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3111",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(d)",
+    "marks": 3,
+    "text": "Describe the function of each status flag in 8086 microprocessor.",
+    "topic": "Status Flags",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3111::8(d)"
+  }
+]

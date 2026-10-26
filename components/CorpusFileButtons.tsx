@@ -11,6 +11,9 @@ import {
 import { deliverFile, downloadFile } from "@/lib/corpus/deliver";
 import { studyPack } from "@/lib/corpus/studyPack";
 import { corpusCourses, corpusTitle } from "@/lib/analysis/papers";
+import type { TopicOverride } from "@/lib/analysis/topics";
+import { groupSavedCorpus } from "@/lib/corpus/useCorpora";
+import { handleModelError, ownKeyStore } from "@/lib/key/ownKey";
 import type { AnalysisResult, Question } from "@/lib/types";
 
 /** A file name for the corpus, from its course: "software-engineering". */
@@ -29,10 +32,16 @@ async function deliver(content: string, name: string, type: string) {
 }
 
 /** Export the corpus as a `.qdna.json` file. */
-export function ExportCorpusButton({ questions }: { questions: Question[] }) {
+export function ExportCorpusButton({
+  questions,
+  topicOverrides,
+}: {
+  questions: Question[];
+  topicOverrides: TopicOverride[];
+}) {
   async function exportCorpus() {
     await deliver(
-      exportCorpusFile(questions),
+      exportCorpusFile(questions, topicOverrides),
       corpusSlug(questions) + CORPUS_FILE_EXTENSION,
       "application/json",
     );
@@ -63,16 +72,20 @@ export function StudyPackButton({ result }: { result: AnalysisResult }) {
 }
 
 /**
- * Import a classmate's corpus file into `existing`, paper by paper. No model
- * request is made. A rejected file leaves the corpus untouched; `onMerged` may
- * throw (storage full), and that is reported the same way.
+ * Import a classmate's corpus file into `existing`, paper by paper. The import
+ * itself makes no model request; when the student holds a key, topic grouping
+ * then runs once over the merged corpus. A rejected file leaves the corpus
+ * untouched; `onMerged` may throw (storage full), and that is reported the
+ * same way. `onMerged` returns the id the merged corpus was saved under.
  */
 export function ImportCorpusButton({
   existing,
+  existingOverrides = [],
   onMerged,
 }: {
   existing: Question[];
-  onMerged: (questions: Question[]) => void;
+  existingOverrides?: TopicOverride[];
+  onMerged: (questions: Question[], topicOverrides: TopicOverride[]) => string | undefined;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
@@ -86,18 +99,36 @@ export function ImportCorpusButton({
       setMessage({ error: true, text: "This file could not be read. Your corpus is unchanged." });
       return;
     }
-    const result = importCorpusFile(existing, text);
+    const result = importCorpusFile(existing, text, existingOverrides);
     if (!result.ok) {
       setMessage({ error: true, text: `${result.error} Your corpus is unchanged.` });
       return;
     }
+    const summary = describeImport(result.added, result.skipped);
+    let id: string | undefined;
     try {
-      if (result.added.length > 0) onMerged(result.questions);
-      setMessage({ error: false, text: describeImport(result.added, result.skipped) });
+      if (result.added.length > 0) id = onMerged(result.questions, result.topicOverrides);
+      setMessage({ error: false, text: summary });
     } catch (err) {
       setMessage({
         error: true,
         text: err instanceof Error ? err.message : "The import could not be saved.",
+      });
+      return;
+    }
+
+    // Grouping never asks for a key here: without one, the import keeps the
+    // raw topic labels and "Group topics" waits as a pending action.
+    const apiKey = ownKeyStore().get();
+    if (!id || !apiKey) return;
+    setMessage({ error: false, text: `${summary} Grouping topics…` });
+    try {
+      await groupSavedCorpus(id, apiKey);
+      setMessage({ error: false, text: `${summary} Topics grouped.` });
+    } catch (err) {
+      setMessage({
+        error: true,
+        text: `${summary} ${handleModelError(err, "Topic grouping failed.")} Group topics is still pending.`,
       });
     }
   }

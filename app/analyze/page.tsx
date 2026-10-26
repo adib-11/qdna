@@ -16,6 +16,7 @@ import { ParetoChart } from "@/components/ParetoChart";
 import { PracticePaper } from "@/components/PracticePaper";
 import { StudyPlan } from "@/components/StudyPlan";
 import { TopicDossier } from "@/components/TopicDossier";
+import { TopicEditor } from "@/components/TopicEditor";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
@@ -23,6 +24,7 @@ import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
 import { browserCorpusStore } from "@/lib/corpus/store";
 import { shortfallNote } from "@/lib/extract/runExtraction";
 import { corpusChanged, useOpenCorpus } from "@/lib/corpus/useCorpora";
+import type { TopicOverride } from "@/lib/analysis/topics";
 import type { Question } from "@/lib/types";
 
 /** The results, in the order a student needs them. */
@@ -43,25 +45,32 @@ export default function AnalyzePage() {
   const outcome = corpus?.outcome ?? null;
 
   /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
-  function saveMerged(questions: Question[]) {
+  function saveMerged(questions: Question[], topicOverrides: TopicOverride[]) {
     if (!corpus) return;
     // A merge into a sample is saved as a new corpus, so reopening the sample
     // can never overwrite it.
-    browserCorpusStore()?.saveImport(corpus, questions);
+    const saved = browserCorpusStore()?.saveImport(corpus, questions, topicOverrides);
     corpusChanged();
+    return saved?.id;
   }
 
   // The whole analysis is pure and synchronous, so it runs here rather than
   // being carried through the session — the corpus is the only state worth
   // persisting, and recomputing costs nothing (REQ-008).
   const result = useMemo(
-    () => (outcome ? analyze(outcome.questions) : null),
-    [outcome],
+    () =>
+      corpus
+        ? analyze(corpus.outcome.questions, {
+            grouping: corpus.topicGrouping,
+            overrides: corpus.topicOverrides,
+          })
+        : null,
+    [corpus],
   );
 
   if (corpus === undefined) return null;
 
-  if (!outcome || !result) {
+  if (!corpus || !outcome || !result) {
     return (
       <main className="page-shell py-[64px]">
         <h1 className="text-heading-sm font-bold">Nothing to analyze yet</h1>
@@ -94,9 +103,13 @@ export default function AnalyzePage() {
           <Button variant="ghost" onClick={() => window.print()}>
             Print
           </Button>
-          <ExportCorpusButton questions={outcome.questions} />
+          <ExportCorpusButton
+            questions={outcome.questions}
+            topicOverrides={corpus.topicOverrides ?? []}
+          />
           <ImportCorpusButton
             existing={outcome.questions}
+            existingOverrides={corpus.topicOverrides}
             onMerged={saveMerged}
           />
         </div>
@@ -172,6 +185,12 @@ export default function AnalyzePage() {
         </section>
 
         <section id="questions" className={SCROLL_CLEARANCE}>
+          <div className="mb-[24px] print:hidden">
+            <TopicEditor
+              corpus={corpus}
+              topics={result.stats.map((stat) => stat.topic)}
+            />
+          </div>
           <TopicDossier
             stats={result.stats}
             expectedMarks={result.expectedMarks}

@@ -1,0 +1,59 @@
+{
+  "topics": [
+    {
+      "topic": "Fundamentals of Communication Systems",
+      "labels": [
+        "Communication System Block Diagram",
+        "Channel Classification",
+        "Digital vs Analog Communication",
+        "Broadcasting and Multicasting"
+      ]
+    },
+    {
+      "topic": "Amplitude Modulation Techniques",
+      "labels": [
+        "AM Power and Efficiency",
+        "AM Power Saving",
+        "AM Signal Derivation",
+        "AM vs FM",
+        "Narrow Band Frequency Modulation (NBFM)"
+      ]
+    },
+    {
+      "topic": "Communication Receivers and Detection",
+      "labels": [
+        "Envelope Detector",
+        "Superheterodyne Receiver",
+        "Diode Detector",
+        "Image Frequency and Rejection Ratio",
+        "Receiver Characteristics"
+      ]
+    },
+    {
+      "topic": "Noise Analysis",
+      "labels": [
+        "Noise in Communication Systems",
+        "Noise Figure and Temperature"
+      ]
+    },
+    {
+      "topic": "Sampling and Pulse Modulation",
+      "labels": [
+        "Sampling Theorem",
+        "Quantization Process",
+        "Pulse Code Modulation (PCM)",
+        "Delta Modulation (DM)",
+        "Sample and Hold Circuit"
+      ]
+    },
+    {
+      "topic": "Digital Modulation and Multiplexing",
+      "labels": [
+        "Digital Modulation Schemes",
+        "Multiplexing Basics",
+        "Time Division Multiplexing (TDM)",
+        "Analog and Digital Modulation"
+      ]
+    }
+  ]
+}

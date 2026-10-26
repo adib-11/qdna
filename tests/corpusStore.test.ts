@@ -135,3 +135,52 @@ describe("saved corpora", () => {
     expect(() => createCorpusStore(storage).save(ct3)).toThrow(/storage is full/i);
   });
 });
+
+describe("topic grouping and topic overrides in a saved corpus", () => {
+  const grouping = { "Gauss's Law": "Gauss", "Electric Flux": "Gauss" };
+  const overrides = [{ from: ["Gauss"], to: "Gauss's Law & Flux" }];
+
+  it("persist across a reload, and a re-run of grouping keeps the overrides", () => {
+    const storage = memoryStorage();
+    const corpus = createCorpusStore(storage, tickingClock()).save(ct3);
+    const store = createCorpusStore(storage, tickingClock());
+    store.saveTopics(corpus.id, { topicOverrides: overrides });
+    store.saveTopics(corpus.id, { topicGrouping: grouping });
+
+    const reloaded = createCorpusStore(storage).current();
+    expect(reloaded?.topicGrouping).toEqual(grouping);
+    expect(reloaded?.topicOverrides).toEqual(overrides);
+    expect(reloaded?.outcome).toEqual(ct3);
+  });
+
+  it("are saved without switching which corpus is open", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const first = store.save(ct3);
+    const second = store.save(finals);
+
+    store.saveTopics(first.id, { topicGrouping: grouping });
+
+    expect(store.current()?.id).toBe(second.id);
+    expect(store.get(first.id)?.topicGrouping).toEqual(grouping);
+  });
+
+  it("carry the grouping and the merged overrides through an import", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const corpus = store.save(ct3, undefined, { topicGrouping: grouping });
+
+    const merged = store.saveImport(corpus, [...ct3.questions, ...finals.questions], overrides);
+
+    expect(merged.topicGrouping).toEqual(grouping);
+    expect(store.current()?.topicOverrides).toEqual(overrides);
+  });
+
+  it("skip a saved corpus whose overrides are damaged", () => {
+    const storage = memoryStorage();
+    const store = createCorpusStore(storage, tickingClock());
+    const corpus = store.save(ct3);
+    const key = [...storage.data.keys()].find((k) => k.endsWith(corpus.id))!;
+    storage.setItem(key, JSON.stringify({ ...corpus, topicOverrides: [{ to: "x" }] }));
+
+    expect(store.current()).toBeNull();
+  });
+});

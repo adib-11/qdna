@@ -1,0 +1,59 @@
+{
+  "topics": [
+    {
+      "topic": "DC Machine Fundamentals and Construction",
+      "labels": [
+        "DC Machine Construction",
+        "DC Machine Classification",
+        "Armature Reaction"
+      ]
+    },
+    {
+      "topic": "DC Generator Operation and Characteristics",
+      "labels": [
+        "DC Generator Voltage Build-up",
+        "DC Generator Characteristics",
+        "Parallel Operation of DC Generators"
+      ]
+    },
+    {
+      "topic": "DC Motor Performance and Control",
+      "labels": [
+        "DC Motor Basics",
+        "DC Motor Performance",
+        "DC Motor Speed Control"
+      ]
+    },
+    {
+      "topic": "Synchronous Machine Construction and Windings",
+      "labels": [
+        "Synchronous Machine Construction",
+        "Synchronous Machine Windings"
+      ]
+    },
+    {
+      "topic": "Synchronous Generator Performance and Synchronization",
+      "labels": [
+        "Synchronous Generator Power",
+        "Synchronous Generator Performance",
+        "Synchronous Generator Parallel Operation",
+        "Synchronous Machine Synchronization"
+      ]
+    },
+    {
+      "topic": "Synchronous Motor Operation and Characteristics",
+      "labels": [
+        "Synchronous Motor Operation",
+        "Synchronous Motor Performance",
+        "Synchronous Motor Characteristics",
+        "Synchronous Condenser"
+      ]
+    },
+    {
+      "topic": "Special Purpose Electrical Motors",
+      "labels": [
+        "Special Motors"
+      ]
+    }
+  ]
+}

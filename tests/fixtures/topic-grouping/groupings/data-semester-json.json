@@ -1,0 +1,208 @@
+{
+  "topics": [
+    {
+      "topic": "Electrostatic Fields",
+      "labels": [
+        "Divergence Theorem",
+        "Electric Force from Surface Charge",
+        "Electric Field Intensity",
+        "Total Charge Calculation",
+        "Electric Flux Density from Potential",
+        "Poisson's Equation"
+      ]
+    },
+    {
+      "topic": "Magnetostatic Fields",
+      "labels": [
+        "Vector Magnetic Potential",
+        "Magnetic Field Intensity"
+      ]
+    },
+    {
+      "topic": "Maxwell's Equations and Materials",
+      "labels": [
+        "Maxwell's Equations",
+        "Resistance Derivation",
+        "Polarization and Susceptibility"
+      ]
+    },
+    {
+      "topic": "Plane Wave Propagation",
+      "labels": [
+        "Plane Wave Propagation",
+        "Uniform Plane Wave Parameters",
+        "Wave Equation Derivation",
+        "Phase and Group Velocity",
+        "Uniform Plane Wave Analysis",
+        "Wave Propagation in Lossy Medium"
+      ]
+    },
+    {
+      "topic": "Reflection and Transmission",
+      "labels": [
+        "Reflection and Transmission Coefficients",
+        "Normal Incidence of Plane Waves"
+      ]
+    },
+    {
+      "topic": "Waveguides and Modes",
+      "labels": [
+        "Waveguides vs Free Space",
+        "Waveguide Modes and Attenuation",
+        "Rectangular Waveguide Modes",
+        "Rectangular Waveguide Parameters"
+      ]
+    },
+    {
+      "topic": "Steam Boilers and Performance",
+      "labels": [
+        "Steam Boilers",
+        "Boiler Accessories",
+        "Boiler Performance"
+      ]
+    },
+    {
+      "topic": "Internal Combustion Engines",
+      "labels": [
+        "Internal Combustion Engines",
+        "Engine Cooling Systems",
+        "Engine Performance Testing"
+      ]
+    },
+    {
+      "topic": "Gas Turbines",
+      "labels": [
+        "Gas Turbines",
+        "Gas Turbine Performance"
+      ]
+    },
+    {
+      "topic": "Refrigeration and Air Conditioning",
+      "labels": [
+        "Air Conditioning",
+        "Air Conditioning Systems",
+        "Refrigeration Systems",
+        "Refrigeration Components"
+      ]
+    },
+    {
+      "topic": "Hydraulic Turbines and Machinery",
+      "labels": [
+        "Hydraulic Turbines",
+        "Draft Tubes",
+        "Pelton Wheel Performance",
+        "Fluid Machinery",
+        "Cavitation in Turbines",
+        "Reaction Turbines",
+        "Fluid Machinery Classification"
+      ]
+    },
+    {
+      "topic": "Reciprocating Pumps",
+      "labels": [
+        "Reciprocating Pumps"
+      ]
+    },
+    {
+      "topic": "Number Systems and Boolean Algebra",
+      "labels": [
+        "Number Systems",
+        "Boolean Algebra"
+      ]
+    },
+    {
+      "topic": "Logic Gates and Families",
+      "labels": [
+        "Logic Gates",
+        "TTL Logic Circuits",
+        "Logic Circuit Classification"
+      ]
+    },
+    {
+      "topic": "Logic Minimization Techniques",
+      "labels": [
+        "Karnaugh Maps",
+        "Quine-McCluskey Method"
+      ]
+    },
+    {
+      "topic": "Combinational Logic Design",
+      "labels": [
+        "Combinational Logic Design",
+        "Multiplexers",
+        "Arithmetic Circuits",
+        "Decoders",
+        "Encoders"
+      ]
+    },
+    {
+      "topic": "Differential Equations",
+      "labels": [
+        "Partial Differential Equations",
+        "Differential Equations"
+      ]
+    },
+    {
+      "topic": "Special Functions and Series",
+      "labels": [
+        "Frobenius Method",
+        "Bessel Functions",
+        "Legendre Polynomials"
+      ]
+    },
+    {
+      "topic": "Three Dimensional Geometry",
+      "labels": [
+        "3D Geometry"
+      ]
+    },
+    {
+      "topic": "Power and Operational Amplifiers",
+      "labels": [
+        "Power Amplifiers",
+        "Operational Amplifiers"
+      ]
+    },
+    {
+      "topic": "Digital Electronics Fundamentals",
+      "labels": [
+        "Digital Electronics"
+      ]
+    },
+    {
+      "topic": "Feedback and Amplifier Stability",
+      "labels": [
+        "Negative Feedback",
+        "Voltage Gain",
+        "Amplifier Stability"
+      ]
+    },
+    {
+      "topic": "Operational Amplifier Circuits",
+      "labels": [
+        "Op-Amp Circuits",
+        "Comparator Circuits"
+      ]
+    },
+    {
+      "topic": "Specialized Integrated Circuits",
+      "labels": [
+        "555 Timer",
+        "Phase Lock Loop"
+      ]
+    },
+    {
+      "topic": "Oscillators and Filter Design",
+      "labels": [
+        "Oscillators",
+        "Filter Design"
+      ]
+    },
+    {
+      "topic": "Mathematical Foundations",
+      "labels": [
+        "Linear Algebra"
+      ]
+    }
+  ]
+}

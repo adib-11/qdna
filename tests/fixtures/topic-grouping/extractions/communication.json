@@ -1,0 +1,452 @@
+[
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "Draw the block diagram of communication system and explain the functions of each block.",
+    "topic": "Communication System Block Diagram",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::1(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Classify channels based on fading, interference and antenna configuration at the transmitter and receiver.",
+    "topic": "Channel Classification",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::1(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "What are the advantages and disadvantages of digital communication over analog communication?",
+    "topic": "Digital vs Analog Communication",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::1(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "2(a)",
+    "marks": 4,
+    "text": "Discuss the types, causes and effects of the various forms of noise which may be created within an amplifier or receiver.",
+    "topic": "Noise in Communication Systems",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::2(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "2(b)",
+    "marks": 4,
+    "text": "Briefly discuss an envelope detector circuit with necessary diagrams.",
+    "topic": "Envelope Detector",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::2(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "2(c)",
+    "marks": 4,
+    "text": "Derive the relation between the output power of an AM transmitter and the depth of modulation. Hence, show that, η_max = 1/3.",
+    "topic": "AM Power and Efficiency",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::2(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "3(a)",
+    "marks": 4,
+    "text": "State and explain sampling theorem.",
+    "topic": "Sampling Theorem",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::3(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "3(b)",
+    "marks": 5,
+    "text": "A receiver connected to an antenna whose resistance is 50Ω has an equivalent noise resistance of 30Ω. Calculate the receiver's noise figure in decibels and its equivalent noise temperature.",
+    "topic": "Noise Figure and Temperature",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3207::3(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "3(c)",
+    "marks": 3,
+    "text": "Describe quantizing process with necessary diagram.",
+    "topic": "Quantization Process",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::3(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "Explain the function of each of the blocks in the superheterodyne receiver. Also give example.",
+    "topic": "Superheterodyne Receiver",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::4(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "Draw a diode detector circuit used for AM demodulation. Discuss the operation in brief.",
+    "topic": "Diode Detector",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::4(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "A",
+      "year": 2018
+    },
+    "qNo": "4(c)",
+    "marks": 4,
+    "text": "When a superheterodyne receiver is tuned to 555kHz, its local oscillator provides the mixer with an input at 1010kHz. What is the image frequency? The antenna of this receiver is connected to the mixer via a tuned circuit whose loaded Q is 40. What will be the rejection ratio for the calculated image frequency?",
+    "topic": "Image Frequency and Rejection Ratio",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3207::4(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "5(a)",
+    "marks": 4,
+    "text": "What are the differences between amplitude modulation and frequency modulation?",
+    "topic": "AM vs FM",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::5(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "5(b)",
+    "marks": 4,
+    "text": "Calculate the percentage power saving when the carrier and one of the sidebands are suppressed in an AM wave modulated to a depth of 100 percent.",
+    "topic": "AM Power Saving",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3207::5(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "5(c)",
+    "marks": 4,
+    "text": "Derive the expression of amplitude modulated signal from the expressions of base-band and carrier signals.",
+    "topic": "AM Signal Derivation",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::5(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "What are the elements of PCM system? Draw the basic block diagram of PCM transmitter, transmission path and receiver.",
+    "topic": "Pulse Code Modulation (PCM)",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::6(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "6(b)",
+    "marks": 4,
+    "text": "What is DM? Draw the basic block diagram of DM and explain the functions of each block.",
+    "topic": "Delta Modulation (DM)",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::6(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "6(c)",
+    "marks": 4,
+    "text": "Briefly describe ASK, PSK and FSK modulation schemes with neat sketch.",
+    "topic": "Digital Modulation Schemes",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::6(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "Draw the sample & hold circuit and explain its principle.",
+    "topic": "Sample and Hold Circuit",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::7(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "7(b)",
+    "marks": 4,
+    "text": "Derive the equation for a narrow band frequency modulator (NBFM). Hence, define its modulation index and frequency deviation.",
+    "topic": "Narrow Band Frequency Modulation (NBFM)",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::7(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "7(c)",
+    "marks": 4,
+    "text": "Define (i) image frequency, (ii) tracking error, (iii) sensitivity and (iv) selectivity.",
+    "topic": "Receiver Characteristics",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::7(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "8(a)",
+    "marks": 3,
+    "text": "What is multiplexing? Why is it important?",
+    "topic": "Multiplexing Basics",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::8(a)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "8(b)",
+    "marks": 3,
+    "text": "Explain TDM. Also mention its application.",
+    "topic": "Time Division Multiplexing (TDM)",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::8(b)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "8(c)",
+    "marks": 4,
+    "text": "Write down the advantages and disadvantages of analog and digital modulation.",
+    "topic": "Analog and Digital Modulation",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::8(c)"
+  },
+  {
+    "course": "Communication Engineering",
+    "courseCodes": [
+      "ECE 3207"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3207",
+      "section": "B",
+      "year": 2018
+    },
+    "qNo": "8(d)",
+    "marks": 2,
+    "text": "What are the differences between Broadcasting and Multicasting?",
+    "topic": "Broadcasting and Multicasting",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3207::8(d)"
+  }
+]

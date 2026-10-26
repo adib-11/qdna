@@ -1,4 +1,5 @@
-import { isQuestion, isRecord } from "@/lib/corpus/corpusFile";
+import type { TopicGrouping, TopicOverride } from "@/lib/analysis/topics";
+import { isQuestion, isRecord, isTopicOverride } from "@/lib/corpus/corpusFile";
 import type { ExtractionOutcome, Question } from "@/lib/types";
 
 /**
@@ -32,7 +33,14 @@ export interface SavedCorpus {
   /** Epoch milliseconds of the last save. */
   savedAt: number;
   outcome: ExtractionOutcome;
+  /** The latest topic grouping, absent until it has run. */
+  topicGrouping?: TopicGrouping;
+  /** The student's topic overrides, in the order they were made. */
+  topicOverrides?: TopicOverride[];
 }
+
+/** What a corpus keeps besides its questions. */
+type CorpusTopics = Pick<SavedCorpus, "topicGrouping" | "topicOverrides">;
 
 export function createCorpusStore(
   storage: KeyValueStorage,
@@ -57,21 +65,25 @@ export function createCorpusStore(
     return found;
   }
 
-  /** Save a corpus (replacing any under the same id) and make it the open one. */
-  function save(
-    outcome: ExtractionOutcome,
-    id: string = crypto.randomUUID(),
-  ): SavedCorpus {
-    const corpus: SavedCorpus = { id, savedAt: now(), outcome };
+  function write(corpus: SavedCorpus, open: boolean): SavedCorpus {
     try {
-      storage.setItem(CORPUS_PREFIX + id, JSON.stringify(corpus));
-      storage.setItem(OPEN_KEY, id);
+      storage.setItem(CORPUS_PREFIX + corpus.id, JSON.stringify(corpus));
+      if (open) storage.setItem(OPEN_KEY, corpus.id);
     } catch {
       throw new Error(
         "Your browser's storage is full, so this corpus could not be saved. Delete a saved corpus and try again.",
       );
     }
     return corpus;
+  }
+
+  /** Save a corpus (replacing any under the same id) and make it the open one. */
+  function save(
+    outcome: ExtractionOutcome,
+    id: string = crypto.randomUUID(),
+    topics: CorpusTopics = {},
+  ): SavedCorpus {
+    return write({ id, savedAt: now(), outcome, ...topics }, true);
   }
 
   return {
@@ -85,14 +97,34 @@ export function createCorpusStore(
 
     save,
 
+    /** One saved corpus, without opening it. Null when no such corpus exists. */
+    get: read,
+
     /**
      * Save the questions an import merged into `corpus`, and open the result.
      * A sample's id is reserved for the pristine sample, which opening the
      * sample again overwrites, so a merge into a sample becomes a new corpus.
      */
-    saveImport(corpus: SavedCorpus, questions: Question[]): SavedCorpus {
+    saveImport(
+      corpus: SavedCorpus,
+      questions: Question[],
+      topicOverrides = corpus.topicOverrides,
+    ): SavedCorpus {
       const id = corpus.id.startsWith(SAMPLE_PREFIX) ? undefined : corpus.id;
-      return save({ ...corpus.outcome, questions }, id);
+      return save({ ...corpus.outcome, questions }, id, {
+        topicGrouping: corpus.topicGrouping,
+        topicOverrides,
+      });
+    },
+
+    /**
+     * Replace a saved corpus's topic grouping or overrides, keeping the rest,
+     * and without opening it: a grouping can finish after the student has
+     * moved on. Null when the corpus is gone, as when it was deleted meanwhile.
+     */
+    saveTopics(id: string, topics: CorpusTopics): SavedCorpus | null {
+      const corpus = read(id);
+      return corpus ? write({ ...corpus, ...topics, savedAt: now() }, false) : null;
     },
 
     /** Make a saved corpus the open one. Null when no such corpus exists. */
@@ -123,7 +155,12 @@ function isSavedCorpus(value: unknown): value is SavedCorpus {
     typeof value.savedAt === "number" &&
     isRecord(value.outcome) &&
     Array.isArray(value.outcome.questions) &&
-    value.outcome.questions.every(isQuestion)
+    value.outcome.questions.every(isQuestion) &&
+    (value.topicGrouping === undefined ||
+      (isRecord(value.topicGrouping) &&
+        Object.values(value.topicGrouping).every((t) => typeof t === "string"))) &&
+    (value.topicOverrides === undefined ||
+      (Array.isArray(value.topicOverrides) && value.topicOverrides.every(isTopicOverride)))
   );
 }
 

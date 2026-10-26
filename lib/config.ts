@@ -104,6 +104,14 @@ export const MODEL_BUDGET_MS = 60_000;
 export const EXTRACTION_ATTEMPT_MS = 45_000;
 export const PRACTICE_PAPER_ATTEMPT_MS = 50_000;
 export const HINT_ATTEMPT_MS = 25_000;
+/**
+ * Topic grouping is one request for a whole corpus, reasoning over every label
+ * at once, and a flash model was measured not answering a 65-label corpus
+ * inside 45s. It runs in the browser, so no function window bounds it; the
+ * budget leaves room for one fallback model after a full attempt.
+ */
+export const GROUPING_ATTEMPT_MS = 90_000;
+export const GROUPING_BUDGET_MS = 150_000;
 
 /** Rasterisation width. Wide enough for subscripted maths, small enough to batch. */
 export const TARGET_PAGE_WIDTH_PX = 1200;

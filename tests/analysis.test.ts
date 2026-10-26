@@ -11,7 +11,7 @@ import { clusterLineages, similarity } from "@/lib/analysis/lineage";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { corpusCourses } from "@/lib/analysis/papers";
-import { canonicalizeTopics } from "@/lib/analysis/topics";
+import { canonicalizeTopics, keepOverriddenTopics } from "@/lib/analysis/topics";
 import { paretoCoverage, topicsToReach } from "@/lib/analysis/pareto";
 import { topicFrequency } from "@/lib/analysis/frequency";
 import type { Question } from "@/lib/types";
@@ -552,5 +552,131 @@ describe("corpusCourses, contained names", () => {
         question({ id: "b", course: "Electronics II" }),
       ]).length,
     ).toBe(2);
+  });
+});
+
+describe("analyze with topic grouping and topic overrides", () => {
+  const topical = (topic: string, id: string, label = "CT1") =>
+    question({ id, topic, paper: { type: "CT", label, section: null, year: null } });
+  const corpus = [
+    topical("SDLC", "a"),
+    topical("SDLC Models", "b"),
+    topical("Requirements Gathering", "c"),
+    topical("Requirements Elicitation", "d"),
+    topical("Data Flow Diagrams", "e"),
+    topical("Data Flow Diagram", "f"),
+  ];
+  const topicOf = (result: ReturnType<typeof analyze>, id: string) =>
+    result.questions.find((q) => q.id === id)?.topic;
+  const grouping = {
+    SDLC: "SDLC & Process Models",
+    "SDLC Models": "SDLC & Process Models",
+    "Requirements Gathering": "Requirements",
+    "Requirements Elicitation": "Requirements",
+  };
+
+  it("folds the labels the grouping map names the same subject into one topic", () => {
+    const result = analyze(corpus, { grouping });
+
+    expect(result.stats.map((s) => [s.topic, s.count]).sort()).toEqual([
+      ["Data Flow Diagram", 2],
+      ["Requirements", 2],
+      ["SDLC & Process Models", 2],
+    ]);
+  });
+
+  it("lets the grouping map beat lexical folding", () => {
+    const result = analyze(corpus, {
+      grouping: { ...grouping, "Data Flow Diagram": "Structured Analysis" },
+    });
+
+    expect(topicOf(result, "e")).toBe("Data Flow Diagrams");
+    expect(topicOf(result, "f")).toBe("Structured Analysis");
+  });
+
+  it("lets a topic override beat the grouping map", () => {
+    const result = analyze(corpus, {
+      grouping,
+      overrides: [{ from: ["Requirements"], to: "Requirements Engineering" }],
+    });
+
+    expect(topicOf(result, "c")).toBe("Requirements Engineering");
+    expect(topicOf(result, "d")).toBe("Requirements Engineering");
+  });
+
+  it("applies a merge then a rename of the merged topic in order", () => {
+    const result = analyze(corpus, {
+      grouping,
+      overrides: [
+        { from: ["Requirements", "SDLC & Process Models"], to: "Requirements" },
+        { from: ["Requirements"], to: "Process" },
+      ],
+    });
+
+    expect(result.stats.map((s) => [s.topic, s.count])).toEqual([
+      ["Process", 4],
+      ["Data Flow Diagram", 2],
+    ]);
+  });
+
+  it("undoes an override by dropping it from the list", () => {
+    const merged = [{ from: ["Requirements", "SDLC & Process Models"], to: "Process" }];
+
+    expect(analyze(corpus, { grouping, overrides: merged }).stats).toHaveLength(2);
+    expect(analyze(corpus, { grouping, overrides: [] })).toEqual(
+      analyze(corpus, { grouping }),
+    );
+  });
+
+  it("feeds resolved topics to the backtest, so grouping can raise holdout coverage", () => {
+    const papers = [
+      topical("SDLC", "p1", "CT1"),
+      topical("SDLC", "p2", "CT1"),
+      topical("SDLC Models", "p3", "CT2"),
+    ];
+    const coverage = (topics = {}) => {
+      const { questions } = analyze(papers, topics);
+      return backtest(questions, "CT2").overlapPct;
+    };
+
+    expect(coverage()).toBe(0);
+    expect(coverage({ grouping })).toBe(100);
+  });
+
+  describe("a re-run of topic grouping", () => {
+    const regrouped = {
+      ...grouping,
+      "Requirements Gathering": "Requirements Analysis",
+      "Requirements Elicitation": "Requirements Analysis",
+      "Data Flow Diagrams": "Structured Analysis",
+      "Data Flow Diagram": "Structured Analysis",
+    };
+
+    it("keeps an override applying when the new grouping names its topic differently", () => {
+      const overrides = [{ from: ["Requirements"], to: "Requirements Engineering" }];
+
+      const kept = keepOverriddenTopics(corpus, grouping, regrouped, overrides);
+      const result = analyze(corpus, { grouping: kept, overrides });
+
+      expect(topicOf(result, "c")).toBe("Requirements Engineering");
+      expect(topicOf(result, "d")).toBe("Requirements Engineering");
+    });
+
+    it("keeps an override made on a topic lexical folding named, before any grouping", () => {
+      const overrides = [{ from: ["Data Flow Diagram"], to: "DFDs" }];
+
+      const kept = keepOverriddenTopics(corpus, undefined, regrouped, overrides);
+      const result = analyze(corpus, { grouping: kept, overrides });
+
+      expect(topicOf(result, "e")).toBe("DFDs");
+      expect(topicOf(result, "f")).toBe("DFDs");
+    });
+
+    it("leaves the new grouping's names alone where no override refers to them", () => {
+      const overrides = [{ from: ["SDLC & Process Models"], to: "Process" }];
+
+      expect(keepOverriddenTopics(corpus, grouping, regrouped, overrides)).toEqual(regrouped);
+      expect(keepOverriddenTopics(corpus, grouping, regrouped, [])).toEqual(regrouped);
+    });
   });
 });
