@@ -5,9 +5,9 @@
  * script renders the pages and supplies the model client.
  */
 import { MediaResolution, type GenerateContentConfig } from "@google/genai";
-import { EXTRACTION_MODEL, MODEL_FALLBACKS, TEXT_LAYER_MIN_CHARS } from "@/lib/config";
+import { FREE_TIER_REQUESTS_PER_DAY, TEXT_LAYER_MIN_CHARS } from "@/lib/config";
 import { runExtraction, type ExtractionCache } from "@/lib/extract/runExtraction";
-import { extractQuestions } from "@/lib/gemini/extract";
+import { EXTRACTION_CHAIN, extractQuestions } from "@/lib/gemini/extract";
 import { extractStatus, type ModelClient } from "@/lib/gemini/generate";
 import type { GroundTruthCourse } from "@/lib/eval/groundTruth";
 import { scoreExtraction, type ExtractedQuestion } from "@/lib/eval/score";
@@ -24,10 +24,8 @@ export interface EvalConfiguration {
   textLayerFirst?: boolean;
 }
 
-const APP_CHAIN = [EXTRACTION_MODEL, ...MODEL_FALLBACKS];
-
 export const CONFIGURATIONS: EvalConfiguration[] = [
-  { name: "Flash chain", models: APP_CHAIN },
+  { name: "Flash chain", models: EXTRACTION_CHAIN },
   {
     // The 2.5 Flash-Lite is the one Flash-Lite whose thinking can be turned
     // off outright; later ones only go down to a minimal level.
@@ -36,15 +34,13 @@ export const CONFIGURATIONS: EvalConfiguration[] = [
     config: { thinkingConfig: { thinkingBudget: 0 } },
   },
   { name: "Gemma 4", models: ["gemma-4-26b-a4b-it"] },
-  { name: "Text layer first", models: APP_CHAIN, textLayerFirst: true },
+  { name: "Text layer first", models: EXTRACTION_CHAIN, textLayerFirst: true },
   {
     name: "Low media resolution",
-    models: APP_CHAIN,
+    models: EXTRACTION_CHAIN,
     config: { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW },
   },
 ];
-
-export const BATCH_SIZES = [2, 4, 8];
 
 /** A page of a ground-truth paper: its image, and its text layer ("" when it has none). */
 export type EvalPage = PageImage & { text: string };
@@ -64,12 +60,14 @@ export interface EvalRow {
   /** Model requests Google accepted, retries included. Rate-limit refusals are not counted. */
   requests: number;
   papers: number;
-  /** Latency of the batches that answered. NaN when none did. */
+  /** Latency of the batches that answered, retries and backoff included. NaN when none did. */
   p50Ms: number;
   p95Ms: number;
   /** Batches that failed or timed out after every retry, over all batches. */
   failureRate: number;
   requestsPerPaper: number;
+  /** Papers one model's free daily quota covers. A chain pools several models' quotas. */
+  papersPerDay: number;
   recall: number;
   precision: number;
   marksAccuracy: number;
@@ -118,12 +116,15 @@ export async function runConfiguration(
 
   const labelOf = new Map<PageImage, string>();
   const latencies: number[] = [];
+  /** When each batch's first attempt started; a retry reuses the batch array. */
+  const startedAt = new Map<PageImage[], number>();
   /** Each batch's last error status, or null once it answered. */
   const lastStatus = new Map<PageImage[], number | null>();
 
   const extractBatch = async (pages: PageImage[], signal?: AbortSignal) => {
     const label = labelOf.get(pages[0]) ?? "";
-    const started = Date.now();
+    if (!startedAt.has(pages)) startedAt.set(pages, Date.now());
+    const started = startedAt.get(pages)!;
     try {
       const questions = await extractQuestions(counting, pages, {
         signal,
@@ -152,10 +153,11 @@ export async function runConfiguration(
     return rest;
   });
 
-  const uploads = papers.map((_, i) => new File([], String(i)));
-  const result = await runExtraction(uploads, {
+  // runExtraction reads uploads; each paper stands in as an empty one.
+  const uploads = new Map(papers.map((paper, i) => [new File([], paper.label), modelPages[i]]));
+  const result = await runExtraction([...uploads.keys()], {
     extractBatch,
-    loadPages: async (file) => modelPages[Number(file.name)],
+    loadPages: async (file) => uploads.get(file) ?? [],
     cache: NO_CACHE,
     minIntervalMs,
     maxPages: batchSize,
@@ -181,6 +183,7 @@ export async function runConfiguration(
     p95Ms: percentile(latencies, 0.95),
     failureRate: batches === 0 ? 0 : failed / batches,
     requestsPerPaper: requests / papers.length,
+    papersPerDay: requests === 0 ? Infinity : (FREE_TIER_REQUESTS_PER_DAY * papers.length) / requests,
     recall: score.recall,
     precision: score.precision,
     marksAccuracy: score.marksAccuracy,
@@ -203,6 +206,11 @@ export const GATES = {
   maxP95Ms: 50_000,
 };
 
+/** The gates, worded for the results document. */
+export const GATES_TEXT =
+  `recall ≥ ${GATES.minRecall}, marks accuracy ≥ ${GATES.minMarksAccuracy}, ` +
+  `failure + timeout ≤ ${GATES.maxFailureRate * 100}%, p95 < ${GATES.maxP95Ms / 1000}s`;
+
 /** The gates a row fails, worded for the results table. Empty when it passes. */
 export function gateFailures(row: EvalRow): string[] {
   const failures: string[] = [];
@@ -213,7 +221,10 @@ export function gateFailures(row: EvalRow): string[] {
   if (!(row.failureRate <= GATES.maxFailureRate)) {
     failures.push(`failure + timeout > ${GATES.maxFailureRate * 100}%`);
   }
-  if (!(row.p95Ms < GATES.maxP95Ms)) failures.push(`p95 ≥ ${GATES.maxP95Ms / 1000}s`);
+  // With no model batch there is no latency to gate.
+  if (row.batches > 0 && !(row.p95Ms < GATES.maxP95Ms)) {
+    failures.push(`p95 ≥ ${GATES.maxP95Ms / 1000}s`);
+  }
   return failures;
 }
 
@@ -245,6 +256,7 @@ export function formatResultsTable(rows: EvalRow[]): string {
     "p95 (s)",
     "Fail + timeout",
     "Requests/paper",
+    "Papers/day (free)",
     "Recall",
     "Precision",
     "Marks accuracy",
@@ -260,6 +272,7 @@ export function formatResultsTable(rows: EvalRow[]): string {
     seconds(row.p95Ms),
     `${(row.failureRate * 100).toFixed(1)}%`,
     ratio(row.requestsPerPaper),
+    Number.isFinite(row.papersPerDay) ? row.papersPerDay.toFixed(1) : "unlimited",
     ratio(row.recall),
     ratio(row.precision),
     ratio(row.marksAccuracy),

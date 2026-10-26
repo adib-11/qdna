@@ -27,6 +27,23 @@ export const MAX_CONCURRENT = 2;
 export const MIN_REQUEST_INTERVAL_MS = 2500;
 
 /**
+ * The extraction eval's spacing between requests. The free tier allows Flash
+ * about 5 requests a minute, so one every 12s stays under it; a paid key can
+ * override it with EVAL_MIN_INTERVAL_MS.
+ */
+export const EVAL_MIN_INTERVAL_MS = 12_000;
+
+/** Pages per request the extraction eval measures every configuration at. */
+export const EVAL_BATCH_SIZES = [2, 4, 8];
+
+/**
+ * Requests per day one model allows on a free key, as measured for
+ * gemini-flash-latest. The eval's papers-per-day figure divides it by
+ * requests per paper.
+ */
+export const FREE_TIER_REQUESTS_PER_DAY = 20;
+
+/**
  * Retry attempts per batch on 429 / 5xx / timeout before the batch is recorded
  * failed. Each attempt can burn the full request timeout, so this trades a
  * lower chance of recovery for bounded worst-case wall time.

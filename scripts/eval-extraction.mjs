@@ -9,7 +9,11 @@
  * committed); the ground-truth pages are rendered into <pages-dir>. Pages are
  * rasterised the way extract-corpus.mjs does it, and everything after that —
  * batching, pacing, retries, the model chain, the prompt and the schema — is
- * the app's own code, through lib/eval/run.ts.
+ * the app's own code, through lib/eval/run.ts. Needs Node 23.5+ for
+ * `registerHooks`, and pdftoppm and pdftotext (poppler).
+ *
+ * Rows are written after every measurement, so a run stopped by spent quota
+ * keeps what it measured. EVAL_MIN_INTERVAL_MS overrides the free-tier pacing.
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -34,14 +38,11 @@ registerHooks({
   },
 });
 const { rasterise } = await import("./extract-corpus.mjs");
-const { BATCH_SIZES, CONFIGURATIONS, formatResultsTable, gateFailures, rankRows, runConfiguration } =
+const { EVAL_BATCH_SIZES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
+const { CONFIGURATIONS, GATES_TEXT, formatResultsTable, gateFailures, rankRows, runConfiguration } =
   await import("../lib/eval/run.ts");
 
-/**
- * Gap between request starts. The free tier allows Flash about 5 requests a
- * minute, so one every 12s stays under it; a paid key could go far faster.
- */
-const MIN_INTERVAL_MS = 12_000;
+const minIntervalMs = Number(process.env.EVAL_MIN_INTERVAL_MS ?? EVAL_MIN_INTERVAL_MS);
 
 const [papersDir, pagesDir, outPath = path.join(ROOT, "docs", "extraction-eval.md")] =
   process.argv.slice(2);
@@ -65,7 +66,8 @@ function renderPage(paper) {
   return (n) => {
     const dir = path.join(pagesDir, `${paper.label.replace(/\W+/g, "-")}-p${n}`);
     fs.rmSync(dir, { recursive: true, force: true });
-    const [image] = rasterise(pdf, { first: n, last: n, dir });
+    const [image] = rasterise(pdf, { page: n, dir });
+    if (!image) throw new Error(`${paper.label}: page ${n} of ${paper.source.file} rendered blank`);
     const text = execFileSync("pdftotext", ["-layout", "-f", String(n), "-l", String(n), pdf, "-"], {
       encoding: "utf8",
     });
@@ -82,45 +84,59 @@ async function measure(configuration, batchSize, run) {
     papers,
     truth,
     run,
-    minIntervalMs: MIN_INTERVAL_MS,
+    minIntervalMs,
   });
-  console.log(
-    `${configuration.name} @ ${batchSize} (run ${run}): recall ${row.recall.toFixed(2)}, ` +
-      `p95 ${(row.p95Ms / 1000).toFixed(1)}s, ${row.requestsPerPaper.toFixed(2)} requests/paper`,
-  );
+  console.log(formatResultsTable([row]).split("\n")[2]);
   return row;
 }
 
 const firstPass = [];
-for (const configuration of CONFIGURATIONS) {
-  for (const batchSize of BATCH_SIZES) firstPass.push(await measure(configuration, batchSize, 1));
-}
-
-const finalists = rankRows(firstPass).slice(0, 2);
 const reruns = [];
-for (const finalist of finalists) {
-  const configuration = CONFIGURATIONS.find((c) => c.name === finalist.configuration);
-  reruns.push(await measure(configuration, finalist.batchSize, 2));
+let verdict = "Not chosen yet: the run stopped before the finalists were re-run.";
+
+try {
+  for (const configuration of CONFIGURATIONS) {
+    for (const batchSize of EVAL_BATCH_SIZES) {
+      firstPass.push(await measure(configuration, batchSize, 1));
+      writeResults();
+    }
+  }
+
+  const finalists = rankRows(firstPass).slice(0, 2);
+  for (const finalist of finalists) {
+    const configuration = CONFIGURATIONS.find((c) => c.name === finalist.configuration);
+    reruns.push(await measure(configuration, finalist.batchSize, 2));
+    writeResults();
+  }
+
+  // The winner is chosen on the re-run, so its numbers are the confirmed ones.
+  const [winner] = rankRows(reruns);
+  const failed = gateFailures(winner);
+  verdict = failed.length
+    ? `No configuration passed every gate. Best recall: **${winner.configuration}** at ${winner.batchSize} pages per request, failing ${failed.join("; ")}.`
+    : `**${winner.configuration}** at ${winner.batchSize} pages per request: it passes every gate with the fewest requests per paper.`;
+} finally {
+  writeResults();
 }
 
-// The winner is chosen on the re-run, so its numbers are the confirmed ones.
-const [winner] = rankRows(reruns);
-const failed = gateFailures(winner);
-const verdict = failed.length
-  ? `No configuration passed every gate. Best recall: **${winner.configuration}** at ${winner.batchSize} pages per request, failing ${failed.join("; ")}.`
-  : `**${winner.configuration}** at ${winner.batchSize} pages per request: it passes every gate with the fewest requests per paper.`;
-
-fs.writeFileSync(
-  outPath,
-  `# Extraction eval
+function writeResults() {
+  // Each finalist's first run sits beside its re-run, so stability is visible.
+  const finalistRows = reruns.flatMap((rerun) => [
+    firstPass.find((r) => r.configuration === rerun.configuration && r.batchSize === rerun.batchSize),
+    rerun,
+  ]);
+  fs.writeFileSync(
+    outPath,
+    `# Extraction eval
 
 Measured on ${new Date().toISOString().slice(0, 10)} by \`scripts/eval-extraction.mjs\` over the
 ${papers.length} ground-truth papers in \`tests/fixtures/ground-truth/\`.
 
-Gates: recall ≥ 0.95, marks accuracy ≥ 0.95, failure + timeout ≤ 2%, p95 < 50s. Among the
-configurations that pass, the fewest requests per paper wins; if none passes, the best recall.
-Latency is per batch that answered. Requests count every request Google accepted, retries included.
-Text-layer pages carry no topic, so they add one blank topic to topics per question.
+Gates: ${GATES_TEXT}. Among the configurations that pass, the fewest requests per paper wins;
+if none passes, the best recall. Latency is per batch that answered, retries and backoff included.
+Requests count every request Google accepted, retries included. Papers per day divide one model's
+free daily quota by requests per paper. Text-layer pages carry no topic, so they add one blank
+topic to topics per question.
 
 ## Winner
 
@@ -131,6 +147,7 @@ ${verdict}
 ${formatResultsTable(firstPass)}
 ## Finalists re-run
 
-${formatResultsTable(reruns)}`,
-);
+${formatResultsTable(finalistRows)}`,
+  );
+}
 console.log(`wrote ${path.relative(ROOT, outPath)}`);

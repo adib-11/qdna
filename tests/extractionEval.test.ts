@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ModelClient } from "@/lib/gemini/generate";
 import type { GroundTruthCourse } from "@/lib/eval/groundTruth";
 import {
-  BATCH_SIZES,
   CONFIGURATIONS,
   formatResultsTable,
   gateFailures,
@@ -138,6 +137,7 @@ describe("runConfiguration", () => {
       batches: 1,
       requests: 1,
       requestsPerPaper: 1,
+      papersPerDay: 20,
       failureRate: 0,
       p50Ms: 20_000,
       p95Ms: 20_000,
@@ -185,7 +185,9 @@ describe("runConfiguration", () => {
     const row = await evaluate(client);
 
     expect(calls).toHaveLength(3);
-    expect(row).toMatchObject({ requests: 1, failureRate: 0, p50Ms: 5_000, recall: 0.5 });
+    expect(row).toMatchObject({ requests: 1, failureRate: 0, recall: 0.5 });
+    // The batch's latency is what a student waits: both refusals, both backoffs, the answer.
+    expect(row.p50Ms).toBeGreaterThanOrEqual(1_000 + 2_000 + 1_000 + 4_000 + 5_000);
   });
 
   it("stops when the quota stays spent, rather than scoring quota as failures", async () => {
@@ -230,6 +232,7 @@ const row = (overrides: Partial<EvalRow>): EvalRow => ({
   p95Ms: 40_000,
   failureRate: 0,
   requestsPerPaper: 1,
+  papersPerDay: 20,
   recall: 0.97,
   precision: 0.97,
   marksAccuracy: 0.98,
@@ -244,6 +247,10 @@ describe("gates and ranking", () => {
     expect(
       gateFailures(row({ recall: 0.9, marksAccuracy: 0.94, failureRate: 0.03, p95Ms: 50_000 })),
     ).toHaveLength(4);
+  });
+
+  it("does not gate latency when no page needed the model", () => {
+    expect(gateFailures(row({ batches: 0, requests: 0, p50Ms: NaN, p95Ms: NaN }))).toEqual([]);
   });
 
   it("ranks passing rows by fewest requests per paper, then failing rows by recall", () => {
@@ -274,8 +281,7 @@ describe("formatResultsTable", () => {
 });
 
 describe("the configurations", () => {
-  it("cover the five configurations at 2, 4 and 8 pages per request", () => {
-    expect(BATCH_SIZES).toEqual([2, 4, 8]);
+  it("cover the five configurations", () => {
     expect(CONFIGURATIONS).toHaveLength(5);
     expect(CONFIGURATIONS.filter((c) => c.textLayerFirst)).toHaveLength(1);
   });

@@ -16,6 +16,9 @@ export interface PagePayload {
   mimeType: string;
 }
 
+/** The models extraction walks, in order. */
+export const EXTRACTION_CHAIN = [EXTRACTION_MODEL, ...MODEL_FALLBACKS];
+
 /** Raw model output, before ids are assigned. */
 type ExtractedQuestion = Omit<Question, "id">;
 
@@ -35,7 +38,7 @@ export async function extractQuestions(
   {
     hint,
     signal,
-    models = [EXTRACTION_MODEL, ...MODEL_FALLBACKS],
+    models = EXTRACTION_CHAIN,
     config,
   }: ExtractOptions = {},
 ): Promise<Question[]> {

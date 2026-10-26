@@ -45,7 +45,7 @@ const MAX_ATTEMPT_MS = 45_000;
 const [pdfPath, outPath, hint] = process.argv.slice(2);
 
 // The eval runner imports `rasterise` from here; only a direct run extracts.
-if (import.meta.main) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!pdfPath || !outPath) {
     console.error('usage: extract-corpus.mjs <pdf> <out.json> ["course hint"]');
     process.exit(2);
@@ -113,13 +113,13 @@ async function main() {
  * the honest equivalent here is to read pixels too. A small PGM is trivial to
  * parse and costs a few milliseconds a page.
  *
- * `first`/`last` limit it to a one-based page range, and `dir` keeps the
- * renders there instead of in a temporary directory that is removed after.
+ * `page` renders that one-based page alone, and `dir` keeps the renders
+ * there instead of in a temporary directory that is removed after.
  */
-export function rasterise(file, { first, last, dir } = {}) {
+export function rasterise(file, { page, dir } = {}) {
   const outDir = dir ?? fs.mkdtempSync(path.join(os.tmpdir(), "qdna-"));
   fs.mkdirSync(outDir, { recursive: true });
-  const range = first ? ["-f", String(first), "-l", String(last ?? first)] : [];
+  const range = page ? ["-f", String(page), "-l", String(page)] : [];
 
   execFileSync("pdftoppm", [
     ...range,
