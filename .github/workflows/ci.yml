@@ -29,7 +29,8 @@ jobs:
           node-version: 24
           cache: npm
 
-      - run: npm ci
+      # Lifecycle scripts are not needed: native binaries come as optional deps.
+      - run: npm ci --ignore-scripts
 
       - name: Lint
         run: npm run lint
@@ -42,10 +43,10 @@ jobs:
 
       # After the build, which generates the route types the app's own types use.
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Install Playwright's Chromium
-        run: npx playwright install --with-deps chromium
+        run: npm run test:e2e:install
 
       - name: End-to-end and accessibility tests (Playwright)
         run: npm run test:e2e
