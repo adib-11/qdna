@@ -273,6 +273,183 @@ export function evalStatus(progress: EvalProgress, spec: EvalSpec, now: Date): E
 }
 
 /**
+ * The day's quota, per model, kept in the progress. Every request sent counts
+ * against the day, refusals included: the caps are a ceiling to stay under,
+ * not a budget to spend.
+ */
+class QuotaGuard {
+  private readonly refusals: Record<string, number> = {};
+  /** When the last request was sent, for pacing across measurements. */
+  lastRequestAt = -Infinity;
+
+  private readonly progress: EvalProgress;
+  private readonly caps: Record<string, number>;
+  private readonly save: (progress: EvalProgress) => void;
+  private readonly log: (line: string) => void;
+
+  // Plain fields, not parameter properties: Node's type stripping, which the
+  // eval script runs on, does not support those.
+  constructor(
+    progress: EvalProgress,
+    caps: Record<string, number>,
+    save: (progress: EvalProgress) => void,
+    log: (line: string) => void,
+  ) {
+    this.progress = progress;
+    this.caps = caps;
+    this.save = save;
+    this.log = log;
+  }
+
+  private usageOf(model: string): ModelUsage {
+    const day = quotaDay(new Date());
+    this.progress.usage[day] ??= {};
+    const today = this.progress.usage[day];
+    today[model] ??= { requests: 0, spent: false };
+    return today[model];
+  }
+
+  available(model: string): boolean {
+    const usage = this.usageOf(model);
+    return !usage.spent && usage.requests < (this.caps[model] ?? EVAL_DEFAULT_DAILY_CAP);
+  }
+
+  spend(model: string): void {
+    const usage = this.usageOf(model);
+    if (usage.spent) return;
+    usage.spent = true;
+    // A run that outlasts midnight starts the new quota day's count afresh.
+    this.refusals[model] = 0;
+    this.save(this.progress);
+    this.log(`${model}: still refused after backing off, so its quota is spent for today`);
+  }
+
+  /**
+   * The client, counted against the day. A model past its cap, or spent, is
+   * refused here without a request, as Google would refuse it.
+   */
+  guard(client: ModelClient): ModelClient {
+    return {
+      models: {
+        generateContent: async (params) => {
+          const { model } = params;
+          if (!this.available(model)) {
+            throw Object.assign(new Error(`${model}: out of quota today`), { status: 429 });
+          }
+          this.usageOf(model).requests += 1;
+          this.lastRequestAt = Date.now();
+          this.save(this.progress);
+          try {
+            const response = await client.models.generateContent(params);
+            this.refusals[model] = 0;
+            return response;
+          } catch (error) {
+            if (extractStatus(error) === 429) this.refused(model);
+            throw error;
+          }
+        },
+      },
+    };
+  }
+
+  private refused(model: string): void {
+    this.refusals[model] = (this.refusals[model] ?? 0) + 1;
+    if (this.refusals[model] >= EVAL_SPENT_AFTER_429S) this.spend(model);
+  }
+}
+
+/** The status of the first failure that says the model was unavailable, if any. */
+const unavailableStatus = (failures: BatchFailure[]) =>
+  failures.find((f) => f.status !== null && UNAVAILABLE.has(f.status))?.status;
+
+const addCounts = (into: Record<string, number>, from: Record<string, number>) => {
+  for (const [model, n] of Object.entries(from)) into[model] = (into[model] ?? 0) + n;
+};
+
+/**
+ * One measurement, measured again after a backoff while the model refuses
+ * (429) or is overloaded (503). The failures instead when its model stayed
+ * unavailable, and null when it is out of quota today before starting.
+ */
+async function measureWithBackoff(
+  quota: QuotaGuard,
+  client: ModelClient,
+  configuration: EvalConfiguration,
+  paper: EvalPaper,
+  minIntervalMs: number,
+): Promise<Measurement | BatchFailure[] | null> {
+  const primary = configuration.models[0];
+  /** Requests accepted so far, over every attempt: all of them are the measurement's cost. */
+  let accepted: Record<string, number> = {};
+  /** The last attempt's failures, kept if the model runs out of quota before the next. */
+  let failures: BatchFailure[] | null = null;
+  for (let attempt = 0; ; attempt++) {
+    if (!quota.available(primary)) return failures;
+    if (attempt > 0) await sleep(EVAL_BACKOFF_BASE_MS * 2 ** (attempt - 1));
+    // runExtraction paces within a measurement; this paces across them.
+    await sleep(quota.lastRequestAt + minIntervalMs - Date.now());
+    const measurement = await measure(client, configuration, paper, minIntervalMs);
+    addCounts(measurement.requests, accepted);
+    accepted = measurement.requests;
+    failures = measurement.failures ?? [];
+    const status = unavailableStatus(failures);
+    if (status === undefined) return measurement;
+    const backOff = status === 429 || status === 503;
+    if (backOff && attempt < EVAL_MEASUREMENT_RETRIES) continue;
+    if (status === 429) quota.spend(primary);
+    return failures;
+  }
+}
+
+const describeFailures = (failures: BatchFailure[]) =>
+  failures.map((f) => `${f.status ?? "no status"} ${f.message}`).join("; ");
+
+const describeMeasurement = (m: Measurement) =>
+  m.batchesFailed ? `${m.batchesFailed} of ${m.batches} batches failed` : `${m.questions.length} questions`;
+
+/** What advancing the eval needs from one measurement to the next. */
+interface AdvanceContext {
+  progress: EvalProgress;
+  papers: EvalPaper[];
+  quota: QuotaGuard;
+  client: ModelClient;
+  minIntervalMs: number;
+  /** Left pending in this run: the next run, on a later day, tries them again. */
+  deferred: Set<string>;
+  save: (progress: EvalProgress) => void;
+  log: (line: string) => void;
+}
+
+/** Makes one pending measurement if its model allows; true when it was recorded as measured. */
+async function advanceOne(
+  ctx: AdvanceContext,
+  { run, configuration, paper }: PendingMeasurement,
+): Promise<boolean> {
+  const { progress, quota, deferred, save, log } = ctx;
+  const key = measurementKey(run, configuration.name, paper);
+  if (deferred.has(key) || !quota.available(configuration.models[0])) return false;
+  const pages = ctx.papers.find((p) => p.label === paper);
+  if (!pages) throw new Error(`no pages for ${paper}`);
+  const result = await measureWithBackoff(quota, ctx.client, configuration, pages, ctx.minIntervalMs);
+  if (!result) return false;
+
+  progress.retry ??= {};
+  const step = `${run === 1 ? "first pass" : "re-run"} · ${configuration.name} · ${paper}`;
+  if (Array.isArray(result)) {
+    deferred.add(key);
+    progress.retry[key] = result;
+    save(progress);
+    log(`${step}: left for a later run, ${describeFailures(result)}`);
+    return false;
+  }
+  progress.measurements[key] = result;
+  delete progress.retry[key];
+  save(progress);
+  log(`${step}: ${describeMeasurement(result)}`);
+  return true;
+}
+
+/**
  * Take the eval as far as today's quota allows: measure what the progress
  * lacks, mutating it as it goes, and go on to the finalists when the first
  * pass completes.
@@ -289,115 +466,26 @@ export async function advanceEval(
     save = () => {},
     log = () => {},
   } = options;
-  const usageOf = (model: string): ModelUsage => {
-    const today = (progress.usage[quotaDay(new Date())] ??= {});
-    return (today[model] ??= { requests: 0, spent: false });
+  const quota = new QuotaGuard(progress, caps, save, log);
+  const ctx: AdvanceContext = {
+    progress,
+    papers,
+    quota,
+    client: quota.guard(client),
+    minIntervalMs,
+    deferred: new Set(),
+    save,
+    log,
   };
-  const available = (model: string) => {
-    const usage = usageOf(model);
-    return !usage.spent && usage.requests < (caps[model] ?? EVAL_DEFAULT_DAILY_CAP);
-  };
-  const spend = (model: string) => {
-    if (usageOf(model).spent) return;
-    usageOf(model).spent = true;
-    // A run that outlasts midnight starts the new quota day's count afresh.
-    refusals[model] = 0;
-    save(progress);
-    log(`${model}: still refused after backing off, so its quota is spent for today`);
-  };
-  const refusals: Record<string, number> = {};
-  let lastRequestAt = -Infinity;
+  progress.retry ??= {};
 
-  // Every request sent counts against the day, refusals included: the caps
-  // are a ceiling to stay under, not a budget to spend. A model past its cap,
-  // or spent, is refused here, without a request, as Google would refuse it.
-  const guarded: ModelClient = {
-    models: {
-      generateContent: async ({ model, ...params }) => {
-        if (!available(model)) throw Object.assign(new Error(`${model}: out of quota today`), { status: 429 });
-        usageOf(model).requests += 1;
-        lastRequestAt = Date.now();
-        save(progress);
-        try {
-          const response = await client.models.generateContent({ model, ...params });
-          refusals[model] = 0;
-          return response;
-        } catch (error) {
-          if (extractStatus(error) === 429) {
-            refusals[model] = (refusals[model] ?? 0) + 1;
-            if (refusals[model] >= EVAL_SPENT_AFTER_429S) spend(model);
-          }
-          throw error;
-        }
-      },
-    },
-  };
-
-  /**
-   * One measurement, measured again after a backoff while the model refuses
-   * (429) or is overloaded (503). The failures instead when its model stayed
-   * unavailable, and null when it is out of quota today before starting.
-   */
-  const measureWithBackoff = async (
-    configuration: EvalConfiguration,
-    paper: EvalPaper,
-  ): Promise<Measurement | BatchFailure[] | null> => {
-    const primary = configuration.models[0];
-    /** Requests accepted so far, over every attempt: all of them are the measurement's cost. */
-    let accepted: Record<string, number> = {};
-    /** The last attempt's failures, kept if the model runs out of quota before the next. */
-    let failures: BatchFailure[] | null = null;
-    for (let attempt = 0; ; attempt++) {
-      if (!available(primary)) return failures;
-      if (attempt > 0) await sleep(EVAL_BACKOFF_BASE_MS * 2 ** (attempt - 1));
-      // runExtraction paces within a measurement; this paces across them.
-      await sleep(lastRequestAt + minIntervalMs - Date.now());
-      const measurement = await measure(guarded, configuration, paper, minIntervalMs);
-      for (const [model, n] of Object.entries(accepted)) {
-        measurement.requests[model] = (measurement.requests[model] ?? 0) + n;
-      }
-      accepted = measurement.requests;
-      failures = measurement.failures ?? [];
-      const status = failures.find((f) => f.status !== null && UNAVAILABLE.has(f.status))?.status;
-      if (status === undefined) return measurement;
-      const backOff = status === 429 || status === 503;
-      if (backOff && attempt < EVAL_MEASUREMENT_RETRIES) continue;
-      if (status === 429) spend(primary);
-      return failures;
+  // A pass that measures something can open more work: the finalists' re-runs.
+  let measured = true;
+  while (measured) {
+    measured = false;
+    for (const pending of pendingWork(progress, options).pending) {
+      if (await advanceOne(ctx, pending)) measured = true;
     }
-  };
-
-  /** Left pending in this run: the next run, on a later day, tries them again. */
-  const deferred = new Set<string>();
-  const retry = (progress.retry ??= {});
-
-  for (;;) {
-    let measured = false;
-    for (const { run, configuration, paper } of pendingWork(progress, options).pending) {
-      const key = measurementKey(run, configuration.name, paper);
-      if (deferred.has(key) || !available(configuration.models[0])) continue;
-      const pages = papers.find((p) => p.label === paper);
-      if (!pages) throw new Error(`no pages for ${paper}`);
-      const result = await measureWithBackoff(configuration, pages);
-      if (!result) continue;
-      const step = `${run === 1 ? "first pass" : "re-run"} · ${configuration.name} · ${paper}`;
-      if (Array.isArray(result)) {
-        deferred.add(key);
-        retry[key] = result;
-        save(progress);
-        log(`${step}: left for a later run, ${result.map((f) => `${f.status ?? "no status"} ${f.message}`).join("; ")}`);
-        continue;
-      }
-      progress.measurements[key] = result;
-      delete retry[key];
-      save(progress);
-      measured = true;
-      const outcome = result.batchesFailed
-        ? `${result.batchesFailed} of ${result.batches} batches failed`
-        : `${result.questions.length} questions`;
-      log(`${step}: ${outcome}`);
-    }
-    if (!measured) return;
   }
 }
 
@@ -462,7 +550,7 @@ async function measure(
   // runExtraction reads uploads; the paper stands in as an empty one.
   const result = await runExtraction([new File([], paper.label)], {
     extractBatch,
-    loadPages: async () => paper.pages,
+    loadPages: () => Promise.resolve(paper.pages),
     cache: NO_CACHE,
     minIntervalMs,
     maxPages: EVAL_LIVE_BATCH_PAGES,
@@ -581,7 +669,7 @@ export function resultsDoc(
     firstPass.find((r) => r.configuration === rerun.configuration)!,
     rerun,
   ]);
-  const days = Object.keys(progress.usage).sort();
+  const days = Object.keys(progress.usage).sort((a, b) => a.localeCompare(b));
   const papers = paperLabels(spec.truth).length;
 
   const markdown = `# Extraction eval
@@ -641,7 +729,7 @@ export function setExtractionSetup(configSource: string, winner: string, why: st
 
 /** Nearest-rank percentile. */
 function percentile(values: number[], q: number): number {
-  if (values.length === 0) return NaN;
+  if (values.length === 0) return Number.NaN;
   const sorted = [...values].sort((a, b) => a - b);
   return sorted[Math.ceil(q * sorted.length) - 1];
 }
@@ -661,15 +749,16 @@ export const GATES_TEXT =
 /** The gates a row fails, worded for the results table. Empty when it passes. */
 export function gateFailures(row: EvalRow): string[] {
   const failures: string[] = [];
-  if (!(row.recall >= GATES.minRecall)) failures.push(`recall < ${GATES.minRecall}`);
-  if (!(row.marksAccuracy >= GATES.minMarksAccuracy)) {
+  // A metric that could not be computed (NaN) fails its gate.
+  if (Number.isNaN(row.recall) || row.recall < GATES.minRecall) failures.push(`recall < ${GATES.minRecall}`);
+  if (Number.isNaN(row.marksAccuracy) || row.marksAccuracy < GATES.minMarksAccuracy) {
     failures.push(`marks accuracy < ${GATES.minMarksAccuracy}`);
   }
-  if (!(row.failureRate <= GATES.maxFailureRate)) {
+  if (Number.isNaN(row.failureRate) || row.failureRate > GATES.maxFailureRate) {
     failures.push(`failure + timeout > ${GATES.maxFailureRate * 100}%`);
   }
   // With no model batch there is no latency to gate.
-  if (row.batches > 0 && !(row.p95Ms < GATES.maxP95Ms)) {
+  if (row.batches > 0 && (Number.isNaN(row.p95Ms) || row.p95Ms >= GATES.maxP95Ms)) {
     failures.push(`p95 ≥ ${GATES.maxP95Ms / 1000}s`);
   }
   return failures;

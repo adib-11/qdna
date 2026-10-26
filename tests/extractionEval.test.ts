@@ -444,6 +444,12 @@ describe("gates and ranking", () => {
     ).toHaveLength(4);
   });
 
+  it("fails a gate whose metric could not be computed", () => {
+    expect(
+      gateFailures(row({ recall: NaN, marksAccuracy: NaN, failureRate: NaN, p50Ms: NaN, p95Ms: NaN })),
+    ).toEqual(["recall < 0.95", "marks accuracy < 0.95", "failure + timeout > 2%", "p95 ≥ 50s"]);
+  });
+
   it("does not gate latency when no page needed the model", () => {
     expect(gateFailures(row({ batches: 0, requests: 0, p50Ms: NaN, p95Ms: NaN }))).toEqual([]);
   });
@@ -616,5 +622,30 @@ describe("parseTextLayer", () => {
       { qNo: "2(a)", section: "A", marks: 5, text: "Discuss noise in amplifiers." },
       { qNo: "5(a)", section: "B", marks: 4, text: "State sampling theorem." },
     ]);
+  });
+
+  it("reads the other printed forms, and takes no marks from a number that is not alone", () => {
+    const text = [
+      "  Section - A  ",
+      "Q.No.3 Define entropy. 123",
+      "Section: B",
+      "Q 4 a) Name two codes.      05",
+      "Section–C",
+      "Q6. State Nyquist's rule.",
+      "  12",
+    ].join("\n");
+
+    expect(parseTextLayer(text)).toEqual([
+      { qNo: "3", section: "A", marks: null, text: "Define entropy. 123" },
+      { qNo: "4(a)", section: "B", marks: 5, text: "Name two codes." },
+      { qNo: "6", section: "C", marks: 12, text: "State Nyquist's rule." },
+    ]);
+  });
+
+  it("stays fast on a long line that nearly matches every pattern", () => {
+    const line = `Q.1 (a)${" ".repeat(100_000)}x`;
+    const started = performance.now();
+    parseTextLayer([`Section${" ".repeat(100_000)}`, line, `${" ".repeat(100_000)}1x`].join("\n"));
+    expect(performance.now() - started).toBeLessThan(1_000);
   });
 });

@@ -41,6 +41,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GROUND_TRUTH_DIR = path.join(ROOT, "tests", "fixtures", "ground-truth");
 const CONFIG_FILE = path.join(ROOT, "lib", "config.ts");
+/** Where poppler is looked up: fixed system directories only, never the caller's PATH. */
+const SYSTEM_PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
 
 const { EVAL_DAILY_CAPS, EVAL_LIVE_BATCH_PAGES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
 const {
@@ -118,7 +120,7 @@ function measureTextLayer(dir) {
       text: execFileSync(
         "pdftotext",
         ["-layout", "-f", String(n), "-l", String(n), path.join(dir, paper.source.file), "-"],
-        { encoding: "utf8" },
+        { encoding: "utf8", env: { ...process.env, PATH: SYSTEM_PATH } },
       ),
     })),
   }));
