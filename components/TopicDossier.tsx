@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { TutorPanel } from "@/components/TutorPanel";
+import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import type { Question, TopicStat } from "@/lib/types";
 
@@ -60,35 +61,39 @@ function TopicRow({
     <div
       id={id}
       // Clears the sticky section nav, as the page's sections do.
-      className="scroll-mt-[64px] border-t border-[var(--border-hairline)] first:border-t-0"
+      className="scroll-mt-[64px] border-b border-rule"
     >
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        className="flex w-full items-center gap-[12px] px-[var(--card-padding)] py-[16px] text-left hover:bg-[rgba(0,0,0,0.02)]"
+        className="grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 py-4 text-left transition-[background-color] duration-(--dur-micro) ease-out hover:bg-surface-2 active:bg-surface-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
       >
-        <span className="w-[24px] shrink-0 text-caption tabular-nums text-[rgba(0,0,0,0.6)]">
-          {rank}
-        </span>
+        <span className="font-outlier text-sm text-ink-2">{rank}</span>
 
-        <span className="min-w-0 flex-1">
-          <span className="block break-words text-body font-medium text-[rgba(0,0,0,0.95)]">
+        <span className="min-w-0">
+          <span className="block break-words text-lg font-semibold">
             {stat.topic}
           </span>
-          <span className="mt-[4px] block text-caption text-graphite">
-            {stat.count} question{stat.count === 1 ? "" : "s"} ·{" "}
-            {share.toFixed(1)}% of corpus · {stat.papers.length} paper
-            {stat.papers.length === 1 ? "" : "s"}
-            {expectedMarks !== null
-              ? ` · ${expectedMarks.toFixed(1)} marks per paper`
-              : " · marks not recorded"}
+          <span className="mt-1 flex flex-wrap gap-x-4 text-sm text-ink-2 tabular-nums">
+            <span>
+              {stat.count} question{stat.count === 1 ? "" : "s"}
+            </span>{" "}
+            <span>{share.toFixed(1)}% of corpus</span>{" "}
+            <span>
+              {stat.papers.length} paper{stat.papers.length === 1 ? "" : "s"}
+            </span>{" "}
+            <span>
+              {expectedMarks !== null
+                ? `${expectedMarks.toFixed(1)} marks per paper`
+                : "marks not recorded"}
+            </span>
           </span>
         </span>
 
         <span
           aria-hidden
-          className="shrink-0 text-caption text-[rgba(0,0,0,0.6)] print:hidden"
+          className="text-sm font-semibold underline decoration-rule underline-offset-4 print:hidden"
         >
           {open ? "Hide" : "Show"}
         </span>
@@ -96,36 +101,35 @@ function TopicRow({
 
       {/* Always rendered, so the print view carries every question. */}
       <ol
-        className={`${open ? "" : "hidden"} px-[var(--card-padding)] pb-[16px] print:block`}
+        className={`${open ? "" : "hidden"} pb-4 print:block sm:pl-[3.75rem]`}
       >
         {stat.questions.map((question, index) => (
           <li
             key={`${question.id}-${index}`}
-            className="border-t border-[var(--border-hairline)] py-[12px]"
+            className="border-t border-rule py-4"
           >
-            <div className="flex flex-wrap items-center gap-x-[8px] gap-y-[4px] text-caption text-graphite">
-              <Pill tone="sky-tint" wrap>
-                {question.paper.label}
-              </Pill>
+            {/* An exam paper's line: the number and its text, the marks pushed
+                to the right margin by `order`, so they are still read after the number. */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
+              <Pill wrap>{question.paper.label}</Pill>
               {question.paper.section && (
                 <span>Section {question.paper.section}</span>
               )}
-              <span className="tabular-nums">{question.qNo}</span>
-              <span className="tabular-nums">
+              <span className="font-outlier text-ink">{question.qNo}</span>
+              <span className="order-last ml-auto font-outlier whitespace-nowrap text-ink">
                 {question.marks === null ? "marks not stated" : `${question.marks} marks`}
               </span>
               <span>{question.isNumerical ? "Numerical" : "Theory"}</span>
             </div>
-            <p className="mt-[8px] break-words text-body-sm text-graphite">
-              {question.text}
-            </p>
-            <button
+            <p className="mt-2 max-w-[65ch] break-words">{question.text}</p>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => onAskTutor(question)}
-              className="mt-[8px] rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd] print:hidden"
+              className="mt-2 print:hidden"
             >
               Hint
-            </button>
+            </Button>
           </li>
         ))}
       </ol>
@@ -158,18 +162,16 @@ export function TopicDossier({
   if (stats.length === 0) return null;
 
   return (
-    <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
-      <div className="p-[var(--card-padding)] pb-[16px]">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-          Questions
-        </h2>
-        <p className="mt-[8px] text-body-sm text-graphite">
+    <div>
+      <div className="border-t border-ink pt-6 pb-10">
+        <h2 className="text-2xl sm:text-3xl">Questions</h2>
+        <p className="mt-3 max-w-[65ch] text-ink-2">
           Every topic, in study plan order, with the questions behind its count.
           Open a topic to practise; ask for a hint on any question.
         </p>
       </div>
 
-      <div>
+      <div className="border-t border-ink">
         {stats.map((stat, index) => (
           <TopicRow
             key={stat.topic}

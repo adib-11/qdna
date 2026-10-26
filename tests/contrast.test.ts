@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { CELL_GROUND, CELL_INK } from "@/components/GenomeMap";
 import { contrastRatio, mixOver, readableInk } from "@/lib/contrast";
 
 // Expected ratios are the published WCAG / WebAIM figures, not recomputed here.
@@ -36,7 +37,7 @@ describe("readableInk", () => {
 
   it("always reaches 4.5:1 on any genome-map cell shade", () => {
     for (let alpha = 0; alpha <= 1; alpha += 0.01) {
-      const cell = mixOver("#0066c4", alpha, "#ffffff");
+      const cell = mixOver(CELL_INK, alpha, CELL_GROUND);
       expect(contrastRatio(readableInk(cell), cell)).toBeGreaterThanOrEqual(4.5);
     }
   });

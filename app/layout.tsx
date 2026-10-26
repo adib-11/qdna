@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { Epilogue, IBM_Plex_Mono } from "next/font/google";
 import { OwnKeyProvider } from "@/components/OwnKeyProvider";
 import "./globals.css";
 
-// NotionInter substitute
-const inter = Inter({
-  variable: "--font-inter",
+// Heads at 700, names and controls at 600, everything read at 400.
+const epilogue = Epilogue({
+  variable: "--font-epilogue",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
 });
 
-// Lyon Text substitute
-const sourceSerif = Source_Serif_4({
-  variable: "--font-source-serif",
+// Only on figures that compare down a column: ranks, counts, marks.
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400"],
 });
@@ -25,15 +25,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${sourceSerif.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-paper-warmth">
+    <html lang="en" className={`${epilogue.variable} ${plexMono.variable} h-full`}>
+      <body className="flex min-h-full flex-col">
         {/* The first Tab stop on every page. Every page's <main> is #main. */}
         <a
           href="#main"
-          className="sr-only rounded-[var(--radius-lg)] bg-pure-white px-[15px] py-[6px] text-body-sm font-medium text-notion-blue focus:not-sr-only focus:fixed focus:left-[16px] focus:top-[16px] focus:z-[70] print:hidden"
+          className="sr-only rounded-control bg-ink px-4 py-3 text-sm font-semibold text-surface focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] print:hidden"
         >
           Skip to content
         </a>

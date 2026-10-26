@@ -3,12 +3,14 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type Variant = "primary" | "ghost" | "text" | "outlined";
 
 const VARIANT_CLASS: Record<Variant, string> = {
-  // The only filled button colour in the system — one per screen.
-  primary: "bg-notion-blue text-pure-white hover:bg-signal-blue px-[15px] py-[6px] rounded-[var(--radius-lg)]",
-  ghost: "bg-sky-tint text-notion-blue hover:bg-[#d8ecfd] px-[15px] py-[6px] rounded-[var(--radius-lg)]",
-  text: "bg-transparent text-[rgba(0,0,0,0.95)] hover:bg-[rgba(0,0,0,0.04)] px-[15px] py-[6px] rounded-[var(--radius-lg)]",
-  outlined:
-    "bg-transparent text-[rgba(0,0,0,0.9)] border border-[rgba(0,0,0,0.9)] px-[10px] py-[5px] rounded-[var(--radius-md)]",
+  // The only filled button in the system: ink with paper text, one per screen.
+  primary: "border-ink bg-ink text-surface hover:border-ink-2 hover:bg-ink-2",
+  // The quiet pair to the primary: a ruled edge on the second surface.
+  ghost: "border-rule bg-surface-2 text-ink hover:border-muted hover:bg-surface-3",
+  // Typographic: an underline that turns teal on hover.
+  text: "border-transparent bg-transparent text-ink underline decoration-rule underline-offset-4 hover:decoration-accent",
+  // Stops something that is running.
+  outlined: "border-ink bg-transparent text-ink hover:bg-surface-2",
 };
 
 export function Button({
@@ -22,7 +24,7 @@ export function Button({
 }) {
   return (
     <button
-      className={`text-body-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed ${VARIANT_CLASS[variant]} ${className}`}
+      className={`inline-flex min-h-11 items-center justify-center rounded-control border px-4 text-sm font-semibold whitespace-nowrap transition-[background-color,border-color,text-decoration-color,translate] duration-(--dur-micro) ease-out active:translate-y-px disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55 ${VARIANT_CLASS[variant]} ${className}`}
       {...rest}
     >
       {children}

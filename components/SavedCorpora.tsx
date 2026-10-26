@@ -37,19 +37,17 @@ export function SavedCorpora() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-start justify-between gap-[16px]">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-          Saved corpora
-        </h2>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <h2>Saved corpora</h2>
         <ImportCorpusButton existing={[]} onMerged={saveImported} />
       </div>
 
       {corpora.length === 0 ? (
-        <p className="mt-[16px] text-body-sm text-graphite">
+        <p className="mt-6 text-lg text-ink-2">
           Corpora you analyze are saved in this browser and listed here.
         </p>
       ) : (
-        <ul className="mt-[16px] divide-y divide-[var(--border-hairline)] rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
+        <ul className="mt-10 border-t border-ink">
           {corpora.map((corpus) => {
             const { questions } = corpus.outcome;
             const paperCount = paperOrder(questions).length;
@@ -59,19 +57,19 @@ export function SavedCorpora() {
             return (
               <li
                 key={corpus.id}
-                className="flex flex-wrap items-center justify-between gap-[16px] p-[16px]"
+                className="flex flex-wrap items-center justify-between gap-4 border-b border-rule py-4"
               >
                 <div className="min-w-0">
-                  <p className="text-body font-medium break-words">
-                    {title}
-                  </p>
-                  <p className="text-caption text-graphite tabular-nums">
-                    {paperCount} paper{paperCount === 1 ? "" : "s"} ·{" "}
-                    {questions.length} questions · saved{" "}
-                    {new Date(corpus.savedAt).toLocaleDateString()}
+                  <p className="text-lg font-semibold break-words">{title}</p>
+                  <p className="mt-1 flex flex-wrap gap-x-4 text-sm text-ink-2 tabular-nums">
+                    <span>
+                      {paperCount} paper{paperCount === 1 ? "" : "s"}
+                    </span>{" "}
+                    <span>{questions.length} questions</span>{" "}
+                    <span>saved {new Date(corpus.savedAt).toLocaleDateString()}</span>
                   </p>
                 </div>
-                <div className="flex gap-[8px]">
+                <div className="flex gap-2">
                   <Button
                     variant="ghost"
                     aria-label={`Reopen ${which}`}

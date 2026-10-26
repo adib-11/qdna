@@ -1,22 +1,16 @@
 import type { ReactNode } from "react";
 
-type PillTone =
-  | "neutral"
-  | "marigold"
-  | "coral"
-  | "sky-tint"
-  | "sky-wash"
-  | "peach"
-  | "midnight";
+/**
+ * `neutral` names a category. `in` is the one teal, for a match. `out` is a
+ * quiet outline (a miss is never red). `on` is ink, for the finding that stands out.
+ */
+type PillTone = "neutral" | "in" | "out" | "on";
 
 const TONE_CLASS: Record<PillTone, string> = {
-  neutral: "bg-[rgba(0,0,0,0.06)] text-[rgba(0,0,0,0.6)]",
-  marigold: "bg-marigold text-ink-black",
-  coral: "bg-coral text-ink-black",
-  "sky-tint": "bg-sky-tint text-notion-blue",
-  "sky-wash": "bg-sky-wash text-ink-black",
-  peach: "bg-peach text-ink-black",
-  midnight: "bg-midnight-ink text-pure-white",
+  neutral: "bg-surface-3 text-ink-2",
+  in: "bg-accent-soft text-accent-soft-ink",
+  out: "bg-transparent text-muted ring-1 ring-inset ring-rule",
+  on: "bg-ink text-surface",
 };
 
 /** Pill Tag — category label or status indicator. */
@@ -41,31 +35,9 @@ export function Pill({
   return (
     <span
       title={title}
-      className={`inline-flex items-center rounded-[var(--radius-full)] px-[12px] py-[4px] text-caption font-medium tracking-[0.12px] ${
+      className={`inline-flex items-center rounded-pill px-3 py-1 text-sm font-semibold ${
         wrap ? "max-w-full text-left" : "whitespace-nowrap"
       } ${TONE_CLASS[tone]} ${className}`}
-    >
-      {children}
-    </span>
-  );
-}
-
-/**
- * Hero Highlight Pill — the signature typographic device: a colored pill
- * wrapping a single word inline in display copy.
- */
-export function HighlightPill({
-  tone = "marigold",
-  className = "",
-  children,
-}: {
-  tone?: PillTone;
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <span
-      className={`inline-block rounded-[var(--radius-full)] px-[24px] py-[8px] ${TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </span>

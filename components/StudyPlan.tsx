@@ -21,50 +21,47 @@ export function StudyPlan({
 }) {
   if (plan.topics.length === 0) {
     return (
-      <p className="text-body-sm text-graphite">
+      <p className="text-ink-2">
         No questions were extracted, so there is no study plan yet.
       </p>
     );
   }
   const count = plan.topics.length;
 
+  // Set like an exam paper: the rank in the left margin, the marks in the right.
   return (
-    <Card tone="marigold" className="max-w-[760px] p-[20px] sm:p-[36px]">
-      <h2 className="text-caption font-medium uppercase tracking-[0.12px] text-[rgba(0,0,0,0.7)]">
-        Study these first
-      </h2>
+    <Card className="max-w-[760px]">
+      <h2 className="text-xl sm:text-2xl">Study these first</h2>
 
-      <ol className="mt-[12px]">
+      <ol className="mt-6 border-t border-ink">
         {plan.topics.map((topic, index) => (
           <li
             key={topic.topic}
-            className="flex items-baseline gap-[12px] border-t border-[rgba(0,0,0,0.12)] py-[10px] first:border-t-0"
+            className="grid grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 border-b border-rule py-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
           >
-            <span className="w-[20px] shrink-0 text-body-sm tabular-nums text-[rgba(0,0,0,0.7)]">
-              {index + 1}
-            </span>
-            <span className="min-w-0 flex-1">
+            <span className="font-outlier text-sm text-ink-2">{index + 1}</span>
+            <span className="min-w-0">
               {/* The plan is a prefix of the ranking, so rank finds the row. */}
               <a
                 href={`#${topicAnchor(index + 1)}`}
-                className="block break-words text-body font-medium text-ink-black underline decoration-[rgba(0,0,0,0.3)] underline-offset-[3px] hover:decoration-ink-black"
+                className="break-words text-lg font-semibold underline decoration-rule underline-offset-4 transition-[text-decoration-color] duration-(--dur-micro) ease-out hover:decoration-accent"
               >
                 {topic.topic}
               </a>
-              <span className="mt-[2px] block text-caption text-[rgba(0,0,0,0.7)]">
+              <span className="mt-1 block text-sm text-ink-2">
                 asked {topic.count} time{topic.count === 1 ? "" : "s"} in{" "}
                 {topic.paperCount} of {paperCount} paper
                 {paperCount === 1 ? "" : "s"}
               </span>
             </span>
-            <span className="shrink-0 text-body-sm font-medium tabular-nums">
+            <span className="text-right font-outlier text-sm whitespace-nowrap">
               {marks(topic.marksPerPaper)}
             </span>
           </li>
         ))}
       </ol>
 
-      <p className="mt-[12px] text-body-sm font-medium">
+      <p className="mt-6 max-w-[60ch] font-semibold">
         These {count} topic{count === 1 ? "" : "s"}
         {plan.marksPerPaper === null
           ? ""
@@ -72,7 +69,7 @@ export function StudyPlan({
         cover {plan.coveragePct.toFixed(1)}% of the {questionCount} questions
         asked.
       </p>
-      <p className="mt-[8px] text-caption text-[rgba(0,0,0,0.7)]">
+      <p className="mt-2 max-w-[60ch] text-sm text-ink-2">
         Marks are the average per paper. This describes what these papers have
         already asked. It is not a forecast of the next one.
       </p>

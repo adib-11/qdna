@@ -11,7 +11,7 @@ export function CrossDeptBadge({ courseCodes }: { courseCodes: string[] }) {
   if (courseCodes.length <= 1) return null;
 
   return (
-    <Pill tone="coral" title={courseCodes.join(" · ")}>
+    <Pill tone="on" title={courseCodes.join(" · ")}>
       appears across departments
     </Pill>
   );

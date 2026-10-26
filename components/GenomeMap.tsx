@@ -2,9 +2,9 @@ import { paperOrder } from "@/lib/analysis/papers";
 import { mixOver, readableInk } from "@/lib/contrast";
 import type { Question, TopicStat } from "@/lib/types";
 
-/** `--color-notion-blue` (app/globals.css) over the card's white, as hex so contrast can be computed. Change both together. */
-const CELL_BLUE = "#0066c4";
-const CELL_GROUND = "#ffffff";
+/** `--color-ink` over `--color-surface` (app/tokens.css), as hex so contrast can be computed. Change both together. */
+export const CELL_INK = "#0d0d0d";
+export const CELL_GROUND = "#fefdfb";
 
 /** A single hit is faint but must still be visible against the canvas. */
 const MIN_ALPHA = 0.14;
@@ -20,8 +20,8 @@ function alphaFor(count: number, max: number): number {
  * The genome map: topics down, papers across, density where the marks are.
  *
  * Reading a column tells you what one paper covered; reading a row tells you
- * how persistent a topic is. Empty cells stay canvas-coloured rather than white
- * so absence reads as absence and not as a faint hit.
+ * how persistent a topic is. Empty cells take the second surface rather than
+ * the page's, so absence reads as absence and not as a faint hit.
  */
 export function GenomeMap({
   questions,
@@ -44,12 +44,10 @@ export function GenomeMap({
   const max = Math.max(1, ...counts.values());
 
   return (
-    <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
-      <div className="p-[var(--card-padding)] pb-[16px]">
-        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
-          Genome map
-        </h3>
-        <p className="mt-[8px] text-body-sm text-graphite">
+    <div>
+      <div className="pb-6">
+        <h3 className="text-xl sm:text-2xl">Genome map</h3>
+        <p className="mt-3 max-w-[65ch] text-ink-2">
           {stats.length} topic{stats.length === 1 ? "" : "s"} across{" "}
           {papers.length} paper{papers.length === 1 ? "" : "s"}. Cell density is
           the number of questions that paper asked on that topic.
@@ -61,9 +59,9 @@ export function GenomeMap({
         role="region"
         aria-label="Genome map, scrolls sideways"
         tabIndex={0}
-        className="overflow-x-auto px-[var(--card-padding)] pb-[var(--card-padding)] print:overflow-visible"
+        className="overflow-x-auto border-t border-ink print:overflow-visible"
       >
-        <table className="w-full border-collapse text-caption">
+        <table className="w-full border-collapse text-sm">
           <caption className="sr-only">
             Question counts by topic and paper
           </caption>
@@ -71,7 +69,7 @@ export function GenomeMap({
             <tr>
               <th
                 scope="col"
-                className="sticky left-0 z-10 bg-pure-white py-[8px] pr-[16px] text-left align-bottom font-medium text-[rgba(0,0,0,0.6)]"
+                className="sticky left-0 z-10 bg-surface py-2 pr-4 text-left align-bottom font-semibold text-ink-2"
               >
                 Topic
               </th>
@@ -79,7 +77,7 @@ export function GenomeMap({
                 <th
                   key={paper.label}
                   scope="col"
-                  className="min-w-[72px] px-[4px] pb-[8px] align-bottom font-medium text-[rgba(0,0,0,0.6)] print:min-w-0"
+                  className="min-w-[72px] px-1 py-2 align-bottom font-semibold text-ink-2 print:min-w-0"
                 >
                   {/* Labels wrap, so a phone fits more than two papers across. */}
                   <span className="block break-words">{paper.label}</span>
@@ -87,7 +85,7 @@ export function GenomeMap({
               ))}
               <th
                 scope="col"
-                className="min-w-[48px] pl-[16px] pb-[8px] align-bottom text-right font-medium text-[rgba(0,0,0,0.6)]"
+                className="min-w-[48px] py-2 pl-4 align-bottom text-right font-semibold text-ink-2"
               >
                 All
               </th>
@@ -95,10 +93,10 @@ export function GenomeMap({
           </thead>
           <tbody>
             {stats.map((stat) => (
-              <tr key={stat.topic}>
+              <tr key={stat.topic} className="border-t border-rule-2">
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 max-w-[120px] bg-pure-white py-[4px] pr-[8px] text-left align-middle font-normal text-[rgba(0,0,0,0.95)] sm:max-w-[260px] sm:pr-[16px]"
+                  className="sticky left-0 z-10 max-w-[120px] bg-surface py-1 pr-2 text-left align-middle font-normal sm:max-w-[260px] sm:pr-4"
                 >
                   {/* Wraps rather than truncates: a phone has no hover to show the rest. */}
                   <span className="block break-words">{stat.topic}</span>
@@ -106,14 +104,14 @@ export function GenomeMap({
                 {papers.map((paper) => {
                   const count = cellCount(stat.topic, paper.label);
                   // An explicit shade, so the ink can be picked against it.
-                  const shade = count === 0 ? null : mixOver(CELL_BLUE, alphaFor(count, max), CELL_GROUND);
+                  const shade = count === 0 ? null : mixOver(CELL_INK, alphaFor(count, max), CELL_GROUND);
                   return (
-                    <td key={paper.label} className="p-[2px]">
+                    <td key={paper.label} className="p-0.5">
                       <div
                         title={`${stat.topic} · ${paper.label} · ${count} question${count === 1 ? "" : "s"}`}
-                        className="flex h-[28px] items-center justify-center rounded-[var(--radius-md)] tabular-nums"
+                        className="flex h-7 items-center justify-center rounded-sm font-outlier"
                         style={{
-                          backgroundColor: shade ?? "var(--color-paper-warmth)",
+                          backgroundColor: shade ?? "var(--color-surface-2)",
                           color: shade ? readableInk(shade) : undefined,
                         }}
                       >
@@ -122,7 +120,7 @@ export function GenomeMap({
                     </td>
                   );
                 })}
-                <td className="pl-[16px] text-right align-middle font-medium tabular-nums text-[rgba(0,0,0,0.95)]">
+                <td className="pl-4 text-right align-middle font-outlier">
                   {stat.count}
                 </td>
               </tr>

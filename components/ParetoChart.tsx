@@ -13,18 +13,21 @@ import {
   YAxis,
 } from "recharts";
 import { pointsToReach } from "@/lib/analysis/pareto";
+import { Button } from "@/components/ui/Button";
 import { PARETO_TARGET_PCT } from "@/lib/config";
 import type { ParetoPoint } from "@/lib/types";
 
 /**
- * Palette is deliberately two-valued: Notion blue for the bars, ink-black alpha
- * for everything structural. A Pareto chart's job is to make one crossing point
- * obvious, and extra hues only compete with it.
+ * One hue only: the teal, for the cumulative line the chart argues from. Bars
+ * are pale and outlined, so the line reads over them; the target line is ink. A Pareto chart's job is to make one
+ * crossing point obvious, and extra hues only compete with it.
  */
-const BAR_FILL = "var(--color-notion-blue)";
-const LINE_STROKE = "rgba(0,0,0,0.95)";
-const AXIS_COLOR = "rgba(0,0,0,0.6)";
-const GRID_COLOR = "rgba(0,0,0,0.08)";
+const BAR_FILL = "var(--color-surface-3)";
+const BAR_STROKE = "var(--color-muted)";
+const LINE_STROKE = "var(--color-accent)";
+const TARGET_STROKE = "var(--color-ink)";
+const AXIS_COLOR = "var(--color-ink-2)";
+const GRID_COLOR = "var(--color-rule)";
 
 /** Enough room per topic that the axis labels stay readable; scroll past that. */
 const PX_PER_TOPIC = 68;
@@ -50,28 +53,27 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
   }));
 
   return (
-    <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
-      <div className="p-[var(--card-padding)] pb-[8px]">
-        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
-          Pareto coverage
-        </h3>
-        <p className="mt-[8px] text-body-sm text-graphite">
+    <div>
+      <div className="pb-6">
+        <h3 className="text-xl sm:text-2xl">Pareto coverage</h3>
+        <p className="mt-3 max-w-[65ch] text-ink-2">
           Topics ranked by how often they were asked, with cumulative coverage
           overlaid. The dashed line marks {PARETO_TARGET_PCT}% of every question
           in the corpus.
         </p>
-        <p id={summaryId} className="mt-[8px] text-body-sm font-medium">
+        <p id={summaryId} className="mt-4 max-w-[65ch] text-lg font-semibold">
           {summary}
         </p>
-        <button
+        <Button
           type="button"
+          variant="ghost"
           aria-expanded={showTable}
           aria-controls={tableId}
           onClick={() => setShowTable((open) => !open)}
-          className="mt-[8px] rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd] print:hidden"
+          className="mt-4 print:hidden"
         >
           {showTable ? "Hide the table" : "Show the numbers as a table"}
-        </button>
+        </Button>
       </div>
 
       <div
@@ -79,7 +81,7 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
         aria-label="Pareto chart, scrolls sideways"
         aria-describedby={summaryId}
         tabIndex={0}
-        className="overflow-x-auto px-[8px] pb-[var(--card-padding)] print:hidden"
+        className="overflow-x-auto border-t border-ink pt-4 print:hidden"
       >
         <div
           style={{ minWidth: Math.max(560, data.length * PX_PER_TOPIC) }}
@@ -96,20 +98,20 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
                 interval={0}
                 angle={-40}
                 textAnchor="end"
-                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                tick={{ fill: AXIS_COLOR, fontSize: 13 }}
                 stroke={GRID_COLOR}
               />
               <YAxis
                 yAxisId="count"
                 allowDecimals={false}
-                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                tick={{ fill: AXIS_COLOR, fontSize: 13 }}
                 stroke={GRID_COLOR}
                 label={{
                   value: "questions",
                   angle: -90,
                   position: "insideLeft",
                   fill: AXIS_COLOR,
-                  fontSize: 12,
+                  fontSize: 13,
                 }}
               />
               <YAxis
@@ -117,15 +119,16 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
                 orientation="right"
                 domain={[0, 100]}
                 unit="%"
-                tick={{ fill: AXIS_COLOR, fontSize: 12 }}
+                tick={{ fill: AXIS_COLOR, fontSize: 13 }}
                 stroke={GRID_COLOR}
               />
               <Tooltip
                 contentStyle={{
-                  borderRadius: 8,
-                  border: "1px solid rgba(0,0,0,0.08)",
+                  borderRadius: 10,
+                  border: "1px solid var(--color-ink)",
+                  background: "var(--color-surface)",
                   boxShadow: "none",
-                  fontSize: 12,
+                  fontSize: 14,
                 }}
                 labelFormatter={(_label, payload) =>
                   payload?.[0]?.payload?.topic ?? ""
@@ -139,21 +142,21 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
               <ReferenceLine
                 yAxisId="pct"
                 y={PARETO_TARGET_PCT}
-                stroke={LINE_STROKE}
+                stroke={TARGET_STROKE}
                 strokeDasharray="4 4"
-                strokeOpacity={0.4}
                 label={{
                   value: `${PARETO_TARGET_PCT}%`,
                   position: "right",
                   fill: AXIS_COLOR,
-                  fontSize: 12,
+                  fontSize: 13,
                 }}
               />
               <Bar
                 yAxisId="count"
                 dataKey="count"
                 fill={BAR_FILL}
-                radius={[4, 4, 0, 0]}
+                stroke={BAR_STROKE}
+                radius={[2, 2, 0, 0]}
                 maxBarSize={36}
               />
               <Line
@@ -161,7 +164,7 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
                 type="monotone"
                 dataKey="cumulativePct"
                 stroke={LINE_STROKE}
-                strokeWidth={2}
+                strokeWidth={3}
                 dot={{ r: 2.5, fill: LINE_STROKE, strokeWidth: 0 }}
                 activeDot={{ r: 4 }}
               />
@@ -174,24 +177,24 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
           page, so print always carries its numbers instead. */}
       <table
         id={tableId}
-        className={`mx-[var(--card-padding)] mb-[var(--card-padding)] text-caption ${showTable ? "" : "hidden"} print:table`}
+        className={`mt-6 w-full border-collapse text-sm ${showTable ? "" : "hidden"} print:table`}
       >
         <caption className="sr-only">Pareto coverage by topic</caption>
         <thead>
-          <tr className="text-left">
-            <th scope="col" className="pr-[16px]">Rank</th>
-            <th scope="col" className="pr-[16px]">Topic</th>
-            <th scope="col" className="pr-[16px] text-right">Questions</th>
-            <th scope="col" className="text-right">Cumulative</th>
+          <tr className="border-b border-ink text-left">
+            <th scope="col" className="py-2 pr-4 font-semibold">Rank</th>
+            <th scope="col" className="py-2 pr-4 font-semibold">Topic</th>
+            <th scope="col" className="py-2 pr-4 text-right font-semibold">Questions</th>
+            <th scope="col" className="py-2 text-right font-semibold">Cumulative</th>
           </tr>
         </thead>
         <tbody>
           {data.map((point) => (
-            <tr key={point.topic}>
-              <td className="pr-[16px] tabular-nums">{point.rank}</td>
-              <td className="pr-[16px]">{point.topic}</td>
-              <td className="pr-[16px] text-right tabular-nums">{point.count}</td>
-              <td className="text-right tabular-nums">
+            <tr key={point.topic} className="border-b border-rule">
+              <td className="py-2 pr-4 font-outlier">{point.rank}</td>
+              <td className="py-2 pr-4">{point.topic}</td>
+              <td className="py-2 pr-4 text-right font-outlier">{point.count}</td>
+              <td className="py-2 text-right font-outlier">
                 {point.cumulativePct.toFixed(1)}%
               </td>
             </tr>
