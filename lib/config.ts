@@ -33,8 +33,41 @@ export const MIN_REQUEST_INTERVAL_MS = 2500;
  */
 export const EVAL_MIN_INTERVAL_MS = 12_000;
 
-/** Pages per request the extraction eval measures every configuration at. */
-export const EVAL_BATCH_SIZES = [2, 4, 8];
+/**
+ * Pages per request the eval sends live. Every ground-truth paper is 1-2
+ * pages and batches never cross papers, so 4 and 8 would send the very same
+ * requests; the results table reports the 2-page numbers for all three.
+ */
+export const EVAL_LIVE_BATCH_PAGES = 2;
+export const EVAL_REPORTED_BATCH_SIZES = [2, 4, 8];
+
+/**
+ * Requests per quota day the eval allows itself per model, stopping before
+ * each. gemini-flash-latest's 20 is measured; the others are not published
+ * for the free tier, so they get a conservative guess. EVAL_DAILY_CAPS
+ * ("model=n,model=n") overrides them.
+ */
+export const EVAL_DAILY_CAPS: Record<string, number> = {
+  "gemini-flash-latest": 20,
+  "gemini-2.5-flash-lite": 15,
+  "gemma-4-26b-a4b-it": 15,
+};
+/** The cap for any other model, such as a fallback in the Flash chain. */
+export const EVAL_DEFAULT_DAILY_CAP = 15;
+
+/** Free-tier daily quotas reset at midnight Pacific time. */
+export const QUOTA_TIME_ZONE = "America/Los_Angeles";
+
+/**
+ * A measurement refused with 429 or 503 is retried after this, doubling, up
+ * to EVAL_MEASUREMENT_RETRIES times. A minute outlasts a requests-per-minute
+ * window, so a 429 that survives it is the daily quota.
+ */
+export const EVAL_BACKOFF_BASE_MS = 60_000;
+export const EVAL_MEASUREMENT_RETRIES = 2;
+
+/** Consecutive 429s after which a model counts as spent for the quota day. */
+export const EVAL_SPENT_AFTER_429S = 4;
 
 /**
  * Requests per day one model allows on a free key, as measured for
@@ -165,6 +198,13 @@ export const PRACTICE_PAPER_EXAMPLE_CHARS = 400;
 export const PARETO_TARGET_PCT = 70;
 
 export const EXTRACTION_MODEL = "gemini-flash-latest";
+
+/**
+ * The extraction setup the app uses: a name from EXTRACTION_SETUPS in
+ * lib/gemini/extract.ts. The eval rewrites the two lines below once it ends.
+ */
+// Pending: the extraction eval (docs/extraction-eval.md) is still in progress.
+export const EXTRACTION_SETUP = "Flash chain";
 export const REASONING_MODEL = "gemini-flash-latest";
 
 /**

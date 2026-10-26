@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { EXTRACTION_SETUP } from "@/lib/config";
 import type { ModelClient } from "@/lib/gemini/generate";
 import type { GroundTruthCourse } from "@/lib/eval/groundTruth";
 import {
@@ -6,7 +8,16 @@ import {
   formatResultsTable,
   gateFailures,
   rankRows,
-  runConfiguration,
+  advanceEval,
+  emptyProgress,
+  evalRows,
+  evalStatus,
+  pendingWork,
+  quotaDay,
+  resultsDoc,
+  setExtractionSetup,
+  textLayerRecall,
+  type EvalProgress,
   type EvalConfiguration,
   type EvalPaper,
   type EvalRow,
@@ -65,7 +76,7 @@ type Reply = { latencyMs: number; text?: string; error?: { status: number } };
 
 /** A client that plays the replies in call order, each after its latency on the fake clock. */
 function scripted(replies: Reply[]) {
-  const calls: Array<{ model: string; config: Record<string, unknown>; parts: unknown[] }> = [];
+  const calls: Array<{ model: string; config: Record<string, unknown>; parts: unknown[]; at: number }> = [];
   const client: ModelClient = {
     models: {
       generateContent: async ({ model, config, contents }) => {
@@ -74,6 +85,7 @@ function scripted(replies: Reply[]) {
           model,
           config: config as Record<string, unknown>,
           parts: (contents as Array<{ parts: unknown[] }>)[0].parts,
+          at: Date.now(),
         });
         if (!reply) throw new Error("unscripted request");
         await new Promise((r) => setTimeout(r, reply.latencyMs));
@@ -99,81 +111,125 @@ async function settle<T>(running: Promise<T>): Promise<T> {
   return running;
 }
 
-const chain: EvalConfiguration = { name: "Chain", models: ["a"] };
+describe("quotaDay", () => {
+  it("rolls over at midnight Pacific time, not UTC", () => {
+    expect(quotaDay(new Date("2026-10-27T06:59:00Z"))).toBe("2026-10-26");
+    expect(quotaDay(new Date("2026-10-27T07:00:00Z"))).toBe("2026-10-27");
+  });
+});
 
-const evaluate = (
-  client: ModelClient,
-  options: Partial<Parameters<typeof runConfiguration>[1]> = {},
-) =>
-  settle(
-    runConfiguration(client, {
-      configuration: chain,
-      batchSize: 2,
-      papers: [paper()],
+const chain: EvalConfiguration = { name: "Chain", models: ["a"] };
+const NOON = new Date("2026-10-26T19:00:00Z"); // noon in Pacific time
+
+type AdvanceOptions = Parameters<typeof advanceEval>[2];
+
+function advance(client: ModelClient, progress: EvalProgress, options: Partial<AdvanceOptions> = {}) {
+  return settle(
+    advanceEval(client, progress, {
       truth,
+      configurations: [chain],
+      papers: [paper()],
       minIntervalMs: 0,
       ...options,
     }),
   );
+}
 
-describe("runConfiguration", () => {
+const noiseAndAm = answer(["1(a)", 4, "Define noise figure.", "Noise"], ["1(b)", 5, "Explain AM.", "AM"]);
+
+describe("advanceEval", () => {
   // Hashing runs on the real event loop; only timers and the clock are faked.
-  beforeEach(() => vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] }));
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+    vi.setSystemTime(NOON);
+  });
   afterEach(() => vi.useRealTimers());
 
-  it("scores a run against the ground truth under the known paper label", async () => {
+  it("measures every paper and scores it against the ground truth under the known label", async () => {
     const { client } = scripted([
-      {
-        latencyMs: 20_000,
-        text: answer(["1(a)", 4, "Define noise figure.", "Noise"], ["1(b)", 5, "Explain AM.", "AM"]),
-      },
+      { latencyMs: 20_000, text: noiseAndAm },
+      { latencyMs: 10_000, text: noiseAndAm },
     ]);
-    const row = await evaluate(client);
+    const progress = emptyProgress();
+    await advance(client, progress);
 
-    expect(row).toMatchObject({
-      configuration: "Chain",
-      batchSize: 2,
-      run: 1,
-      batches: 1,
-      requests: 1,
-      requestsPerPaper: 1,
-      papersPerDay: 20,
-      failureRate: 0,
-      p50Ms: 20_000,
-      p95Ms: 20_000,
-      recall: 1,
-      precision: 1,
-      marksAccuracy: 0.5,
-      topicsPerQuestion: 1,
-      answeredBy: { a: 1 },
-    });
+    expect(evalRows(progress, { truth, configurations: [chain] }, 1)).toEqual([
+      expect.objectContaining({
+        configuration: "Chain",
+        batchSize: 2,
+        run: 1,
+        batches: 1,
+        requests: 1,
+        requestsPerPaper: 1,
+        papersPerDay: 20,
+        failureRate: 0,
+        p50Ms: 20_000,
+        p95Ms: 20_000,
+        recall: 1,
+        precision: 1,
+        marksAccuracy: 0.5,
+        topicsPerQuestion: 1,
+        answeredBy: { a: 1 },
+      }),
+    ]);
   });
 
-  it("splits a paper into batches of the given size and reports latency percentiles", async () => {
+  it("re-runs the two best configurations once the first pass is complete", async () => {
+    const noiseOnly = answer(["1(a)", 4, "Define noise figure.", "Noise"]);
     const { client, calls } = scripted([
-      { latencyMs: 10_000, text: answer() },
-      { latencyMs: 30_000, text: answer() },
+      { latencyMs: 1_000, text: noiseOnly },
+      { latencyMs: 1_000, text: noiseAndAm },
+      { latencyMs: 1_000, text: answer() },
+      { latencyMs: 1_000, text: noiseAndAm },
+      { latencyMs: 1_000, text: noiseOnly },
     ]);
-    const row = await evaluate(client, { papers: [paper([page(0), page(1), page(2)])] });
+    const configurations = ["a", "b", "c"].map((m) => ({ name: m.toUpperCase(), models: [m] }));
+    const progress = emptyProgress();
+    await advance(client, progress, { configurations });
 
-    expect(calls.map((c) => c.parts.length - 1)).toEqual([2, 1]);
-    expect(row).toMatchObject({ batches: 2, requests: 2, p50Ms: 10_000, p95Ms: 30_000 });
+    expect(calls.map((c) => c.model)).toEqual(["a", "b", "c", "b", "a"]);
+    expect(evalRows(progress, { truth, configurations }, 2).map((r) => r.configuration)).toEqual(["A", "B"]);
   });
 
-  it("sends the configuration's models and settings over the app's prompt and schema", async () => {
-    const { client, calls } = scripted([{ latencyMs: 1_000, text: answer() }]);
-    await evaluate(client, {
-      configuration: { name: "Lite", models: ["lite"], config: { thinkingConfig: { thinkingBudget: 0 } } },
-      batchSize: 8,
-    });
+  it("resumes from saved progress without repeating a measurement", async () => {
+    const saved: string[] = [];
+    const first = scripted([
+      { latencyMs: 1_000, text: noiseAndAm },
+      { latencyMs: 1_000, text: noiseAndAm },
+    ]);
+    await advance(first.client, emptyProgress(), { save: (p) => saved.push(JSON.stringify(p)) });
 
-    expect(calls[0].model).toBe("lite");
-    expect(calls[0].config).toMatchObject({
-      responseMimeType: "application/json",
-      temperature: 0,
-      thinkingConfig: { thinkingBudget: 0 },
-    });
-    expect(calls[0].config.responseSchema).toBeDefined();
+    const second = scripted([]);
+    const progress = JSON.parse(saved.at(-1)!) as EvalProgress;
+    await advance(second.client, progress);
+
+    expect(first.calls).toHaveLength(2);
+    expect(second.calls).toHaveLength(0);
+    expect(evalRows(progress, { truth, configurations: [chain] }, 2)).toHaveLength(1);
+  });
+
+  it("stops before a model's daily cap, counting what today already spent", async () => {
+    const { client, calls } = scripted([{ latencyMs: 1_000, text: noiseAndAm }]);
+    const progress = emptyProgress();
+    progress.usage["2026-10-26"] = { a: { requests: 2, spent: false } };
+    await advance(client, progress, { caps: { a: 3 } });
+
+    expect(calls).toHaveLength(1);
+    expect(progress.usage["2026-10-26"].a.requests).toBe(3);
+    expect(pendingWork(progress, { truth, configurations: [chain] }).phase).toBe("finalists");
+  });
+
+  it("gives every model a fresh budget on the next Pacific quota day", async () => {
+    const { client, calls } = scripted([
+      { latencyMs: 1_000, text: noiseAndAm },
+      { latencyMs: 1_000, text: noiseAndAm },
+    ]);
+    const progress = emptyProgress();
+    progress.usage["2026-10-25"] = { a: { requests: 3, spent: true } };
+    await advance(client, progress, { caps: { a: 3 } });
+
+    expect(calls).toHaveLength(2);
+    expect(progress.usage["2026-10-26"].a).toEqual({ requests: 2, spent: false });
   });
 
   it("retries a rate-limited batch without counting the refused requests", async () => {
@@ -181,43 +237,125 @@ describe("runConfiguration", () => {
       { latencyMs: 1_000, error: { status: 429 } },
       { latencyMs: 1_000, error: { status: 429 } },
       { latencyMs: 5_000, text: answer(["1(a)", 4, "Define noise figure.", "Noise"]) },
+      { latencyMs: 1_000, text: noiseAndAm },
     ]);
-    const row = await evaluate(client);
+    const progress = emptyProgress();
+    await advance(client, progress);
+    const [first] = evalRows(progress, { truth, configurations: [chain] }, 1);
 
-    expect(calls).toHaveLength(3);
-    expect(row).toMatchObject({ requests: 1, failureRate: 0, recall: 0.5 });
+    expect(calls).toHaveLength(4);
+    expect(first).toMatchObject({ requests: 1, failureRate: 0, recall: 0.5 });
     // The batch's latency is what a student waits: both refusals, both backoffs, the answer.
-    expect(row.p50Ms).toBeGreaterThanOrEqual(1_000 + 2_000 + 1_000 + 4_000 + 5_000);
+    expect(first.p50Ms).toBeGreaterThanOrEqual(1_000 + 2_000 + 1_000 + 4_000 + 5_000);
   });
 
-  it("stops when the quota stays spent, rather than scoring quota as failures", async () => {
+  it("treats a 429 that outlasts the backoff as the model's daily quota, and saves it", async () => {
     const spent = { latencyMs: 1_000, error: { status: 429 } };
-    const { client } = scripted([spent, spent, spent]);
-    await expect(evaluate(client)).rejects.toThrow(/quota/i);
-  });
+    const { client, calls } = scripted(Array(20).fill(spent));
+    const saved: EvalProgress[] = [];
+    await advance(client, emptyProgress(), { save: (p) => saved.push(structuredClone(p)) });
 
-  it("records a batch that fails outright, and one that keeps timing out, as failures", async () => {
-    const timeout = { latencyMs: 1_000, error: { status: 504 } };
-    const { client } = scripted([{ latencyMs: 1_000, error: { status: 400 } }, timeout, timeout, timeout]);
-    const row = await evaluate(client, { batchSize: 1 });
-
-    expect(row).toMatchObject({ batches: 2, requests: 4, failureRate: 1, recall: 0 });
-    expect(row.p95Ms).toBeNaN();
-  });
-
-  it("reads text-layer pages without the model and sends only the rest", async () => {
-    const textPage = page(0, "Section A\nQ.1 (a) Define noise figure. 04\n".padEnd(400, " ."));
-    const { client, calls } = scripted([
-      { latencyMs: 1_000, text: answer(["1(b)", 4, "Explain AM.", "AM"]) },
-    ]);
-    const row = await evaluate(client, {
-      configuration: { name: "Text first", models: ["a"], textLayerFirst: true },
-      papers: [paper([textPage, page(1)])],
+    expect(calls).toHaveLength(4);
+    expect(calls[3].at - calls[2].at).toBeGreaterThanOrEqual(60_000);
+    expect(saved.at(-1)).toEqual({
+      measurements: {},
+      usage: { "2026-10-26": { a: { requests: 4, spent: true } } },
     });
+  });
 
-    expect(calls).toHaveLength(1);
-    expect(calls[0].parts).toHaveLength(2);
-    expect(row).toMatchObject({ requests: 1, recall: 1 });
+  it("backs off and measures again after a 503 the app's retries could not get past", async () => {
+    const busy = { latencyMs: 1_000, error: { status: 503 } };
+    const { client, calls } = scripted([busy, busy, busy, { latencyMs: 1_000, text: noiseAndAm }]);
+    const progress = emptyProgress();
+    await advance(client, progress);
+
+    expect(calls[3].at - calls[2].at).toBeGreaterThanOrEqual(60_000);
+    expect(evalRows(progress, { truth, configurations: [chain] }, 1)[0]).toMatchObject({
+      requests: 4,
+      failureRate: 0,
+      recall: 1,
+    });
+  });
+
+  it("records a batch that keeps failing, or fails outright, as a failure", async () => {
+    const busy = { latencyMs: 1_000, error: { status: 503 } };
+    const { client, calls } = scripted([...Array(9).fill(busy), { latencyMs: 1_000, error: { status: 400 } }]);
+    const progress = emptyProgress();
+    await advance(client, progress);
+    const spec = { truth, configurations: [chain] };
+
+    expect(calls).toHaveLength(10);
+    expect(evalRows(progress, spec, 1)[0]).toMatchObject({ batches: 1, requests: 9, failureRate: 1, recall: 0 });
+    expect(evalRows(progress, spec, 1)[0].p95Ms).toBeNaN();
+    expect(evalRows(progress, spec, 2)[0]).toMatchObject({ requests: 1, failureRate: 1 });
+  });
+
+  it("paces requests across measurements, not only within one", async () => {
+    const { client, calls } = scripted([
+      { latencyMs: 1_000, text: noiseAndAm },
+      { latencyMs: 1_000, text: noiseAndAm },
+    ]);
+    await advance(client, emptyProgress(), { minIntervalMs: 12_000 });
+
+    expect(calls[1].at - calls[0].at).toBeGreaterThanOrEqual(12_000);
+  });
+});
+
+describe("evalStatus", () => {
+  const configurations = [
+    { name: "Flash", models: ["flash", "fallback"] },
+    { name: "Flash, low res", models: ["flash", "fallback"] },
+    { name: "Lite", models: ["lite"] },
+  ];
+  // Three papers of 1, 2 and 3 pages: 1, 1 and 2 requests at 2 pages a request.
+  const threePapers: GroundTruthCourse[] = [
+    {
+      ...truth[0],
+      papers: [1, 2, 3].map((pages) => ({
+        ...truth[0].papers[0],
+        label: `paper ${pages}`,
+        source: { ...truth[0].papers[0].source, pages: Array.from({ length: pages }, (_, i) => i + 1) },
+      })),
+    },
+  ];
+  const spec = { truth: threePapers, configurations, caps: { flash: 5, lite: 3 } };
+
+  it("plans the whole eval from nothing: requests per model, and days under the caps", () => {
+    const status = evalStatus(emptyProgress(), spec, NOON);
+
+    expect(status.phase).toBe("first pass");
+    expect(status.models).toEqual([
+      { model: "flash", cap: 5, usedToday: 0, spentToday: false, sent: 0, left: 8 },
+      { model: "lite", cap: 3, usedToday: 0, spentToday: false, sent: 0, left: 4 },
+    ]);
+    // flash: 5 today, 3 tomorrow; then a day for the finalists.
+    expect(status.daysLeft).toBe(3);
+    expect(status.next).toBe("measure the first pass: Flash (3 papers), Flash, low res (3 papers), Lite (3 papers)");
+  });
+
+  it("counts what is done and what today has already spent", () => {
+    const progress = emptyProgress();
+    progress.usage["2026-10-25"] = { flash: { requests: 5, spent: true } };
+    progress.usage["2026-10-26"] = { flash: { requests: 2, spent: false }, lite: { requests: 1, spent: true } };
+    for (const label of ["paper 1", "paper 2", "paper 3"]) {
+      progress.measurements[`1|Flash|${label}`] = {
+        requests: {},
+        answeredBy: {},
+        latenciesMs: [],
+        batches: 0,
+        batchesFailed: 0,
+        questions: [],
+      };
+    }
+    const status = evalStatus(progress, spec, NOON);
+
+    expect(status.models).toEqual([
+      { model: "flash", cap: 5, usedToday: 2, spentToday: false, sent: 7, left: 4 },
+      { model: "lite", cap: 3, usedToday: 1, spentToday: true, sent: 1, left: 4 },
+    ]);
+    // lite: none today, 3 tomorrow, 1 the day after; then the finalists.
+    expect(status.daysLeft).toBe(4);
+    expect(status.next).toBe("measure the first pass: Flash, low res (3 papers), Lite (3 papers)");
   });
 });
 
@@ -281,9 +419,97 @@ describe("formatResultsTable", () => {
 });
 
 describe("the configurations", () => {
-  it("cover the five configurations", () => {
-    expect(CONFIGURATIONS).toHaveLength(5);
-    expect(CONFIGURATIONS.filter((c) => c.textLayerFirst)).toHaveLength(1);
+  it("run the four model setups live, and the app uses one of them", () => {
+    expect(CONFIGURATIONS.map((c) => c.name)).toEqual([
+      "Flash chain",
+      "Flash-Lite, thinking off",
+      "Gemma 4",
+      "Low media resolution",
+    ]);
+    expect(CONFIGURATIONS.map((c) => c.name)).toContain(EXTRACTION_SETUP);
+  });
+});
+
+describe("resultsDoc", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+    vi.setSystemTime(NOON);
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it("reports the 2-page numbers for 2, 4 and 8, the re-runs, the winner and the text layer", async () => {
+    const configurations = [
+      { name: "A", models: ["a"] },
+      { name: "B", models: ["b"] },
+    ];
+    const exact = answer(["1(a)", 4, "Define noise figure.", "Noise"], ["1(b)", 4, "Explain AM.", "AM"]);
+    const { client } = scripted(Array(4).fill({ latencyMs: 1_000, text: exact }));
+    const progress = emptyProgress();
+    await advance(client, progress, { configurations });
+
+    const { markdown, winner, why } = resultsDoc(progress, { truth, configurations }, [
+      { label: LABEL, recall: 0.72 },
+    ]);
+    const tableLines = (heading: string) =>
+      markdown.split(`## ${heading}`)[1].split("## ")[0].split("\n").filter((l) => /^\| [AB] \|/.test(l));
+
+    expect(winner).toBe("A");
+    expect(why).toMatch(/passes every gate/);
+    expect(markdown).toContain("quota days 2026-10-26 to 2026-10-26");
+    expect(tableLines("First pass").map((l) => l.split(" | ").slice(0, 3).join(" | "))).toEqual([
+      "| A | 2 | 1",
+      "| A | 4 | 1",
+      "| A | 8 | 1",
+      "| B | 2 | 1",
+      "| B | 4 | 1",
+      "| B | 8 | 1",
+    ]);
+    expect(tableLines("Finalists re-run")).toHaveLength(4);
+    expect(markdown).toMatch(/1-2 pages/);
+    expect(markdown).toContain(`${LABEL}: 0.72`);
+  });
+});
+
+describe("textLayerRecall", () => {
+  it("scores each paper with a text layer on the parser alone, and skips scans without one", () => {
+    const text = "Section A\nQ.1 (a) Define noise figure. 04\n".padEnd(400, " .");
+    const scanned = { ...truth[0].papers[0], label: "scan", source: { ...truth[0].papers[0].source, textLayer: false } };
+    const both = [{ ...truth[0], papers: [...truth[0].papers, scanned] }];
+
+    expect(
+      textLayerRecall(
+        [
+          { label: LABEL, pages: [{ text }, { text: "" }] },
+          { label: "scan", pages: [{ text: "" }] },
+        ],
+        both,
+      ),
+    ).toEqual([{ label: LABEL, recall: 0.5 }]);
+  });
+});
+
+describe("setExtractionSetup", () => {
+  it("finds the setting in the real config", () => {
+    const source = readFileSync("lib/config.ts", "utf8");
+    expect(setExtractionSetup(source, "Gemma 4", "why")).toContain('EXTRACTION_SETUP = "Gemma 4";');
+  });
+
+  it("points the app's config at the winner, citing the results table", () => {
+    const source = [
+      "export const EXTRACTION_MODEL = \"m\";",
+      "// Pending: the extraction eval (docs/extraction-eval.md) is still in progress.",
+      "export const EXTRACTION_SETUP = \"Flash chain\";",
+      "export const OTHER = 1;",
+    ].join("\n");
+
+    expect(setExtractionSetup(source, "Gemma 4", "it passes every gate")).toBe(
+      [
+        "export const EXTRACTION_MODEL = \"m\";",
+        "// Chosen by the extraction eval, docs/extraction-eval.md: it passes every gate.",
+        "export const EXTRACTION_SETUP = \"Gemma 4\";",
+        "export const OTHER = 1;",
+      ].join("\n"),
+    );
   });
 });
 

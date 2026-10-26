@@ -1,29 +1,44 @@
 #!/usr/bin/env node
 /**
- * The extraction eval: every configuration at every batch size, scored
- * against the ground truth, then the two finalists re-run.
+ * The extraction eval, run on a free key over several days.
  *
- *   GEMINI_API_KEY=… node scripts/eval-extraction.mjs <papers-dir> <pages-dir> [out.md]
+ *   node scripts/eval-extraction.mjs plan
+ *   node scripts/eval-extraction.mjs text-layer <papers-dir>
+ *   GEMINI_API_KEY=… node scripts/eval-extraction.mjs run <papers-dir> <pages-dir>
  *
- * <papers-dir> holds the source PDFs the ground truth names (they are never
- * committed); the ground-truth pages are rendered into <pages-dir>. Pages are
- * rasterised the way extract-corpus.mjs does it, and everything after that —
- * batching, pacing, retries, the model chain, the prompt and the schema — is
- * the app's own code, through lib/eval/run.ts. Needs Node 23.5+ for
- * `registerHooks`, and pdftoppm and pdftotext (poppler).
+ * `plan` needs no key and makes no network call: it prints the requests the
+ * whole eval needs per model and the days that takes under the daily caps,
+ * then where the saved progress stands.
  *
- * Rows are written after every measurement, so a run stopped by spent quota
- * keeps what it measured. EVAL_MIN_INTERVAL_MS overrides the free-tier pacing.
+ * `text-layer` measures "text layer first" offline, from each PDF's text layer
+ * (pdftotext), at no quota. It is why that setup is not run live.
+ *
+ * `run` takes the eval as far as today's quota allows and stops before each
+ * model's cap. Every request and measurement is saved to the progress file, so
+ * the next run, on any day, carries on where this one stopped: the first pass,
+ * then the two finalists' re-runs, and then it writes docs/extraction-eval.md
+ * and sets EXTRACTION_SETUP in lib/config.ts to the winner. Until then it
+ * prints what is done, what is left and what the next run will do.
+ *
+ * <papers-dir> holds the source PDFs the ground truth names (never committed);
+ * pages are rendered into <pages-dir> the way extract-corpus.mjs renders them,
+ * and everything after that is the app's own code, through lib/eval/run.ts.
+ * Needs Node 23.5+ for `registerHooks`, and pdftoppm and pdftotext (poppler).
+ *
+ * Environment:
+ *   EVAL_PROGRESS_FILE    progress file, outside the repo (default /tmp/qd/eval6-progress.json)
+ *   EVAL_DAILY_CAPS       "model=n,model=n": per-model requests per quota day, over lib/config.ts's
+ *   EVAL_MIN_INTERVAL_MS  gap between requests (default: free-tier pacing)
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { registerHooks } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { GoogleGenAI } from "@google/genai";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GROUND_TRUTH_DIR = path.join(ROOT, "tests", "fixtures", "ground-truth");
+const CONFIG_FILE = path.join(ROOT, "lib", "config.ts");
 
 // The app's modules import each other through tsconfig's "@/" alias and
 // without extensions, as the bundler allows; plain Node needs both spelled out.
@@ -37,117 +52,143 @@ registerHooks({
     return nextResolve(target, context);
   },
 });
-const { rasterise } = await import("./extract-corpus.mjs");
-const { EVAL_BATCH_SIZES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
-const { CONFIGURATIONS, GATES_TEXT, formatResultsTable, gateFailures, rankRows, runConfiguration } =
+const { EVAL_DAILY_CAPS, EVAL_LIVE_BATCH_PAGES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
+const { RESULTS_DOC, advanceEval, emptyProgress, evalStatus, resultsDoc, setExtractionSetup, textLayerRecall } =
   await import("../lib/eval/run.ts");
 
-const minIntervalMs = Number(process.env.EVAL_MIN_INTERVAL_MS ?? EVAL_MIN_INTERVAL_MS);
+const progressFile = path.resolve(process.env.EVAL_PROGRESS_FILE ?? "/tmp/qd/eval6-progress.json");
+if (!path.relative(ROOT, progressFile).startsWith("..")) {
+  fail(`the progress file must live outside the repo: ${progressFile}`);
+}
 
-const [papersDir, pagesDir, outPath = path.join(ROOT, "docs", "extraction-eval.md")] =
-  process.argv.slice(2);
-if (!papersDir || !pagesDir || !process.env.GEMINI_API_KEY) {
-  console.error("usage: GEMINI_API_KEY=… eval-extraction.mjs <papers-dir> <pages-dir> [out.md]");
-  process.exit(2);
+const caps = { ...EVAL_DAILY_CAPS };
+for (const entry of (process.env.EVAL_DAILY_CAPS ?? "").split(",").filter(Boolean)) {
+  const [model, n] = entry.split("=");
+  if (!model || !Number.isInteger(Number(n))) fail(`EVAL_DAILY_CAPS: cannot read "${entry}"`);
+  caps[model.trim()] = Number(n);
 }
 
 const truth = fs
   .readdirSync(GROUND_TRUTH_DIR)
   .filter((name) => name.endsWith(".json"))
   .map((name) => JSON.parse(fs.readFileSync(path.join(GROUND_TRUTH_DIR, name), "utf8")));
+const groundTruthPapers = truth.flatMap((course) => course.papers);
+const spec = { truth, caps };
 
-const papers = truth.flatMap((course) =>
-  course.papers.map((paper) => ({ label: paper.label, pages: paper.source.pages.map(renderPage(paper)) })),
-);
-
-/** One ground-truth page: its image, and its PDF text layer. */
-function renderPage(paper) {
-  const pdf = path.join(papersDir, paper.source.file);
-  return (n) => {
-    const dir = path.join(pagesDir, `${paper.label.replace(/\W+/g, "-")}-p${n}`);
-    fs.rmSync(dir, { recursive: true, force: true });
-    const [image] = rasterise(pdf, { page: n, dir });
-    if (!image) throw new Error(`${paper.label}: page ${n} of ${paper.source.file} rendered blank`);
-    const text = execFileSync("pdftotext", ["-layout", "-f", String(n), "-l", String(n), pdf, "-"], {
-      encoding: "utf8",
-    });
-    return { ...image, pageIndex: n - 1, text };
-  };
-}
-
-const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-async function measure(configuration, batchSize, run) {
-  const row = await runConfiguration(client, {
-    configuration,
-    batchSize,
-    papers,
-    truth,
-    run,
-    minIntervalMs,
-  });
-  console.log(formatResultsTable([row]).split("\n")[2]);
-  return row;
-}
-
-const firstPass = [];
-const reruns = [];
-let verdict = "Not chosen yet: the run stopped before the finalists were re-run.";
-
-try {
-  for (const configuration of CONFIGURATIONS) {
-    for (const batchSize of EVAL_BATCH_SIZES) {
-      firstPass.push(await measure(configuration, batchSize, 1));
-      writeResults();
-    }
-  }
-
-  const finalists = rankRows(firstPass).slice(0, 2);
-  for (const finalist of finalists) {
-    const configuration = CONFIGURATIONS.find((c) => c.name === finalist.configuration);
-    reruns.push(await measure(configuration, finalist.batchSize, 2));
-    writeResults();
-  }
-
-  // The winner is chosen on the re-run, so its numbers are the confirmed ones.
-  const [winner] = rankRows(reruns);
-  const failed = gateFailures(winner);
-  verdict = failed.length
-    ? `No configuration passed every gate. Best recall: **${winner.configuration}** at ${winner.batchSize} pages per request, failing ${failed.join("; ")}.`
-    : `**${winner.configuration}** at ${winner.batchSize} pages per request: it passes every gate with the fewest requests per paper.`;
-} finally {
-  writeResults();
-}
-
-function writeResults() {
-  // Each finalist's first run sits beside its re-run, so stability is visible.
-  const finalistRows = reruns.flatMap((rerun) => [
-    firstPass.find((r) => r.configuration === rerun.configuration && r.batchSize === rerun.batchSize),
-    rerun,
-  ]);
-  fs.writeFileSync(
-    outPath,
-    `# Extraction eval
-
-Measured on ${new Date().toISOString().slice(0, 10)} by \`scripts/eval-extraction.mjs\` over the
-${papers.length} ground-truth papers in \`tests/fixtures/ground-truth/\`.
-
-Gates: ${GATES_TEXT}. Among the configurations that pass, the fewest requests per paper wins;
-if none passes, the best recall. Latency is per batch that answered, retries and backoff included.
-Requests count every request Google accepted, retries included. Papers per day divide one model's
-free daily quota by requests per paper. Text-layer pages carry no topic, so they add one blank
-topic to topics per question.
-
-## Winner
-
-${verdict}
-
-## First pass
-
-${formatResultsTable(firstPass)}
-## Finalists re-run
-
-${formatResultsTable(finalistRows)}`,
+const [mode, papersDir, pagesDir] = process.argv.slice(2);
+if (mode === "plan") plan();
+else if (mode === "text-layer" && papersDir) printTextLayer(papersDir);
+else if (mode === "run" && papersDir && pagesDir) await run(papersDir, pagesDir);
+else {
+  fail(
+    "usage: eval-extraction.mjs plan | text-layer <papers-dir> | run <papers-dir> <pages-dir>" +
+      " (run needs GEMINI_API_KEY)",
   );
 }
-console.log(`wrote ${path.relative(ROOT, outPath)}`);
+
+function plan() {
+  const whole = evalStatus(emptyProgress(), spec, new Date());
+  const perRun = groundTruthPapers.reduce((n, p) => n + Math.ceil(p.source.pages.length / EVAL_LIVE_BATCH_PAGES), 0);
+  const firstPass = whole.models.reduce((n, m) => n + m.left, 0);
+  console.log("The whole eval, at one request per batch (retries and chain fallbacks add more):");
+  for (const m of whole.models) console.log(`  ${m.model}: ${m.left} requests, at ${m.cap} a day`);
+  console.log(
+    `  first pass ${firstPass} requests, then up to ${2 * perRun} for the two finalists' re-runs,` +
+      " on whichever models they use.",
+  );
+  console.log(
+    `  About ${whole.daysLeft} quota days on full daily budgets. Quota other work spends on the` +
+      " same key, and every 429 or 503, adds to that.",
+  );
+  if (fs.existsSync(progressFile)) printStatus(loadProgress());
+  else console.log(`No progress yet (${progressFile}).`);
+}
+
+function printTextLayer(dir) {
+  for (const { label, recall } of measureTextLayer(dir)) {
+    console.log(`${label}: recall ${recall.toFixed(2)} from the text layer alone`);
+  }
+}
+
+/** "Text layer first", offline: the parser's recall on each paper's own text layer. */
+function measureTextLayer(dir) {
+  const papers = groundTruthPapers.map((paper) => ({
+    label: paper.label,
+    pages: paper.source.pages.map((n) => ({
+      text: execFileSync(
+        "pdftotext",
+        ["-layout", "-f", String(n), "-l", String(n), path.join(dir, paper.source.file), "-"],
+        { encoding: "utf8" },
+      ),
+    })),
+  }));
+  return textLayerRecall(papers, truth);
+}
+
+async function run(papersDir, pagesDir) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) fail("run needs GEMINI_API_KEY");
+  const { GoogleGenAI } = await import("@google/genai");
+  const { rasterise } = await import("./extract-corpus.mjs");
+
+  const papers = groundTruthPapers.map((paper) => ({
+    label: paper.label,
+    pages: paper.source.pages.map((n) => {
+      const dir = path.join(pagesDir, `${paper.label.replace(/\W+/g, "-")}-p${n}`);
+      fs.rmSync(dir, { recursive: true, force: true });
+      const [image] = rasterise(path.join(papersDir, paper.source.file), { page: n, dir });
+      if (!image) fail(`${paper.label}: page ${n} of ${paper.source.file} rendered blank`);
+      return { ...image, pageIndex: n - 1 };
+    }),
+  }));
+
+  const progress = fs.existsSync(progressFile) ? loadProgress() : emptyProgress();
+  await advanceEval(new GoogleGenAI({ apiKey }), progress, {
+    ...spec,
+    papers,
+    minIntervalMs: Number(process.env.EVAL_MIN_INTERVAL_MS ?? EVAL_MIN_INTERVAL_MS),
+    save: saveProgress,
+    log: (line) => console.log(line),
+  });
+  saveProgress(progress);
+
+  const status = evalStatus(progress, spec, new Date());
+  if (status.phase !== "complete") {
+    printStatus(progress);
+    return;
+  }
+  const { markdown, winner, why } = resultsDoc(progress, spec, measureTextLayer(papersDir));
+  fs.mkdirSync(path.join(ROOT, path.dirname(RESULTS_DOC)), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, RESULTS_DOC), markdown);
+  fs.writeFileSync(CONFIG_FILE, setExtractionSetup(fs.readFileSync(CONFIG_FILE, "utf8"), winner, why));
+  console.log(`The eval is complete. Wrote ${RESULTS_DOC}; EXTRACTION_SETUP is now "${winner}": ${why}.`);
+}
+
+function printStatus(progress) {
+  const status = evalStatus(progress, spec, new Date());
+  console.log(`Eval: ${status.phase}. Progress in ${progressFile}.`);
+  for (const m of status.models) {
+    const today = m.spentToday ? "spent today" : `${m.usedToday}/${m.cap} used today`;
+    console.log(`  ${m.model}: ${m.sent} requests sent, at least ${m.left} left; ${today}`);
+  }
+  if (status.phase !== "complete") {
+    console.log(`About ${status.daysLeft} quota day(s) left, today included. Next run: ${status.next}.`);
+  }
+}
+
+function loadProgress() {
+  return JSON.parse(fs.readFileSync(progressFile, "utf8"));
+}
+
+/** Written whole and renamed into place, so a run killed mid-write keeps the last good copy. */
+function saveProgress(progress) {
+  fs.mkdirSync(path.dirname(progressFile), { recursive: true });
+  const partial = `${progressFile}.partial`;
+  fs.writeFileSync(partial, JSON.stringify(progress, null, 1));
+  fs.renameSync(partial, progressFile);
+}
+
+function fail(message) {
+  console.error(message);
+  process.exit(2);
+}
