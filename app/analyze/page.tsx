@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { BacktestPanel } from "@/components/BacktestPanel";
+import {
+  ExportCorpusButton,
+  ImportCorpusButton,
+} from "@/components/CorpusFileButtons";
 import { GenomeMap } from "@/components/GenomeMap";
 import { HeadlineStat } from "@/components/HeadlineStat";
 import { LineageCard } from "@/components/LineageCard";
@@ -12,29 +16,24 @@ import { PredictedPaper } from "@/components/PredictedPaper";
 import { TopicDossier } from "@/components/TopicDossier";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
-import { corpusCourses, paperOrder } from "@/lib/analysis/papers";
-import { loadSession } from "@/lib/extract/session";
-import type { ExtractionOutcome } from "@/lib/types";
-
-/**
- * What this corpus is, in the heading. One course names itself; a bundle of
- * several says so rather than borrowing the first paper's name.
- */
-function corpusTitle(courses: string[]): string {
-  if (courses.length === 0) return "your corpus";
-  if (courses.length === 1) return courses[0];
-  if (courses.length === 2) return `${courses[0]} and ${courses[1]}`;
-  return `${courses.length} courses`;
-}
+import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
+import { browserCorpusStore } from "@/lib/corpus/store";
+import { corpusChanged, useOpenCorpus } from "@/lib/corpus/useCorpora";
+import type { Question } from "@/lib/types";
 
 export default function AnalyzePage() {
-  const [outcome, setOutcome] = useState<ExtractionOutcome | null>(null);
-  const [ready, setReady] = useState(false);
+  // Undefined until browser storage can be read, after hydration.
+  const corpus = useOpenCorpus();
+  const outcome = corpus?.outcome ?? null;
 
-  useEffect(() => {
-    setOutcome(loadSession());
-    setReady(true);
-  }, []);
+  /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
+  function saveMerged(questions: Question[]) {
+    if (!corpus) return;
+    // A merge into a sample is saved as a new corpus, so reopening the sample
+    // can never overwrite it.
+    browserCorpusStore()?.saveImport(corpus, questions);
+    corpusChanged();
+  }
 
   // The whole analysis is pure and synchronous, so it runs here rather than
   // being carried through the session — the corpus is the only state worth
@@ -44,7 +43,7 @@ export default function AnalyzePage() {
     [outcome],
   );
 
-  if (!ready) return null;
+  if (corpus === undefined) return null;
 
   if (!outcome || !result) {
     return (
@@ -82,6 +81,13 @@ export default function AnalyzePage() {
           >
             ← New analysis
           </Link>
+          <div className="flex flex-wrap items-start gap-[8px]">
+            <ExportCorpusButton questions={outcome.questions} />
+            <ImportCorpusButton
+              existing={outcome.questions}
+              onMerged={saveMerged}
+            />
+          </div>
           <p className="text-caption text-graphite tabular-nums">
             {result.questionCount} questions · {papers.length} paper
             {papers.length === 1 ? "" : "s"} · {result.stats.length} topics ·{" "}

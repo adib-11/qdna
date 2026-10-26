@@ -49,6 +49,18 @@ export function corpusCourses(questions: Question[]): string[] {
     .map((course) => course.name);
 }
 
+/**
+ * What a corpus is, in a heading or a saved-corpora list. One course names
+ * itself; a bundle of several says so rather than borrowing the first paper's
+ * name.
+ */
+export function corpusTitle(courses: string[]): string {
+  if (courses.length === 0) return "your corpus";
+  if (courses.length === 1) return courses[0];
+  if (courses.length === 2) return `${courses[0]} and ${courses[1]}`;
+  return `${courses.length} courses`;
+}
+
 /** True when every word of `inner` appears, in order, inside `outer`. */
 function contains(outer: string, inner: string): boolean {
   return outer !== inner && ` ${outer} `.includes(` ${inner} `);
