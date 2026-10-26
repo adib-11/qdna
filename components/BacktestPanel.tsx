@@ -31,9 +31,9 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
   if (papers.length < 2 || !report) {
     return (
       <Card tone="white">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
           Backtest
-        </h2>
+        </h3>
         <p className="mt-[16px] text-body-sm text-graphite max-w-[640px]">
           A backtest needs at least two papers: one to hide, and the rest to
           build the ranking from. Add another paper from this course to see how
@@ -58,11 +58,11 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-[16px]">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
           Backtest
-        </h2>
+        </h3>
 
-        <label className="flex items-center gap-[8px] text-body-sm text-graphite">
+        <label className="flex items-center gap-[8px] text-body-sm text-graphite print:hidden">
           Hold out
           <select
             value={heldOut ?? ""}
@@ -78,7 +78,7 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
         </label>
       </div>
 
-      <Card tone="sky-wash" className="mt-[24px] p-[36px]">
+      <Card tone="sky-wash" className="mt-[24px] p-[20px] sm:p-[36px]">
         <p className="text-caption font-medium tracking-[0.12px] text-[rgba(0,0,0,0.6)]">
           {report.trainingPapers.length} paper
           {report.trainingPapers.length === 1 ? "" : "s"} in, {report.heldOutPaper}{" "}
@@ -108,9 +108,9 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
 
       <div className="mt-[24px] grid gap-[24px] lg:grid-cols-2">
         <Card tone="white">
-          <h3 className="text-body font-medium">
+          <h4 className="text-body font-medium">
             Ranked from the other papers
-          </h3>
+          </h4>
           <p className="mt-[8px] text-caption text-graphite">
             The topics qDNA would have told you to study, in order.
           </p>
@@ -129,9 +129,9 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
         </Card>
 
         <Card tone="white">
-          <h3 className="text-body font-medium">
+          <h4 className="text-body font-medium">
             What {report.heldOutPaper} actually asked
-          </h3>
+          </h4>
           <p className="mt-[8px] text-caption text-graphite">
             Every topic on the hidden paper, by question count.
           </p>
