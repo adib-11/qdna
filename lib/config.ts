@@ -42,13 +42,20 @@ export const EVAL_LIVE_BATCH_PAGES = 2;
 export const EVAL_REPORTED_BATCH_SIZES = [2, 4, 8];
 
 /**
+ * Requests per day one model allows on a free key, as measured for
+ * gemini-flash-latest. The eval's papers-per-day figure divides it by
+ * requests per paper.
+ */
+export const FREE_TIER_REQUESTS_PER_DAY = 20;
+
+/**
  * Requests per quota day the eval allows itself per model, stopping before
- * each. gemini-flash-latest's 20 is measured; the others are not published
+ * each. gemini-flash-latest's is the measured free-tier quota; the others are not published
  * for the free tier, so they get a conservative guess. EVAL_DAILY_CAPS
  * ("model=n,model=n") overrides them.
  */
 export const EVAL_DAILY_CAPS: Record<string, number> = {
-  "gemini-flash-latest": 20,
+  "gemini-flash-latest": FREE_TIER_REQUESTS_PER_DAY,
   "gemini-2.5-flash-lite": 15,
   "gemma-4-26b-a4b-it": 15,
 };
@@ -68,13 +75,6 @@ export const EVAL_MEASUREMENT_RETRIES = 2;
 
 /** Consecutive 429s after which a model counts as spent for the quota day. */
 export const EVAL_SPENT_AFTER_429S = 4;
-
-/**
- * Requests per day one model allows on a free key, as measured for
- * gemini-flash-latest. The eval's papers-per-day figure divides it by
- * requests per paper.
- */
-export const FREE_TIER_REQUESTS_PER_DAY = 20;
 
 /**
  * Retry attempts per batch on 429 / 5xx / timeout before the batch is recorded

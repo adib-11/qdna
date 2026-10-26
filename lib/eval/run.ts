@@ -260,6 +260,8 @@ export async function advanceEval(
   const spend = (model: string) => {
     if (usageOf(model).spent) return;
     usageOf(model).spent = true;
+    // A run that outlasts midnight starts the new quota day's count afresh.
+    refusals[model] = 0;
     save(progress);
     log(`${model}: still refused after backing off, so its quota is spent for today`);
   };
