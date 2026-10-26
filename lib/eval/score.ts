@@ -2,7 +2,10 @@
  * Scoring one extraction against the ground truth. Pure: no I/O, no model
  * call, so the eval runner and the tests compute the same numbers.
  */
+import { analyze } from "@/lib/analysis";
+import { backtest, defaultHeldOutPaper } from "@/lib/analysis/backtest";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
+import type { TopicInputs } from "@/lib/analysis/topics";
 import type { GroundTruthCourse, GroundTruthQuestion } from "@/lib/eval/groundTruth";
 import type { PaperRef, Question } from "@/lib/types";
 
@@ -214,5 +217,34 @@ function groupingScores(matches: Match[]) {
     groupingPairPrecision: precision,
     groupingPairRecall: recall,
     groupingPairF1: ratio(2 * precision * recall, precision + recall),
+  };
+}
+
+/** What topic grouping changes about one corpus. Null where the corpus cannot say. */
+export interface GroupingMeasure {
+  topics: number;
+  /** Holdout coverage of the newest dated paper, 0–100; null below two papers. */
+  holdoutCoverage: number | null;
+  /** Pair F1 against the ground-truth grouping; null without two matched questions. */
+  pairF1: number | null;
+  /** Rand index against the ground-truth grouping, shown beside pair F1. */
+  randIndex: number | null;
+}
+
+/** Measure a corpus's topics before or after grouping, the same way for both. */
+export function measureGrouping(
+  raw: Question[],
+  topics: TopicInputs,
+  truth: GroundTruthCourse[],
+): GroupingMeasure {
+  const { questions, stats } = analyze(raw, topics);
+  const heldOut = defaultHeldOutPaper(questions);
+  const score = scoreExtraction(questions, truth);
+  const scored = score.matched >= 2;
+  return {
+    topics: stats.length,
+    holdoutCoverage: heldOut ? backtest(questions, heldOut).overlapPct : null,
+    pairF1: scored ? score.groupingPairF1 : null,
+    randIndex: scored ? score.groupingAgreement : null,
   };
 }

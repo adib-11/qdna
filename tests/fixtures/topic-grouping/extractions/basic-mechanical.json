@@ -1,0 +1,488 @@
+[
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "1(a)",
+    "marks": 3,
+    "text": "Define fuels and classify their various types.",
+    "topic": "Fuels and Classification",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::1(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "1(b)",
+    "marks": 5,
+    "text": "What is meant by HCV and LCV? What are the advantages of gaseous fuels?",
+    "topic": "Calorific Value and Gaseous Fuels",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::1(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "A sample of coal has the following composition by mass: Carbon 75%; Hydrogen 6%, Oxygen 8%; Nitrogen 2.5%, Sulpher 1.5% and ash 7%. Calculate its higher and lower calorific values per kg of coal.",
+    "topic": "Calorific Value Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::1(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "2(a)",
+    "marks": 5,
+    "text": "What is steam boiler? Describe the working principle of a Cochran boiler with neat sketch.",
+    "topic": "Steam Boilers",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::2(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "2(b)",
+    "marks": 3,
+    "text": "Distinguish between boiler mountings and boiler accessories.",
+    "topic": "Boiler Mountings and Accessories",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::2(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "2(c)",
+    "marks": 4,
+    "text": "The following observation were made in a boiler trial: Coal used 250kg of calorific value 29800 kJ/kg, water evaporated 2000 kg, steam pressure 11.5 bar, dryness fraction 0.95 and feed water temperature 34°C. Calculate the equivalent evaporation from and at 100°C per kg of coal and efficiency of the boiler.",
+    "topic": "Boiler Performance Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::2(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "3(a)",
+    "marks": 4,
+    "text": "What is an Internal Combustion(IC) Engine? Explain the working principle of a four-stroke diesel engine with necessary sketches.",
+    "topic": "IC Engines",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::3(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "3(b)",
+    "marks": 3,
+    "text": "What is Octane number? Explain how SI engine fuels are rated.",
+    "topic": "Engine Fuel Rating",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::3(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "3(c)",
+    "marks": 2,
+    "text": "Define the following terms: (i) Clearance Volume (ii) Compression ratio.",
+    "topic": "Engine Terminology",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::3(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "3(d)",
+    "marks": 3,
+    "text": "An engine uses 100gm of oil per minute of calorific value 30000 kJ/kg. If the Brake power of the engine is 22kW and mechanical efficiency 87%, calculate (i) Indicated thermal efficiency; (ii) Brake thermal efficiency and (iii) Specific fuel consumption in kg/B.P./h.",
+    "topic": "Engine Performance Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::3(d)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "What are the merits and demerits of gas turbine plants over IC Engine plants.",
+    "topic": "Gas Turbine vs IC Engine",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::4(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "State the human comfort conditions. What are the factors which affect the human comfort?",
+    "topic": "Air Conditioning and Human Comfort",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::4(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - A",
+      "year": 2021
+    },
+    "qNo": "4(c)",
+    "marks": 4,
+    "text": "The temperature limits of an ammonia refrigeration system are 298K and 263K. If the gas is dry at the end of compression, calculate the COP of the cycle assuming no undercooling of the liquid ammonia. Also determine the capacity of the refrigerator if the liquid flow is at the rate of 6 kg/min. The properties of ammonia refrigerant are:\nTemperature (K) | Liquid heat (kJ/kg) | Latent heat (kJ/kg) | Liquid entropy (kJ/kg K)\n298 | 298.9 | 1166.94 | 1.1242\n263 | 135.37 | 1297.68 | 0.5443",
+    "topic": "Refrigeration Cycle Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::4(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "5(a)",
+    "marks": 3,
+    "text": "Classify gas turbine, and briefly describe closed cycle gas turbine with intercooling.",
+    "topic": "Gas Turbines",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::5(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "5(b)",
+    "marks": 3,
+    "text": "In an oil-gas turbine installation, air is taken at pressure of 1 bar and 27°C and compressed to a pressure of 4 bar. The oil with a calorific value of 42000 kJ/kg is burnt in the combustion chamber to raise the temperature of air to 550°C. If the air flows at the rate of 1.2 kg/s, find the net power of the installation. Take C_p = 1.05 kJ/kg K.",
+    "topic": "Gas Turbine Performance Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::5(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "5(c)",
+    "marks": 2,
+    "text": "Distinguish between a gas turbine and steam turbine.",
+    "topic": "Gas vs Steam Turbines",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::5(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "5(d)",
+    "marks": 4,
+    "text": "Draw a general layout of a hydroelectric power plant using an impulse turbine and describe it.",
+    "topic": "Hydroelectric Power Plants",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::5(d)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "6(a)",
+    "marks": 4,
+    "text": "What is the more common term for an energy producing turbomachine? How about an energy absorbing turbomachine? Explain this terminology.",
+    "topic": "Turbomachinery Terminology",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::6(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "6(b)",
+    "marks": 3,
+    "text": "Name and briefly discuss the differences between the two basic types of dynamic turbines.",
+    "topic": "Dynamic Turbines",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::6(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "6(c)",
+    "marks": 5,
+    "text": "A pelton wheel is running under a head of 150m at the speed of 300 rpm. The overall efficiency of the turbine is 85% and the ratio of Jet to the wheel diameter is 1/10. Find the following: (i) Diameter of the wheel, (ii) Diameter of the Jet, (iii) Width of buckets, (iv) Depth of buckets, (v) Number of buckets.",
+    "topic": "Pelton Wheel Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::6(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "7(a)",
+    "marks": 4,
+    "text": "What is cavitation? What are the effects of cavitation and how it is avoided?",
+    "topic": "Cavitation in Pumps",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::7(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "7(b)",
+    "marks": 4,
+    "text": "Define specific speed of a centrifugal pump. How is the model testing of the centrifugal pump carried out?",
+    "topic": "Centrifugal Pumps",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::7(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "7(c)",
+    "marks": 4,
+    "text": "Two geometrically similar pumps are running at the same speed of 1000 rpm. One pump has an impeller diameter of 300 mm and lifts water at the rate of 0.02 m³/s against a head of 15m. Determine the head and impeller diameter of the other pump to deliver half the discharge.",
+    "topic": "Pump Similarity Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::7(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "8(a)",
+    "marks": 3,
+    "text": "Define actual efficiency, manometric efficiency and hydraulic efficiency of a centrifugal pump.",
+    "topic": "Centrifugal Pump Efficiencies",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::8(a)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "8(b)",
+    "marks": 5,
+    "text": "A single acting reciprocating pump has a stroke length of 150mm, suction pipe is 7m long and the ratio of suction pipe diameter to the piston diameter is 3/4. The water level in the sump is 2.5m below the axis of the pump cylinder and the pipe connecting the sump and pump cylinder is 75 mm in diameter. If the crank is running at 75 rpm, determine the pressure head on the piston at the begining and end of the suction stroke. Take friction coefficient, f = 0.01.",
+    "topic": "Reciprocating Pump Calculation",
+    "isNumerical": true,
+    "id": "2021 Final ME 2101::8(b)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "8(c)",
+    "marks": 2,
+    "text": "Why air vessels are used in a reciprocating pump?",
+    "topic": "Reciprocating Pumps",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::8(c)"
+  },
+  {
+    "course": "Basic Mechanical Engineering",
+    "courseCodes": [
+      "ME 2101"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2021 Final ME 2101",
+      "section": "SECTION - B",
+      "year": 2021
+    },
+    "qNo": "8(d)",
+    "marks": 2,
+    "text": "Write short notes on blower and compressor.",
+    "topic": "Blowers and Compressors",
+    "isNumerical": false,
+    "id": "2021 Final ME 2101::8(d)"
+  }
+]

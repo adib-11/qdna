@@ -1,0 +1,470 @@
+[
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "What are the elements of a system? Can you have a viable system without feedback? Explain.",
+    "topic": "System Fundamentals",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::1(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Distinguish between:\n(i) Interaction and independence\n(ii) Open and closed systems",
+    "topic": "System Characteristics",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::1(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "1(c)",
+    "marks": 4,
+    "text": "How would an analysis determine the user's needs for a system? Explain briefly.",
+    "topic": "Requirements Analysis",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::1(c)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "2(a)(i)",
+    "marks": 4,
+    "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions.\n(i) What is SDLC? Will you follow any SDLC model for ECE-RUET website project? If so, which one and why?",
+    "topic": "SDLC Models",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::2(a)(i)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "2(a)(ii)",
+    "marks": 4,
+    "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions.\n(ii) For developing online result publishing system, which SDLC model will you choose and why?",
+    "topic": "SDLC Models",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::2(a)(ii)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "2(a)(iii)",
+    "marks": 4,
+    "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions.\n(iii) If you are provided a team of 10 members, which framework will you use for team management? Also explain the roles of different people involved with the result publishing project.",
+    "topic": "Project Management",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::2(a)(iii)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "3(a)",
+    "marks": 2,
+    "text": "Explain coupling and cohesion.",
+    "topic": "Software Design Principles",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::3(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "3(b)",
+    "marks": 4,
+    "text": "What is software testing? Differentiate between black-box and white-box testing.",
+    "topic": "Software Testing",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::3(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "3(c)",
+    "marks": 4,
+    "text": "Why quality control is important in software engineering? How it is different from quality assurance.",
+    "topic": "Software Quality",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::3(c)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "3(d)",
+    "marks": 2,
+    "text": "What is software re-engineering?",
+    "topic": "Software Maintenance",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::3(d)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "Describe the steps of requirement analysis.",
+    "topic": "Requirements Engineering",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::4(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "4(b)",
+    "marks": 3,
+    "text": "What are the differences between functional and non-functional requirements?",
+    "topic": "Requirements Engineering",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::4(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-A",
+      "year": 2020
+    },
+    "qNo": "4(c)",
+    "marks": 5,
+    "text": "What is architectural design? Describe the issues involved in architectural design.",
+    "topic": "Software Architecture",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::4(c)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "5(a)(i)",
+    "marks": 3,
+    "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions-\n(i) How will you determine the users' actual need?",
+    "topic": "Requirements Elicitation",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::5(a)(i)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "5(a)(ii)",
+    "marks": 3,
+    "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions-\n(ii) Which difficulties you may face in the process of information gathering why?",
+    "topic": "Requirements Elicitation",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::5(a)(ii)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "5(a)(iii)",
+    "marks": 3,
+    "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions-\n(iii) Which tools will you use for information gathering and why?",
+    "topic": "Requirements Elicitation",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::5(a)(iii)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "5(a)(iv)",
+    "marks": 3,
+    "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions-\n(iv) If you need to take the interview of the Vice-chancellor of RUET in the process, which strategy will you follow to have a successful interview?",
+    "topic": "Requirements Elicitation",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::5(a)(iv)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "6(a)",
+    "marks": 6,
+    "text": "Give a real-world example where you can implement the spiral model.",
+    "topic": "SDLC Models",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::6(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "6(b)",
+    "marks": 6,
+    "text": "What are the roles of scrum?",
+    "topic": "Agile Methodologies",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::6(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "7(a)",
+    "marks": 3,
+    "text": "What are the key considerations involved in feasibility analysis?",
+    "topic": "Feasibility Analysis",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::7(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "7(b)",
+    "marks": 3,
+    "text": "What is DFD? Explain each symbol used in a DFD.",
+    "topic": "Data Flow Diagrams",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::7(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "7(c)",
+    "marks": 2,
+    "text": "Explain logical data description hierarchy.",
+    "topic": "Data Modeling",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::7(c)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "7(d)",
+    "marks": 4,
+    "text": "Suppose, a publisher company provides 25% discount for the bookstores. If the number of books ordered by a bookstore is less than 30, then no discount is allowed. The publisher also provides 20% and 5% discounts for libraries and individuals respectively. For individuals discount is allowed only if at least 5 books are purchased at a time. Now draw a decision tree for the given information.",
+    "topic": "Decision Trees",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::7(d)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "8(a)",
+    "marks": 4,
+    "text": "Differentiate between verification and validation.",
+    "topic": "Software Quality",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::8(a)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "8(b)",
+    "marks": 4,
+    "text": "What is software quality assurance? Explain briefly.",
+    "topic": "Software Quality",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::8(b)"
+  },
+  {
+    "course": "Software Engineering & Information System Design",
+    "courseCodes": [
+      "ECE 3117"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2020 Final ECE 3117",
+      "section": "SECTION-B",
+      "year": 2020
+    },
+    "qNo": "8(c)",
+    "marks": 4,
+    "text": "What is the quality attribute of a software?",
+    "topic": "Software Quality",
+    "isNumerical": false,
+    "id": "2020 Final ECE 3117::8(c)"
+  }
+]

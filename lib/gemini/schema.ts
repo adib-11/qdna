@@ -165,3 +165,26 @@ export function practicePaperSchema(topics: string[], sections: string[]) {
     required: ["title", "instructions", "questions"],
   };
 }
+
+/** Structured-output contract for topic grouping: topics, each with the labels it folds. */
+export const TOPIC_GROUPING_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    topics: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          topic: { type: Type.STRING, description: "The topic's syllabus name." },
+          labels: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: "The topic labels this topic folds, copied exactly.",
+          },
+        },
+        required: ["topic", "labels"],
+      },
+    },
+  },
+  required: ["topics"],
+};

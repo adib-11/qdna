@@ -127,3 +127,44 @@ describe("rejecting a corpus file", () => {
     );
   });
 });
+
+describe("topic overrides in a corpus file", () => {
+  const ct2 = EMF_QUESTIONS.filter((q) => q.paper.label === "CT2 ECE 3121");
+  const ct3 = EMF_QUESTIONS.filter((q) => q.paper.label === "CT3");
+  const theirs = [
+    { from: ["Gauss's Law", "Electric Flux"], to: "Gauss" },
+    { from: ["Capacitance"], to: "Capacitors" },
+  ];
+
+  it("travel in the file and come back on import", () => {
+    const file = exportCorpusFile(ct2, theirs);
+
+    expect(JSON.parse(file).topicOverrides).toEqual(theirs);
+    const result = importCorpusFile([], file);
+    expect(result.ok && result.topicOverrides).toEqual(theirs);
+  });
+
+  it("let the importer's own overrides win over the imported ones", () => {
+    const mine = [{ from: ["Capacitance"], to: "Capacitance & Dielectrics" }];
+    const result = importCorpusFile(ct3, exportCorpusFile(ct2, theirs), mine);
+
+    expect(result.ok && result.topicOverrides).toEqual([theirs[0], ...mine]);
+  });
+
+  it("keep the importer's overrides when the import adds no papers", () => {
+    const mine = [{ from: ["Capacitance"], to: "Capacitors" }];
+    const result = importCorpusFile(ct3, exportCorpusFile(ct3, theirs), mine);
+
+    expect(result.ok && result.added).toEqual([]);
+    expect(result.ok && result.topicOverrides).toEqual([theirs[0], ...mine]);
+  });
+
+  it("reject a file whose overrides are malformed, leaving the corpus untouched", () => {
+    for (const topicOverrides of [{}, [{ from: "Capacitance", to: "C" }], [{ from: [], to: "C" }], [{ from: ["C"], to: " " }]]) {
+      const file = { ...JSON.parse(exportCorpusFile(ct2)), topicOverrides };
+      const result = importCorpusFile(ct3, JSON.stringify(file));
+      expect(result.ok).toBe(false);
+      expect(!result.ok && result.error).toMatch(/damaged/i);
+    }
+  });
+});

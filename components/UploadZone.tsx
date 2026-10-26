@@ -14,13 +14,14 @@ import {
 import { UPLOAD_ACCEPT, uploadKind } from "@/lib/extract/uploads";
 import { saveSession } from "@/lib/extract/session";
 import { sampleCorpusId } from "@/lib/corpus/store";
+import { groupSavedCorpus } from "@/lib/corpus/useCorpora";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { extractQuestions } from "@/lib/gemini/extract";
-import { handleModelError } from "@/lib/key/ownKey";
+import { handleModelError, ownKeyStore } from "@/lib/key/ownKey";
 import { SAMPLES, sampleOutcome } from "@/lib/samples";
 
-type Phase = "idle" | "working" | "cancelled" | "failed";
+type Phase = "idle" | "working" | "grouping" | "cancelled" | "failed";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
@@ -94,7 +95,7 @@ export function UploadZone() {
         return;
       }
 
-      openOutcome(run);
+      await openOutcome(run);
     } catch (err) {
       setPhase("failed");
       setError(handleModelError(err, "Extraction failed."));
@@ -103,8 +104,16 @@ export function UploadZone() {
     }
   }
 
-  function openOutcome(run: ExtractionRun) {
-    saveSession(run.outcome);
+  /** Save what was extracted, group its topics while the key is at hand, and open it. */
+  async function openOutcome(run: ExtractionRun) {
+    const saved = saveSession(run.outcome);
+    const apiKey = ownKeyStore().get();
+    if (saved && apiKey) {
+      setPhase("grouping");
+      // A failed grouping is not a failed extraction: the analysis offers
+      // "Group topics" as a pending action until one succeeds.
+      await groupSavedCorpus(saved.id, apiKey).catch(() => {});
+    }
     router.push("/analyze");
   }
 
@@ -182,8 +191,8 @@ export function UploadZone() {
               Cancel extraction
             </Button>
           ) : (
-            <Button onClick={analyze} disabled={files.length === 0}>
-              Analyze papers
+            <Button onClick={analyze} disabled={files.length === 0 || phase === "grouping"}>
+              {phase === "grouping" ? "Grouping topics…" : "Analyze papers"}
             </Button>
           )}
         </div>
@@ -251,7 +260,7 @@ export function UploadZone() {
             this browser, so analyzing again will not pay for them.
           </p>
           {kept.questions.length > 0 && (
-            <Button variant="ghost" className="mt-[12px]" onClick={() => openOutcome(stopped)}>
+            <Button variant="ghost" className="mt-[12px]" onClick={() => void openOutcome(stopped)}>
               Open the {plural(kept.questions.length, "question")} extracted so far
             </Button>
           )}

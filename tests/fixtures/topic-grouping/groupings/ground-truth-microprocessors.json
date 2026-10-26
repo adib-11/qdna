@@ -1,0 +1,68 @@
+{
+  "topics": [
+    {
+      "topic": "Introduction to Microprocessor Systems",
+      "labels": [
+        "Microprocessor vs Microcontroller",
+        "CISC vs RISC",
+        "Microprocessor Components"
+      ]
+    },
+    {
+      "topic": "8088 Architecture and Execution",
+      "labels": [
+        "8088 Microprocessor Architecture",
+        "Microprocessor System Design",
+        "Instruction Execution Cycle"
+      ]
+    },
+    {
+      "topic": "Processor Registers and Flags",
+      "labels": [
+        "Registers and Flags",
+        "Status Flags"
+      ]
+    },
+    {
+      "topic": "Memory Segmentation and Addressing",
+      "labels": [
+        "Memory Segmentation",
+        "Physical Address Calculation",
+        "RAM Limitations"
+      ]
+    },
+    {
+      "topic": "Advanced Architectures and Performance",
+      "labels": [
+        "Multi-core Processors",
+        "Processor Cores",
+        "Pipelining",
+        "Microprocessor Performance"
+      ]
+    },
+    {
+      "topic": "Assembly Language Instruction Set",
+      "labels": [
+        "Assembly Language Programming",
+        "Shift and Rotate Instructions",
+        "Logical Instructions",
+        "Data Transfer Instructions"
+      ]
+    },
+    {
+      "topic": "I/O Interfacing and DMA",
+      "labels": [
+        "I/O Mapping",
+        "8255 PPI Configuration",
+        "Direct Memory Access (DMA)"
+      ]
+    },
+    {
+      "topic": "System Boot and Optimization",
+      "labels": [
+        "Boot Process",
+        "Memory Access Optimization"
+      ]
+    }
+  ]
+}

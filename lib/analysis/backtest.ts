@@ -3,7 +3,6 @@ import { clusterLineages } from "@/lib/analysis/lineage";
 import { paperOrder } from "@/lib/analysis/papers";
 import { topicFrequency } from "@/lib/analysis/frequency";
 import { topicsToReach } from "@/lib/analysis/pareto";
-import { canonicalizeTopics } from "@/lib/analysis/topics";
 import type { BacktestResult, Question } from "@/lib/types";
 
 const key = (topic: string) => topic.trim().toLowerCase();
@@ -45,14 +44,14 @@ export function defaultHeldOutPaper(questions: Question[]): string | null {
  * about marks on the page, not about labels.
  */
 export function backtest(
-  raw: Question[],
+  questions: Question[],
   heldOutPaperLabel: string,
   threshold: number = VARIANT_THRESHOLD,
 ): BacktestResult {
-  // Folded over the whole corpus, held-out paper included. Folding the two
-  // sides separately would let the same subject survive under two names and
-  // score as a miss for no reason but wording.
-  const questions = canonicalizeTopics(raw);
+  // Topics arrive already resolved over the whole corpus (`analyze` does it),
+  // held-out paper included. Resolving the two sides separately would let the
+  // same subject survive under two names and score as a miss for no reason
+  // but wording.
   const heldOut = questions.filter((q) => q.paper.label === heldOutPaperLabel);
   const training = questions.filter((q) => q.paper.label !== heldOutPaperLabel);
 

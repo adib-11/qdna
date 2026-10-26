@@ -2,6 +2,8 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
+import { browserModelClient } from "@/lib/gemini/browserClient";
+import { groupTopics } from "@/lib/gemini/groupTopics";
 
 /**
  * React views of the saved corpora. localStorage is an external store, so it
@@ -51,4 +53,20 @@ export function useSavedCorpora(): SavedCorpus[] {
     () => (rev < 0 ? [] : (browserCorpusStore()?.list() ?? [])),
     [rev],
   );
+}
+
+/**
+ * Run topic grouping over a saved corpus, on the student's own key, and save
+ * the grouping with it. Throws the model's error; until a grouping is saved,
+ * the analysis view offers "Group topics" as a pending action.
+ */
+export async function groupSavedCorpus(id: string, apiKey: string): Promise<void> {
+  const corpus = browserCorpusStore()?.get(id);
+  if (!corpus) return;
+  const topicGrouping = await groupTopics(
+    browserModelClient(apiKey),
+    corpus.outcome.questions,
+  );
+  browserCorpusStore()?.saveTopics(id, { topicGrouping });
+  corpusChanged();
 }

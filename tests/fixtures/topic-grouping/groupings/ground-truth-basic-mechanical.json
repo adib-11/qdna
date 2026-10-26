@@ -1,0 +1,71 @@
+{
+  "topics": [
+    {
+      "topic": "Fuels and Calorific Value",
+      "labels": [
+        "Fuels and Classification",
+        "Calorific Value and Gaseous Fuels",
+        "Calorific Value Calculation"
+      ]
+    },
+    {
+      "topic": "Steam Boilers and Performance",
+      "labels": [
+        "Steam Boilers",
+        "Boiler Mountings and Accessories",
+        "Boiler Performance Calculation"
+      ]
+    },
+    {
+      "topic": "Internal Combustion Engines",
+      "labels": [
+        "IC Engines",
+        "Engine Fuel Rating",
+        "Engine Terminology",
+        "Engine Performance Calculation"
+      ]
+    },
+    {
+      "topic": "Gas Turbines and Systems",
+      "labels": [
+        "Gas Turbine vs IC Engine",
+        "Gas Turbines",
+        "Gas Turbine Performance Calculation",
+        "Gas vs Steam Turbines"
+      ]
+    },
+    {
+      "topic": "Refrigeration and Air Conditioning",
+      "labels": [
+        "Air Conditioning and Human Comfort",
+        "Refrigeration Cycle Calculation"
+      ]
+    },
+    {
+      "topic": "Hydraulic Turbines and Power Plants",
+      "labels": [
+        "Hydroelectric Power Plants",
+        "Turbomachinery Terminology",
+        "Dynamic Turbines",
+        "Pelton Wheel Calculation"
+      ]
+    },
+    {
+      "topic": "Centrifugal Pumps and Cavitation",
+      "labels": [
+        "Cavitation in Pumps",
+        "Centrifugal Pumps",
+        "Pump Similarity Calculation",
+        "Centrifugal Pump Efficiencies"
+      ]
+    },
+    {
+      "topic": "Reciprocating Pumps and Compressors",
+      "labels": [
+        "Reciprocating Pump Calculation",
+        "Reciprocating Pumps",
+        "Blowers and Compressors"
+      ]
+    }
+  ]
+}

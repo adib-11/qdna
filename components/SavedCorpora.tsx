@@ -7,6 +7,7 @@ import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
 import { browserCorpusStore } from "@/lib/corpus/store";
 import { corpusChanged, useSavedCorpora } from "@/lib/corpus/useCorpora";
 import { sampleOutcome } from "@/lib/samples";
+import type { TopicOverride } from "@/lib/analysis/topics";
 import type { Question } from "@/lib/types";
 
 /** Every corpus saved in this browser, to reopen or delete, plus importing a classmate's file. */
@@ -26,9 +27,12 @@ export function SavedCorpora() {
   }
 
   /** An import from here starts a new corpus. */
-  function saveImported(questions: Question[]) {
-    browserCorpusStore()?.save(sampleOutcome(questions));
+  function saveImported(questions: Question[], topicOverrides: TopicOverride[]) {
+    const saved = browserCorpusStore()?.save(sampleOutcome(questions), undefined, {
+      topicOverrides,
+    });
     corpusChanged();
+    return saved?.id;
   }
 
   return (
