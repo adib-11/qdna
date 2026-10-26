@@ -53,8 +53,10 @@ export interface ExtractionProgress {
   pagesTotal: number;
   questionsFound: number;
   batchesFailed: number;
-  /** Pages belonging to batches that failed outright. */
+  /** Pages belonging to batches that failed outright, including any too large to send. */
   pagesFailed: number;
+  /** Pages skipped for being over Gemini's inline size limit. */
+  pagesTooLarge?: number;
 }
 
 export interface ExtractionOutcome {

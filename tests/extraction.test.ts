@@ -1,7 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { hashImage } from "@/lib/cache/hashCache";
-import { BATCH_PAGES } from "@/lib/config";
-import { runExtraction, type ExtractionCache } from "@/lib/extract/runExtraction";
+import { BATCH_PAGES, GEMINI_INLINE_LIMIT_BYTES } from "@/lib/config";
+import { describeModelError } from "@/lib/gemini/generate";
+import {
+  emptyRunMessage,
+  runExtraction,
+  shortfallNote,
+  type ExtractionCache,
+} from "@/lib/extract/runExtraction";
 import { pagesOf, uploadKind } from "@/lib/extract/uploads";
 import type { PageImage, Question } from "@/lib/types";
 
@@ -218,5 +224,119 @@ describe("runExtraction", () => {
       }),
     ).rejects.toThrow(/API key not valid/);
     expect(calls).toBe(1);
+  });
+
+  describe("when every batch fails", () => {
+    afterEach(() => vi.useRealTimers());
+
+    it("keeps the last model error, so spent quota is reported as quota, not as a bad scan", async () => {
+      // Only timeouts are faked: hashing still runs on the real event loop.
+      vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+      const pages = { "a.pdf": [0, 1, 2].map((i) => page("a", i)) };
+      const running = runExtraction([file("a.pdf")], {
+        loadPages: loadPagesFrom(pages),
+        cache: memoryCache(),
+        minIntervalMs: 0,
+        extractBatch: async () => {
+          throw Object.assign(new Error("RESOURCE_EXHAUSTED"), { status: 429 });
+        },
+      });
+      // Retries back off; let every backoff run out.
+      let settled = false;
+      void running.finally(() => (settled = true));
+      while (!settled) {
+        await new Promise((r) => setImmediate(r));
+        await vi.advanceTimersByTimeAsync(1_000);
+      }
+      const run = await running;
+
+      expect(run.outcome.questions).toHaveLength(0);
+      expect(run.lastError).toMatchObject({ status: 429 });
+      expect(emptyRunMessage(run, (e) => describeModelError(e, "x"))).toMatch(/out of quota/);
+    });
+  });
+
+  it("blames the scans only when the model answered with nothing", async () => {
+    const run = await runExtraction([file("a.pdf")], {
+      loadPages: loadPagesFrom({ "a.pdf": [page("a", 0)] }),
+      cache: memoryCache(),
+      minIntervalMs: 0,
+      extractBatch: async () => [],
+    });
+    expect(run.lastError).toBeUndefined();
+    expect(emptyRunMessage(run, () => "model error")).toMatch(/faint or rotated/);
+  });
+
+  it("skips a page over Gemini's inline limit with its own reason, without sending it", async () => {
+    let calls = 0;
+    const huge = { ...page("big", 0), bytes: GEMINI_INLINE_LIMIT_BYTES + 1 };
+
+    const run = await runExtraction([file("big.jpg"), file("ok.jpg")], {
+      loadPages: loadPagesFrom({ "big.jpg": [huge], "ok.jpg": [page("ok", 0)] }),
+      cache: memoryCache(),
+      minIntervalMs: 0,
+      extractBatch: async (batch) => {
+        calls++;
+        return oneQuestionPerBatch(batch);
+      },
+    });
+
+    expect(calls).toBe(1);
+    expect(run.files[0]).toMatchObject({ pagesTooLarge: 1, pagesFailed: 1, pagesDone: 0 });
+    expect(run.files[1]).toMatchObject({ pagesTooLarge: 0, pagesDone: 1 });
+
+    const onlyHuge = await runExtraction([file("big.jpg")], {
+      loadPages: loadPagesFrom({ "big.jpg": [huge] }),
+      cache: memoryCache(),
+      minIntervalMs: 0,
+      extractBatch: async () => [],
+    });
+    expect(emptyRunMessage(onlyHuge, () => "model error")).toMatch(/too large/);
+  });
+
+  it("honours a cancel while pages are still being prepared", async () => {
+    const controller = new AbortController();
+    const seenSignals: (AbortSignal | undefined)[] = [];
+    let calls = 0;
+
+    const run = await runExtraction([file("a.pdf"), file("b.pdf")], {
+      signal: controller.signal,
+      cache: memoryCache(),
+      minIntervalMs: 0,
+      loadPages: async (_file, signal) => {
+        seenSignals.push(signal);
+        // The student cancels mid-render; the renderer stops between pages.
+        controller.abort();
+        throw new DOMException("Aborted", "AbortError");
+      },
+      extractBatch: async () => {
+        calls++;
+        return [];
+      },
+    });
+
+    expect(seenSignals).toEqual([controller.signal]);
+    expect(run.cancelled).toBe(true);
+    expect(calls).toBe(0);
+    expect(run.files.map((f) => f.status)).toEqual(["cancelled", "cancelled"]);
+  });
+});
+
+describe("shortfallNote", () => {
+  const progress = { questionsFound: 0, batchesFailed: 1 };
+
+  it("names unreadable pages, a cancel, or both", () => {
+    expect(shortfallNote({ ...progress, pagesDone: 2, pagesFailed: 2, pagesTotal: 4 })).toBe(
+      "2 pages could not be read.",
+    );
+    expect(shortfallNote({ ...progress, pagesDone: 2, pagesFailed: 0, pagesTotal: 4 })).toBe(
+      "the extraction was cancelled before the rest.",
+    );
+    expect(shortfallNote({ ...progress, pagesDone: 2, pagesFailed: 1, pagesTotal: 5 })).toBe(
+      "1 page could not be read, and the extraction was cancelled before the rest.",
+    );
+    expect(
+      shortfallNote({ ...progress, pagesDone: 1, pagesFailed: 2, pagesTooLarge: 1, pagesTotal: 3 }),
+    ).toBe("1 page could not be read, and 1 page was too large to send to Gemini.");
   });
 });

@@ -42,6 +42,9 @@ export const RETRY_BASE_DELAY_MS = 2000;
  * retried or recorded rather than holding the whole extraction open.
  */
 export const MODEL_BUDGET_MS = 60_000;
+// The extraction eval (#6) should revisit this budget and the attempt caps
+// below: they were sized for a 60s Vercel function window, which no longer
+// bounds a browser-to-Gemini call.
 
 /**
  * Longest a single model attempt may run, per action. Verbatim transcription
@@ -64,6 +67,13 @@ export const JPEG_QUALITY = 0.75;
  * limit is higher, so this is conservative rather than binding.
  */
 export const MAX_BATCH_BYTES = 3_500_000;
+
+/**
+ * Largest single page qDNA will send, as base64 bytes. Gemini caps a whole
+ * request with inline data at 20 MB; a page over this is skipped with a clear
+ * message rather than sent to fail. Photos are never downscaled to fit.
+ */
+export const GEMINI_INLINE_LIMIT_BYTES = 20_000_000;
 
 /** Proportion of non-white pixels below which a page is treated as blank. */
 export const LOW_INK_THRESHOLD = 0.02;

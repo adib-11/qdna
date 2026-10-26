@@ -40,10 +40,10 @@ export function uploadKind(file: Pick<File, "name" | "type">): UploadKind | null
  * browser; a photo skips rasterisation and is sent as is, so Gemini reads
  * HEIC without the browser having to decode it.
  */
-export async function pagesOf(file: File): Promise<PageImage[]> {
+export async function pagesOf(file: File, signal?: AbortSignal): Promise<PageImage[]> {
   const kind = uploadKind(file);
   if (!kind) throw new Error(`${file.name} is not a PDF or a JPG, PNG or HEIC photo.`);
-  if (kind.kind === "pdf") return renderPdfToPages(file);
+  if (kind.kind === "pdf") return renderPdfToPages(file, undefined, signal);
 
   const base64 = toBase64(new Uint8Array(await file.arrayBuffer()));
   return [{ pageIndex: 0, base64, bytes: base64.length, mimeType: kind.mimeType }];

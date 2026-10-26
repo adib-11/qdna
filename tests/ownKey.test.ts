@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createKeyStore, verifyKey } from "@/lib/key/ownKey";
+import { createKeyStore, handleModelError, verifyKey } from "@/lib/key/ownKey";
 
 function memoryStorage() {
   const data = new Map<string, string>();
@@ -125,5 +125,32 @@ describe("verifyKey", () => {
     const result = await verifyKey("   ", fetchImpl);
     expect(result.ok).toBe(false);
     expect(calls).toHaveLength(0);
+  });
+});
+
+describe("handleModelError", () => {
+  it("forgets a key Google rejects mid-session, so the next model action prompts again", () => {
+    const storage = memoryStorage();
+    const store = createKeyStore(storage);
+    store.set(FAKE_KEY, true);
+    const rejected = Object.assign(new Error("API key not valid. Please pass a valid API key."), {
+      status: 400,
+    });
+
+    const message = handleModelError(rejected, "fallback", store);
+
+    expect(message).toMatch(/rejected your Gemini key/);
+    expect(store.get()).toBeNull();
+    expect(createKeyStore(storage).get()).toBeNull();
+  });
+
+  it("keeps the key for any other failure, such as spent quota", () => {
+    const store = createKeyStore(memoryStorage());
+    store.set(FAKE_KEY, false);
+
+    const message = handleModelError(Object.assign(new Error("RESOURCE_EXHAUSTED"), { status: 429 }), "x", store);
+
+    expect(message).toMatch(/out of quota/);
+    expect(store.get()).toBe(FAKE_KEY);
   });
 });

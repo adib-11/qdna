@@ -5,10 +5,14 @@ import { isLowInk } from "./blankFilter";
 /**
  * Rasterise a PDF entirely in the browser. Nothing leaves the machine here —
  * the caller decides what to send, and sends images, never the file.
+ *
+ * A cancel is checked between pages, so stopping a long PDF does not wait for
+ * the rest of it to render.
  */
 export async function renderPdfToPages(
   file: File,
   onPage?: (rendered: number, total: number) => void,
+  signal?: AbortSignal,
 ): Promise<PageImage[]> {
   if (typeof window === "undefined") {
     throw new Error("renderPdfToPages is browser-only");
@@ -25,6 +29,10 @@ export async function renderPdfToPages(
   const pages: PageImage[] = [];
 
   for (let n = 1; n <= doc.numPages; n++) {
+    if (signal?.aborted) {
+      await doc.loadingTask.destroy();
+      throw new DOMException("Aborted", "AbortError");
+    }
     const page = await doc.getPage(n);
     const baseViewport = page.getViewport({ scale: 1 });
     const scale = TARGET_PAGE_WIDTH_PX / baseViewport.width;

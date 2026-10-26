@@ -6,6 +6,8 @@
  * key" is an explicit opt-in that keeps a copy in this browser's localStorage,
  * and forgetting clears both.
  */
+import { describeModelError, isKeyRejected } from "@/lib/gemini/generate";
+
 const REMEMBER_KEY = "qdna:own-key:v1";
 
 /** Where Gemini lives. The browser calls it directly; CORS allows it. */
@@ -103,6 +105,20 @@ export async function verifyKey(
     ok: false,
     message: `Google couldn't check the key right now (${response.status}). Try again in a moment.`,
   };
+}
+
+/**
+ * What to tell the student when a model action fails. A key Google rejects
+ * mid-session (revoked, deleted) is forgotten here, in memory and in this
+ * browser, so the next model action prompts for a new one.
+ */
+export function handleModelError(
+  error: unknown,
+  fallback: string,
+  store: KeyStore = ownKeyStore(),
+): string {
+  if (isKeyRejected(error)) store.forget();
+  return describeModelError(error, fallback);
 }
 
 let browserStore: KeyStore | null = null;

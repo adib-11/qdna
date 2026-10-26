@@ -6,6 +6,7 @@ import { OwnKeyStatus, useRequestKey } from "@/components/OwnKeyProvider";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import {
+  emptyRunMessage,
   runExtraction,
   type ExtractionRun,
   type FileProgress,
@@ -16,7 +17,7 @@ import { sampleCorpusId } from "@/lib/corpus/store";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { extractQuestions } from "@/lib/gemini/extract";
-import { describeModelError } from "@/lib/gemini/generate";
+import { handleModelError } from "@/lib/key/ownKey";
 import { SAMPLES, sampleOutcome } from "@/lib/samples";
 
 type Phase = "idle" | "working" | "cancelled" | "failed";
@@ -86,8 +87,9 @@ export function UploadZone() {
 
       if (run.outcome.questions.length === 0) {
         setPhase("failed");
+        // Spent quota on every batch reads as a quota problem, not a bad scan.
         setError(
-          "No questions came back from those pages. If the scans are very faint or rotated, try a cleaner copy.",
+          emptyRunMessage(run, (error) => handleModelError(error, "Extraction failed.")),
         );
         return;
       }
@@ -95,7 +97,7 @@ export function UploadZone() {
       openOutcome(run);
     } catch (err) {
       setPhase("failed");
-      setError(describeModelError(err, "Extraction failed."));
+      setError(handleModelError(err, "Extraction failed."));
     } finally {
       cancelRef.current = null;
     }
@@ -306,10 +308,20 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
                 style={{ width: `${pct}%` }}
               />
             </div>
-            {file.pagesFailed > 0 && (
+            {file.pagesTooLarge > 0 && (
               <p className="mt-[8px] text-caption text-coral">
-                {plural(file.pagesFailed, "page")} could not be read and{" "}
-                {file.pagesFailed === 1 ? "was" : "were"} skipped.
+                {plural(file.pagesTooLarge, "page")}{" "}
+                {file.pagesTooLarge === 1 ? "is" : "are"} over Gemini&apos;s 20 MB
+                limit for one request and{" "}
+                {file.pagesTooLarge === 1 ? "was" : "were"} skipped. Try a
+                smaller photo or a lower-resolution scan.
+              </p>
+            )}
+            {file.pagesFailed > file.pagesTooLarge && (
+              <p className="mt-[8px] text-caption text-coral">
+                {plural(file.pagesFailed - file.pagesTooLarge, "page")} could not
+                be read and {file.pagesFailed - file.pagesTooLarge === 1 ? "was" : "were"}{" "}
+                skipped.
               </p>
             )}
           </li>

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { browserModelClient } from "@/lib/gemini/browserClient";
-import { describeModelError } from "@/lib/gemini/generate";
 import { writeHint } from "@/lib/gemini/hint";
+import { handleModelError } from "@/lib/key/ownKey";
 import type { Question, TopicStat } from "@/lib/types";
 
 interface TutorState {
@@ -68,7 +68,7 @@ export function TutorPanel({
         setState({
           status: "error",
           hint: "",
-          error: describeModelError(error, "The hint request failed."),
+          error: handleModelError(error, "The hint request failed."),
         });
       }
     }

@@ -1,5 +1,6 @@
 import { getCached, hashImage, setCached } from "@/lib/cache/hashCache";
 import {
+  GEMINI_INLINE_LIMIT_BYTES,
   MAX_CONCURRENT,
   MAX_RETRIES,
   MIN_REQUEST_INTERVAL_MS,
@@ -26,7 +27,10 @@ export interface FileProgress {
   status: "reading" | "extracting" | "done" | "cancelled";
   pagesDone: number;
   pagesTotal: number;
+  /** Pages skipped, including any too large to send. */
   pagesFailed: number;
+  /** Pages over Gemini's inline size limit, skipped without a request. */
+  pagesTooLarge: number;
   batchesFailed: number;
   questionsFound: number;
 }
@@ -41,7 +45,7 @@ export interface RunExtractionOptions {
   /** One batch of pages to questions — normally Gemini on the student's own key. */
   extractBatch: (pages: PageImage[], signal?: AbortSignal) => Promise<Question[]>;
   /** One file to its pages. Defaults to rendering PDFs and reading photos as is. */
-  loadPages?: (file: File) => Promise<PageImage[]>;
+  loadPages?: (file: File, signal?: AbortSignal) => Promise<PageImage[]>;
   onProgress?: (files: FileProgress[]) => void;
   /** The student's cancel. Finished pages are kept and stay cached. */
   signal?: AbortSignal;
@@ -55,6 +59,8 @@ export interface ExtractionRun {
   files: FileProgress[];
   /** True when the student stopped the run before every page was read. */
   cancelled: boolean;
+  /** The last batch failure, so a run that read nothing can say why. */
+  lastError?: unknown;
 }
 
 const browserCache: ExtractionCache = { get: getCached, set: setCached };
@@ -85,11 +91,13 @@ export async function runExtraction(
     pagesDone: 0,
     pagesTotal: 0,
     pagesFailed: 0,
+    pagesTooLarge: 0,
     batchesFailed: 0,
     questionsFound: 0,
   }));
   const emit = () => onProgress?.(files.map((f) => ({ ...f })));
   const questions: Question[] = [];
+  let lastError: unknown;
   const limiter = createLimiter({ maxConcurrent: MAX_CONCURRENT, minIntervalMs });
 
   const finish = (cancelled: boolean): ExtractionRun => {
@@ -106,6 +114,7 @@ export async function runExtraction(
       },
       files: files.map((f) => ({ ...f })),
       cancelled,
+      lastError,
     };
   };
 
@@ -114,7 +123,13 @@ export async function runExtraction(
   const perFilePages: PageImage[][] = [];
   for (const [i, upload] of uploads.entries()) {
     if (signal?.aborted) return finish(true);
-    const pages = await loadPages(upload);
+    let pages: PageImage[];
+    try {
+      pages = await loadPages(upload, signal);
+    } catch (error) {
+      if (signal?.aborted) return finish(true);
+      throw error;
+    }
     perFilePages.push(pages);
     files[i].pagesTotal = pages.length;
     emit();
@@ -130,6 +145,15 @@ export async function runExtraction(
     for (const batch of batchPages(pages)) {
       if (signal?.aborted) return finish(true);
 
+      // Batches cap their bytes, so only a lone page can be this big. Sending
+      // it would fail anyway; say why instead. Photos are never downscaled.
+      if (batch.length === 1 && batch[0].bytes > GEMINI_INLINE_LIMIT_BYTES) {
+        progress.pagesTooLarge += 1;
+        progress.pagesFailed += 1;
+        emit();
+        continue;
+      }
+
       const hash = await hashImage(batch.map((p) => p.base64));
       let extracted = cache.get(hash);
 
@@ -142,6 +166,7 @@ export async function runExtraction(
         } catch (error) {
           if (signal?.aborted) return finish(true);
           if (isKeyRejected(error)) throw error;
+          lastError = error;
           progress.batchesFailed += 1;
           progress.pagesFailed += batch.length;
           emit();
@@ -162,14 +187,48 @@ export async function runExtraction(
   return finish(false);
 }
 
+/**
+ * Why a run that produced no questions produced none: the model's own error
+ * when batches failed (spent quota, say), otherwise the scans themselves.
+ */
+export function emptyRunMessage(run: ExtractionRun, describe: (error: unknown) => string): string {
+  if (run.lastError !== undefined) return describe(run.lastError);
+  if (run.files.some((f) => f.pagesTooLarge > 0)) {
+    return "Every page was too large to send to Gemini. Try smaller photos or a lower-resolution scan.";
+  }
+  return "No questions came back from those pages. If the scans are very faint or rotated, try a cleaner copy.";
+}
+
+/**
+ * The note on a partial corpus: pages that could not be read, pages a cancel
+ * left unread, or both.
+ */
+export function shortfallNote(progress: ExtractionProgress): string {
+  const notes: string[] = [];
+  const pages = (n: number) => `${n} page${n === 1 ? "" : "s"}`;
+  const tooLarge = progress.pagesTooLarge ?? 0;
+  const unreadable = progress.pagesFailed - tooLarge;
+  if (unreadable > 0) notes.push(`${pages(unreadable)} could not be read`);
+  if (tooLarge > 0) {
+    notes.push(`${pages(tooLarge)} ${tooLarge === 1 ? "was" : "were"} too large to send to Gemini`);
+  }
+  if (progress.pagesDone + progress.pagesFailed < progress.pagesTotal) {
+    notes.push("the extraction was cancelled before the rest");
+  }
+  return notes.length > 0 ? `${notes.join(", and ")}.` : "";
+}
+
 /** The run's totals, as the saved corpus records them. */
 function totalProgress(files: FileProgress[], questionsFound: number): ExtractionProgress {
-  const sum = (key: "pagesDone" | "pagesTotal" | "pagesFailed" | "batchesFailed") =>
+  const sum = (
+    key: "pagesDone" | "pagesTotal" | "pagesFailed" | "pagesTooLarge" | "batchesFailed",
+  ) =>
     files.reduce((total, f) => total + f[key], 0);
   return {
     pagesDone: sum("pagesDone"),
     pagesTotal: sum("pagesTotal"),
     pagesFailed: sum("pagesFailed"),
+    pagesTooLarge: sum("pagesTooLarge"),
     batchesFailed: sum("batchesFailed"),
     questionsFound,
   };
@@ -211,15 +270,13 @@ async function dispatchBatch(
 /** A backoff wait that a cancel cuts short. */
 function pause(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
-    const timer = setTimeout(resolve, ms);
-    signal?.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timer);
-        resolve();
-      },
-      { once: true },
-    );
+    const done = () => {
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", done);
+      resolve();
+    };
+    const timer = setTimeout(done, ms);
+    signal?.addEventListener("abort", done, { once: true });
   });
 }
 

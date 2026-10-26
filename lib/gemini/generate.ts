@@ -163,7 +163,7 @@ export function isKeyRejected(error: unknown): boolean {
 /** What a student is told when a model action fails. */
 export function describeModelError(error: unknown, fallback: string): string {
   if (isKeyRejected(error)) {
-    return "Google rejected your Gemini key. Forget it and paste a valid key, then try again.";
+    return "Google rejected your Gemini key, so qDNA has forgotten it. Try again to paste a valid key.";
   }
   if (extractStatus(error) === 429) {
     return "Your Gemini key is out of quota on every model qDNA tried. The free tier resets daily; try again later.";

@@ -19,6 +19,7 @@ import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
 import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
 import { browserCorpusStore } from "@/lib/corpus/store";
+import { shortfallNote } from "@/lib/extract/runExtraction";
 import { corpusChanged, useOpenCorpus } from "@/lib/corpus/useCorpora";
 import type { Question } from "@/lib/types";
 
@@ -119,11 +120,8 @@ export default function AnalyzePage() {
           {partial && (
             <p className="mt-[24px] text-body-sm text-vermillion">
               {progress.pagesDone} of {progress.pagesTotal} pages analyzed —{" "}
-              {progress.pagesFailed > 0
-                ? `${progress.pagesFailed} page${progress.pagesFailed === 1 ? "" : "s"} could not be read.`
-                : "the extraction was cancelled before the rest."}{" "}
-              Every figure below is computed from what was successfully
-              extracted.
+              {shortfallNote(progress)} Every figure below is computed from
+              what was successfully extracted.
             </p>
           )}
 

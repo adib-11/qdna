@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { browserModelClient } from "@/lib/gemini/browserClient";
-import { describeModelError } from "@/lib/gemini/generate";
 import { practicePaperTopics, writePracticePaper } from "@/lib/gemini/practicePaper";
+import { handleModelError } from "@/lib/key/ownKey";
 import type { AnalysisResult, PracticePaper as Paper, TopicStat } from "@/lib/types";
 
 type State =
@@ -59,7 +59,7 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
     } catch (error) {
       setState({
         status: "error",
-        message: describeModelError(error, "The paper could not be generated."),
+        message: handleModelError(error, "The paper could not be generated."),
       });
     }
   }
