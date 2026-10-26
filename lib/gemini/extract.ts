@@ -4,6 +4,7 @@ import {
   MODEL_BUDGET_MS,
   MODEL_FALLBACKS,
 } from "@/lib/config";
+import type { GenerateContentConfig } from "@google/genai";
 import { generateWithFallback, type ModelClient } from "@/lib/gemini/generate";
 import { EXTRACTION_PROMPT } from "@/lib/gemini/prompts";
 import { EXTRACTION_SCHEMA } from "@/lib/gemini/schema";
@@ -18,11 +19,25 @@ export interface PagePayload {
 /** Raw model output, before ids are assigned. */
 type ExtractedQuestion = Omit<Question, "id">;
 
+export interface ExtractOptions {
+  hint?: string;
+  signal?: AbortSignal;
+  /** The model chain to walk. The app's chain unless the eval is measuring another. */
+  models?: string[];
+  /** Settings layered over the app's JSON schema and temperature, such as thinking or media resolution. */
+  config?: GenerateContentConfig;
+}
+
 /** Every question on a batch of page images, through the model chain. */
 export async function extractQuestions(
   client: ModelClient,
   pages: PagePayload[],
-  { hint, signal }: { hint?: string; signal?: AbortSignal } = {},
+  {
+    hint,
+    signal,
+    models = [EXTRACTION_MODEL, ...MODEL_FALLBACKS],
+    config,
+  }: ExtractOptions = {},
 ): Promise<Question[]> {
   const raw = await generateWithFallback(client, {
     parts: [
@@ -31,11 +46,12 @@ export async function extractQuestions(
         inlineData: { mimeType: page.mimeType, data: page.base64 },
       })),
     ],
-    models: [EXTRACTION_MODEL, ...MODEL_FALLBACKS],
+    models,
     config: {
       responseMimeType: "application/json",
       responseSchema: EXTRACTION_SCHEMA,
       temperature: 0,
+      ...config,
     },
     budgetMs: MODEL_BUDGET_MS,
     maxAttemptMs: EXTRACTION_ATTEMPT_MS,

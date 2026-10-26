@@ -75,6 +75,12 @@ export const MAX_BATCH_BYTES = 3_500_000;
  */
 export const GEMINI_INLINE_LIMIT_BYTES = 20_000_000;
 
+/**
+ * Non-whitespace characters at or above which a PDF page counts as having a
+ * text layer. Image-only scans yield none, or a stray header of a few dozen.
+ */
+export const TEXT_LAYER_MIN_CHARS = 200;
+
 /** Proportion of non-white pixels below which a page is treated as blank. */
 export const LOW_INK_THRESHOLD = 0.02;
 

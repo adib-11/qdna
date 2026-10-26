@@ -52,6 +52,8 @@ export interface RunExtractionOptions {
   cache?: ExtractionCache;
   /** Gap between request starts; the free tier fails on requests per minute first. */
   minIntervalMs?: number;
+  /** Pages per request. BATCH_PAGES unless the eval is measuring another size. */
+  maxPages?: number;
 }
 
 export interface ExtractionRun {
@@ -83,6 +85,7 @@ export async function runExtraction(
     signal,
     cache = browserCache,
     minIntervalMs = MIN_REQUEST_INTERVAL_MS,
+    maxPages,
   }: RunExtractionOptions,
 ): Promise<ExtractionRun> {
   const files: FileProgress[] = uploads.map((file) => ({
@@ -142,7 +145,7 @@ export async function runExtraction(
     progress.status = "extracting";
     emit();
 
-    for (const batch of batchPages(pages)) {
+    for (const batch of batchPages(pages, maxPages)) {
       if (signal?.aborted) return finish(true);
 
       // Batches cap their bytes, so only a lone page can be this big. Sending
