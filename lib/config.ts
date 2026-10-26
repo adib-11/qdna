@@ -56,10 +56,9 @@ export const FREE_TIER_REQUESTS_PER_DAY = 20;
  */
 export const EVAL_DAILY_CAPS: Record<string, number> = {
   "gemini-flash-latest": FREE_TIER_REQUESTS_PER_DAY,
-  "gemini-2.5-flash-lite": 15,
-  "gemma-4-26b-a4b-it": 15,
+  "gemini-3.5-flash-lite": 15,
 };
-/** The cap for any other model, such as a fallback in the Flash chain. */
+/** The cap for any other model. */
 export const EVAL_DEFAULT_DAILY_CAP = 15;
 
 /** Free-tier daily quotas reset at midnight Pacific time. */
@@ -212,7 +211,7 @@ export const EXTRACTION_MODEL = "gemini-flash-latest";
  * lib/gemini/extract.ts. The eval rewrites the two lines below once it ends.
  */
 // Pending: the extraction eval (docs/extraction-eval.md) is still in progress.
-export const EXTRACTION_SETUP = "Flash chain";
+export const EXTRACTION_SETUP = "Flash (gemini-flash-latest)";
 export const REASONING_MODEL = "gemini-flash-latest";
 
 /**

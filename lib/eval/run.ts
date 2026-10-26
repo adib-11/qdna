@@ -32,7 +32,10 @@ export interface EvalConfiguration extends ExtractionSetup {
   name: string;
 }
 
-/** Every setup the app could ship. "Text layer first" is measured offline only: see textLayerRecall. */
+/**
+ * Every setup the eval runs live. "Text layer first" is measured offline only
+ * (see textLayerRecall), and Gemma 4 is not run: see resultsDoc.
+ */
 export const CONFIGURATIONS: EvalConfiguration[] = Object.entries(EXTRACTION_SETUPS).map(
   ([name, setup]) => ({ name, ...setup }),
 );
@@ -600,6 +603,17 @@ reported for all three.
 ${textLayer.map((t) => `${t.label}: ${t.recall.toFixed(2)}`).join(", ")} on the papers with a
 text layer, against the ${GATES.minRecall} gate. \`scripts/eval-extraction.mjs text-layer\`
 reproduces it offline.
+
+**Gemma 4** (\`gemma-4-26b-a4b-it\`) was dropped from the live eval: on the free key it answered
+extraction requests with repeated 500 INTERNAL errors, and a minimal JSON-schema test call
+returned 500 as well.
+
+**Flash-Lite, minimal thinking** is \`gemini-3.5-flash-lite\` with \`thinkingLevel: MINIMAL\`.
+Thinking cannot be turned off on that model; minimal is the lowest level it allows.
+
+**Pinned models.** Each setup runs on the one model it is named after, with no fallback, so
+"Answered by" names that model. A batch refused with 429 or 503 is left pending for a later
+day instead of falling back. The app keeps its fallback chain for students.
 
 ## Winner
 

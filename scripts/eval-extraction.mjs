@@ -90,7 +90,7 @@ function plan() {
   const whole = evalStatus(emptyProgress(), spec, new Date());
   const perRun = groundTruthPapers.reduce((n, p) => n + Math.ceil(p.source.pages.length / EVAL_LIVE_BATCH_PAGES), 0);
   const firstPass = whole.models.reduce((n, m) => n + m.left, 0);
-  console.log("The whole eval, at one request per batch (retries and chain fallbacks add more):");
+  console.log("The whole eval, at one request per batch (retries add more; each setup is pinned to one model):");
   for (const m of whole.models) console.log(`  ${m.model}: ${m.left} requests, at ${m.cap} a day`);
   console.log(
     `  first pass ${firstPass} requests, then up to ${2 * perRun} for the two finalists' re-runs,` +

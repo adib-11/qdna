@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MediaResolution, ThinkingLevel } from "@google/genai";
 import { EXTRACTION_SETUP } from "@/lib/config";
+import { EXTRACTION_CHAIN, extractQuestions } from "@/lib/gemini/extract";
 import type { ModelClient } from "@/lib/gemini/generate";
 import type { GroundTruthCourse } from "@/lib/eval/groundTruth";
 import {
@@ -476,14 +478,35 @@ describe("formatResultsTable", () => {
 });
 
 describe("the configurations", () => {
-  it("run the four model setups live, and the app uses one of them", () => {
-    expect(CONFIGURATIONS.map((c) => c.name)).toEqual([
-      "Flash chain",
-      "Flash-Lite, thinking off",
-      "Gemma 4",
-      "Low media resolution",
+  it("run three setups live, each pinned to the one model it is named after", () => {
+    expect(CONFIGURATIONS).toEqual([
+      { name: "Flash (gemini-flash-latest)", models: ["gemini-flash-latest"] },
+      {
+        name: "Flash-Lite, minimal thinking",
+        models: ["gemini-3.5-flash-lite"],
+        config: { thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL } },
+      },
+      {
+        name: "Low media resolution",
+        models: ["gemini-flash-latest"],
+        config: { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW },
+      },
     ]);
     expect(CONFIGURATIONS.map((c) => c.name)).toContain(EXTRACTION_SETUP);
+  });
+
+  it("leave the app's extraction walking its whole fallback chain", async () => {
+    const tried: string[] = [];
+    const client: ModelClient = {
+      models: {
+        generateContent: async ({ model }) => {
+          tried.push(model);
+          throw Object.assign(new Error("busy"), { status: 503 });
+        },
+      },
+    };
+    await expect(extractQuestions(client, [{ base64: "AAAA", mimeType: "image/jpeg" }])).rejects.toThrow();
+    expect(tried).toEqual(EXTRACTION_CHAIN);
   });
 });
 
@@ -523,6 +546,8 @@ describe("resultsDoc", () => {
     ]);
     expect(tableLines("Finalists re-run")).toHaveLength(4);
     expect(markdown).toMatch(/1-2 pages/);
+    expect(markdown).toMatch(/Flash-Lite, minimal thinking[^]*cannot be turned off/);
+    expect(markdown).toMatch(/Gemma 4[^]*500 INTERNAL/);
     expect(markdown).toContain(`${LABEL}: 0.72`);
   });
 });
@@ -548,7 +573,9 @@ describe("textLayerRecall", () => {
 describe("setExtractionSetup", () => {
   it("finds the setting in the real config", () => {
     const source = readFileSync("lib/config.ts", "utf8");
-    expect(setExtractionSetup(source, "Gemma 4", "why")).toContain('EXTRACTION_SETUP = "Gemma 4";');
+    expect(setExtractionSetup(source, "Low media resolution", "why")).toContain(
+      'EXTRACTION_SETUP = "Low media resolution";',
+    );
   });
 
   it("points the app's config at the winner, citing the results table", () => {
@@ -559,11 +586,11 @@ describe("setExtractionSetup", () => {
       "export const OTHER = 1;",
     ].join("\n");
 
-    expect(setExtractionSetup(source, "Gemma 4", "it passes every gate")).toBe(
+    expect(setExtractionSetup(source, "Low media resolution", "it passes every gate")).toBe(
       [
         "export const EXTRACTION_MODEL = \"m\";",
         "// Chosen by the extraction eval, docs/extraction-eval.md: it passes every gate.",
-        "export const EXTRACTION_SETUP = \"Gemma 4\";",
+        "export const EXTRACTION_SETUP = \"Low media resolution\";",
         "export const OTHER = 1;",
       ].join("\n"),
     );

@@ -5,7 +5,7 @@ import {
   MODEL_BUDGET_MS,
   MODEL_FALLBACKS,
 } from "@/lib/config";
-import { MediaResolution, type GenerateContentConfig } from "@google/genai";
+import { MediaResolution, ThinkingLevel, type GenerateContentConfig } from "@google/genai";
 import { generateWithFallback, type ModelClient } from "@/lib/gemini/generate";
 import { EXTRACTION_PROMPT } from "@/lib/gemini/prompts";
 import { EXTRACTION_SCHEMA } from "@/lib/gemini/schema";
@@ -21,24 +21,26 @@ export interface PagePayload {
 export const EXTRACTION_CHAIN = [EXTRACTION_MODEL, ...MODEL_FALLBACKS];
 
 export interface ExtractionSetup {
-  /** The model chain to walk, in order. */
+  /** The model chain to walk, in order. The eval's setups are pinned to one model. */
   models: string[];
   /** Settings layered over the app's schema and temperature. */
   config?: GenerateContentConfig;
 }
 
-/** The setups the extraction eval measures. EXTRACTION_SETUP names the app's. */
+/**
+ * The setups the extraction eval measures, each pinned to the one model it is
+ * named after so its row measures that model. EXTRACTION_SETUP names the
+ * app's, which keeps the fallback chain (see APP_MODELS).
+ */
 export const EXTRACTION_SETUPS: Record<string, ExtractionSetup> = {
-  "Flash chain": { models: EXTRACTION_CHAIN },
-  // The 2.5 Flash-Lite is the one Flash-Lite whose thinking can be turned
-  // off outright; later ones only go down to a minimal level.
-  "Flash-Lite, thinking off": {
-    models: ["gemini-2.5-flash-lite"],
-    config: { thinkingConfig: { thinkingBudget: 0 } },
+  "Flash (gemini-flash-latest)": { models: [EXTRACTION_MODEL] },
+  // Thinking cannot be turned off on 3.5 Flash-Lite; minimal is its lowest.
+  "Flash-Lite, minimal thinking": {
+    models: ["gemini-3.5-flash-lite"],
+    config: { thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL } },
   },
-  "Gemma 4": { models: ["gemma-4-26b-a4b-it"] },
   "Low media resolution": {
-    models: EXTRACTION_CHAIN,
+    models: [EXTRACTION_MODEL],
     config: { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW },
   },
 };
@@ -56,6 +58,11 @@ export interface ExtractOptions {
 }
 
 const APP_SETUP = EXTRACTION_SETUPS[EXTRACTION_SETUP];
+/** The app's setup model first, then the rest of the chain: students keep every fallback. */
+const APP_MODELS = [
+  APP_SETUP.models[0],
+  ...EXTRACTION_CHAIN.filter((model) => model !== APP_SETUP.models[0]),
+];
 
 /** Every question on a batch of page images, through the model chain. */
 export async function extractQuestions(
@@ -64,7 +71,7 @@ export async function extractQuestions(
   {
     hint,
     signal,
-    models = APP_SETUP.models,
+    models = APP_MODELS,
     config = APP_SETUP.config,
   }: ExtractOptions = {},
 ): Promise<Question[]> {
