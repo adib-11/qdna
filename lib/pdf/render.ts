@@ -46,7 +46,12 @@ export async function renderPdfToPages(
     if (!skip) {
       const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
       const base64 = dataUrl.slice(dataUrl.indexOf(",") + 1);
-      pages.push({ pageIndex: n - 1, base64, bytes: base64.length });
+      pages.push({
+        pageIndex: n - 1,
+        base64,
+        bytes: base64.length,
+        mimeType: "image/jpeg",
+      });
     }
 
     page.cleanup();

@@ -405,7 +405,7 @@ describe("backtest", () => {
     const report = backtest(EMF_QUESTIONS, heldOut);
 
     expect(report.trainingPapers).not.toContain(heldOut);
-    for (const stat of report.predictedTopics) {
+    for (const stat of report.rankedTopics) {
       expect(stat.papers).not.toContain(heldOut);
     }
   });

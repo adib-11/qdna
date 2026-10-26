@@ -11,8 +11,9 @@ import { GenomeMap } from "@/components/GenomeMap";
 import { HeadlineStat } from "@/components/HeadlineStat";
 import { LineageCard } from "@/components/LineageCard";
 import { LowConfidenceNotice } from "@/components/LowConfidenceNotice";
+import { OwnKeyStatus } from "@/components/OwnKeyProvider";
 import { ParetoChart } from "@/components/ParetoChart";
-import { PredictedPaper } from "@/components/PredictedPaper";
+import { PracticePaper } from "@/components/PracticePaper";
 import { TopicDossier } from "@/components/TopicDossier";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
@@ -88,6 +89,7 @@ export default function AnalyzePage() {
               onMerged={saveMerged}
             />
           </div>
+          <OwnKeyStatus />
           <p className="text-caption text-graphite tabular-nums">
             {result.questionCount} questions · {papers.length} paper
             {papers.length === 1 ? "" : "s"} · {result.stats.length} topics ·{" "}
@@ -117,9 +119,11 @@ export default function AnalyzePage() {
           {partial && (
             <p className="mt-[24px] text-body-sm text-vermillion">
               {progress.pagesDone} of {progress.pagesTotal} pages analyzed —{" "}
-              {progress.pagesFailed} page
-              {progress.pagesFailed === 1 ? "" : "s"} could not be read. Every
-              figure below is computed from what was successfully extracted.
+              {progress.pagesFailed > 0
+                ? `${progress.pagesFailed} page${progress.pagesFailed === 1 ? "" : "s"} could not be read.`
+                : "the extraction was cancelled before the rest."}{" "}
+              Every figure below is computed from what was successfully
+              extracted.
             </p>
           )}
 
@@ -173,7 +177,7 @@ export default function AnalyzePage() {
         </section>
 
         <section>
-          <PredictedPaper result={result} />
+          <PracticePaper result={result} />
         </section>
 
         <section>

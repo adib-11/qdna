@@ -1,10 +1,21 @@
-import type { GenerateContentConfig, GoogleGenAI } from "@google/genai";
+import type { GenerateContentConfig, GenerateContentParameters } from "@google/genai";
 
 export type Part =
   | { text: string }
   | { inlineData: { mimeType: string; data: string } };
 
-/** Time reserved for serialising and returning the response. */
+/**
+ * The one thing the chain needs from a model client. `GoogleGenAI` satisfies
+ * it, and so does a fake in tests, so the chain never touches the network
+ * itself.
+ */
+export interface ModelClient {
+  models: {
+    generateContent(params: GenerateContentParameters): Promise<{ text?: string }>;
+  };
+}
+
+/** Time reserved for handling the response after the last attempt. */
 const RESPONSE_MARGIN_MS = 3_000;
 /** Below this, there is no point starting another attempt. */
 const MIN_ATTEMPT_MS = 8_000;
@@ -14,25 +25,28 @@ export interface GenerateOptions {
   /** Tried in order; the walk steps on only when a model reports itself unusable. */
   models: string[];
   config?: GenerateContentConfig;
-  /** Total wall-clock budget, normally the route's own `maxDuration`. */
+  /** Total wall-clock budget for the whole walk. */
   budgetMs: number;
   /** Longest a single model attempt may run. */
   maxAttemptMs: number;
+  /** The caller's cancel. Ends the walk at once; no further model is tried. */
+  signal?: AbortSignal;
 }
 
 /**
  * Run a generation, stepping down the model list only when a model reports
- * itself unavailable or spent. Any other failure is the caller's problem to
- * retry — switching models would just repeat it.
+ * itself unavailable or spent, or does not answer inside its attempt cap. Any
+ * other failure is the caller's problem to retry — switching models would just
+ * repeat it.
  *
  * Flash models go through demand spikes, and an overloaded one can sit on a
  * request for ~30s before answering 503. Each attempt is therefore capped, and
- * the walk stops once there is not enough of the function window left to finish
- * another one — returning a clean error beats being killed mid-flight.
+ * the walk stops once there is not enough of the budget left to finish
+ * another one.
  */
 export async function generateWithFallback(
-  ai: GoogleGenAI,
-  { parts, models, config, budgetMs, maxAttemptMs }: GenerateOptions,
+  ai: ModelClient,
+  { parts, models, config, budgetMs, maxAttemptMs, signal }: GenerateOptions,
 ): Promise<string | undefined> {
   const deadline = Date.now() + budgetMs - RESPONSE_MARGIN_MS;
   let lastError: unknown;
@@ -41,28 +55,64 @@ export async function generateWithFallback(
     const remaining = deadline - Date.now();
     if (remaining < MIN_ATTEMPT_MS) break;
 
+    const attemptMs = Math.min(remaining, maxAttemptMs);
+    const attempt = attemptSignal(attemptMs, signal);
+
     try {
       const response = await ai.models.generateContent({
         model,
         contents: [{ role: "user", parts }],
-        config: {
-          ...config,
-          httpOptions: { timeout: Math.min(remaining, maxAttemptMs) },
-        },
+        config: { ...config, abortSignal: attempt.signal },
       });
       return response.text;
     } catch (error) {
+      if (signal?.aborted) throw error;
+      // A deadline walks the chain: a model instance that will not answer
+      // inside the attempt cap is exactly the case another model can rescue,
+      // and the walk is bounded by the budget regardless.
+      if (attempt.timedOut()) {
+        lastError = Object.assign(
+          new Error(`${model} did not answer within ${Math.round(attemptMs / 1000)}s`),
+          { status: 504 },
+        );
+        continue;
+      }
       // 429 walks the chain too: the daily ceiling is metered per model, so
-      // the next model has its own budget even when this one is spent. So does
-      // a deadline — a model instance that will not answer inside the attempt
-      // cap is exactly the case another model can rescue, and the walk is
-      // bounded by the budget regardless.
+      // the next model has its own budget even when this one is spent.
       if (!WALKABLE.has(extractStatus(error) ?? 0)) throw error;
       lastError = error;
+    } finally {
+      attempt.dispose();
     }
   }
 
-  throw lastError ?? new Error("No model answered within the function window");
+  throw lastError ?? new Error("No model answered within the time budget");
+}
+
+/**
+ * One attempt's abort: fires on the caller's cancel or on the attempt cap,
+ * whichever comes first, and remembers which. Built on setTimeout rather than
+ * `AbortSignal.timeout` so the cap follows fake timers in tests.
+ */
+function attemptSignal(ms: number, caller?: AbortSignal) {
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, ms);
+  const onCancel = () => controller.abort();
+  if (caller?.aborted) controller.abort();
+  caller?.addEventListener("abort", onCancel);
+
+  return {
+    signal: controller.signal,
+    timedOut: () => timedOut,
+    dispose: () => {
+      clearTimeout(timer);
+      caller?.removeEventListener("abort", onCancel);
+    },
+  };
 }
 
 /** Upstream statuses another model may still answer. */
@@ -94,6 +144,31 @@ export function extractRetryAfter(error: unknown): string | null {
   if (typeof message !== "string") return null;
   const match = message.match(/retryDelay["':\s]+(\d+)/);
   return match ? match[1] : null;
+}
+
+/** True when Google refused the key itself, which no retry or other model can fix. */
+export function isKeyRejected(error: unknown): boolean {
+  const status = extractStatus(error);
+  const message =
+    typeof error === "object" && error !== null
+      ? String((error as { message?: unknown }).message ?? "")
+      : "";
+  return (
+    status === 401 ||
+    status === 403 ||
+    /API_KEY_INVALID|API key not valid|API key expired/i.test(message)
+  );
+}
+
+/** What a student is told when a model action fails. */
+export function describeModelError(error: unknown, fallback: string): string {
+  if (isKeyRejected(error)) {
+    return "Google rejected your Gemini key. Forget it and paste a valid key, then try again.";
+  }
+  if (extractStatus(error) === 429) {
+    return "Your Gemini key is out of quota on every model qDNA tried. The free tier resets daily; try again later.";
+  }
+  return error instanceof Error && error.message ? error.message : fallback;
 }
 
 /**

@@ -3,11 +3,15 @@ import {
   MAX_CONCURRENT,
   MAX_RETRIES,
   MIN_REQUEST_INTERVAL_MS,
-  REQUEST_TIMEOUT_MS,
   RETRY_BASE_DELAY_MS,
 } from "@/lib/config";
+import {
+  extractRetryAfter,
+  extractStatus,
+  isKeyRejected,
+} from "@/lib/gemini/generate";
+import { pagesOf } from "@/lib/extract/uploads";
 import { batchPages } from "@/lib/pdf/batch";
-import { renderPdfToPages } from "@/lib/pdf/render";
 import { createLimiter } from "@/lib/queue/rateLimiter";
 import type {
   ExtractionOutcome,
@@ -16,99 +20,166 @@ import type {
   Question,
 } from "@/lib/types";
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-export interface RunExtractionOptions {
-  onProgress?: (progress: ExtractionProgress) => void;
-  /** Optional free-text context passed to the extractor, e.g. a course name. */
-  hint?: string;
-  signal?: AbortSignal;
+/** Where one uploaded file has got to. */
+export interface FileProgress {
+  name: string;
+  status: "reading" | "extracting" | "done" | "cancelled";
+  pagesDone: number;
+  pagesTotal: number;
+  pagesFailed: number;
+  batchesFailed: number;
+  questionsFound: number;
 }
 
+/** The content-hash cache, injectable so tests need no browser storage. */
+export interface ExtractionCache {
+  get(hash: string): Question[] | null;
+  set(hash: string, questions: Question[]): void;
+}
+
+export interface RunExtractionOptions {
+  /** One batch of pages to questions — normally Gemini on the student's own key. */
+  extractBatch: (pages: PageImage[], signal?: AbortSignal) => Promise<Question[]>;
+  /** One file to its pages. Defaults to rendering PDFs and reading photos as is. */
+  loadPages?: (file: File) => Promise<PageImage[]>;
+  onProgress?: (files: FileProgress[]) => void;
+  /** The student's cancel. Finished pages are kept and stay cached. */
+  signal?: AbortSignal;
+  cache?: ExtractionCache;
+  /** Gap between request starts; the free tier fails on requests per minute first. */
+  minIntervalMs?: number;
+}
+
+export interface ExtractionRun {
+  outcome: ExtractionOutcome;
+  files: FileProgress[];
+  /** True when the student stopped the run before every page was read. */
+  cancelled: boolean;
+}
+
+const browserCache: ExtractionCache = { get: getCached, set: setCached };
+
 /**
- * Full client-side extraction: render → filter → batch → cache → dispatch.
+ * Full client-side extraction: load → batch → cache → dispatch, per file.
  *
  * A batch that fails after exhausting retries is recorded and skipped. Losing
  * three pages of a thirty-five page upload is a shortfall to report, not a
- * reason to throw away the other thirty-two.
+ * reason to throw away the other thirty-two. A cancel likewise keeps what
+ * finished; only a key Google rejects ends the run with an error, since every
+ * later batch would fail the same way.
  */
 export async function runExtraction(
-  files: File[],
-  options: RunExtractionOptions = {},
-): Promise<ExtractionOutcome> {
-  const { onProgress, hint, signal } = options;
-
-  const progress: ExtractionProgress = {
+  uploads: File[],
+  {
+    extractBatch,
+    loadPages = pagesOf,
+    onProgress,
+    signal,
+    cache = browserCache,
+    minIntervalMs = MIN_REQUEST_INTERVAL_MS,
+  }: RunExtractionOptions,
+): Promise<ExtractionRun> {
+  const files: FileProgress[] = uploads.map((file) => ({
+    name: file.name,
+    status: "reading",
     pagesDone: 0,
     pagesTotal: 0,
-    questionsFound: 0,
-    batchesFailed: 0,
     pagesFailed: 0,
-  };
-  const emit = () => onProgress?.({ ...progress });
+    batchesFailed: 0,
+    questionsFound: 0,
+  }));
+  const emit = () => onProgress?.(files.map((f) => ({ ...f })));
+  const questions: Question[] = [];
+  const limiter = createLimiter({ maxConcurrent: MAX_CONCURRENT, minIntervalMs });
 
-  // Render every file first so pagesTotal is truthful before dispatch starts.
+  const finish = (cancelled: boolean): ExtractionRun => {
+    if (cancelled) {
+      for (const f of files) if (f.status !== "done") f.status = "cancelled";
+      emit();
+    }
+    const progress = totalProgress(files, questions.length);
+    return {
+      outcome: {
+        questions: dedupe(questions),
+        progress,
+        partial: progress.pagesDone < progress.pagesTotal,
+      },
+      files: files.map((f) => ({ ...f })),
+      cancelled,
+    };
+  };
+
+  // Read every file first so each paper's page total is truthful before
+  // dispatch starts.
   const perFilePages: PageImage[][] = [];
-  for (const file of files) {
-    const pages = await renderPdfToPages(file);
+  for (const [i, upload] of uploads.entries()) {
+    if (signal?.aborted) return finish(true);
+    const pages = await loadPages(upload);
     perFilePages.push(pages);
-    progress.pagesTotal += pages.length;
+    files[i].pagesTotal = pages.length;
     emit();
   }
 
-  const limiter = createLimiter({
-    maxConcurrent: MAX_CONCURRENT,
-    minIntervalMs: MIN_REQUEST_INTERVAL_MS,
-  });
-
-  const questions: Question[] = [];
-
   // Batches never straddle files: two papers on one request confuses paper
   // metadata, and paper provenance is the whole point of the extraction.
-  for (const pages of perFilePages) {
+  for (const [i, pages] of perFilePages.entries()) {
+    const progress = files[i];
+    progress.status = "extracting";
+    emit();
+
     for (const batch of batchPages(pages)) {
-      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+      if (signal?.aborted) return finish(true);
 
       const hash = await hashImage(batch.map((p) => p.base64));
-      const cached = getCached(hash);
+      let extracted = cache.get(hash);
 
-      if (cached) {
-        questions.push(...cached);
-        progress.pagesDone += batch.length;
-        progress.questionsFound = questions.length;
-        emit();
-        continue;
+      if (!extracted) {
+        try {
+          extracted = await limiter.schedule(() =>
+            dispatchBatch(batch, extractBatch, signal),
+          );
+          cache.set(hash, extracted);
+        } catch (error) {
+          if (signal?.aborted) return finish(true);
+          if (isKeyRejected(error)) throw error;
+          progress.batchesFailed += 1;
+          progress.pagesFailed += batch.length;
+          emit();
+          continue;
+        }
       }
 
-      try {
-        const extracted = await limiter.schedule(() =>
-          dispatchBatch(batch, { hint, signal }),
-        );
-        setCached(hash, extracted);
-        questions.push(...extracted);
-        progress.pagesDone += batch.length;
-      } catch (error) {
-        if (signal?.aborted) throw error;
-        progress.batchesFailed += 1;
-        progress.pagesFailed += batch.length;
-      }
-
-      progress.questionsFound = questions.length;
+      questions.push(...extracted);
+      progress.pagesDone += batch.length;
+      progress.questionsFound += extracted.length;
       emit();
     }
+
+    progress.status = "done";
+    emit();
   }
 
+  return finish(false);
+}
+
+/** The run's totals, as the saved corpus records them. */
+function totalProgress(files: FileProgress[], questionsFound: number): ExtractionProgress {
+  const sum = (key: "pagesDone" | "pagesTotal" | "pagesFailed" | "batchesFailed") =>
+    files.reduce((total, f) => total + f[key], 0);
   return {
-    questions: dedupe(questions),
-    progress: { ...progress },
-    partial: progress.batchesFailed > 0,
+    pagesDone: sum("pagesDone"),
+    pagesTotal: sum("pagesTotal"),
+    pagesFailed: sum("pagesFailed"),
+    batchesFailed: sum("batchesFailed"),
+    questionsFound,
   };
 }
 
 /** One batch, retried with exponential backoff plus jitter on 429/5xx. */
 async function dispatchBatch(
   batch: PageImage[],
-  { hint, signal }: { hint?: string; signal?: AbortSignal },
+  extractBatch: RunExtractionOptions["extractBatch"],
+  signal?: AbortSignal,
 ): Promise<Question[]> {
   let lastError: unknown;
 
@@ -116,41 +187,18 @@ async function dispatchBatch(
     if (attempt > 0) {
       const backoff = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
       const jitter = Math.random() * RETRY_BASE_DELAY_MS;
-      await sleep(retryAfterMs(lastError) ?? backoff + jitter);
+      const retryAfter = Number(extractRetryAfter(lastError)) * 1000;
+      await pause(retryAfter > 0 ? retryAfter : backoff + jitter, signal);
+      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
     }
 
-    // A batch that never returns must not hold the whole run open. The abort
-    // is combined with the caller's so a user cancel still wins.
-    const timeout = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
-    const attemptSignal = signal
-      ? AbortSignal.any([signal, timeout])
-      : timeout;
-
     try {
-      const response = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ images: batch.map((p) => p.base64), hint }),
-        signal: attemptSignal,
-      });
-
-      if (response.ok) {
-        const data = (await response.json()) as { questions?: Question[] };
-        return data.questions ?? [];
-      }
-
-      // 4xx other than rate limiting will not improve on retry.
-      if (response.status !== 429 && response.status < 500) {
-        throw new Error(`Extraction rejected the batch (${response.status})`);
-      }
-
-      lastError = Object.assign(new Error(`Upstream ${response.status}`), {
-        status: response.status,
-        retryAfter: response.headers.get("Retry-After"),
-      });
+      return await extractBatch(batch, signal);
     } catch (error) {
-      // Only a caller-initiated abort ends the run; a timeout is retryable.
       if (signal?.aborted) throw error;
+      // A 4xx other than rate limiting will not improve on retry.
+      const status = extractStatus(error);
+      if (status !== null && status !== 429 && status < 500) throw error;
       lastError = error;
     }
   }
@@ -160,11 +208,19 @@ async function dispatchBatch(
     : new Error("Batch failed after retries");
 }
 
-function retryAfterMs(error: unknown): number | null {
-  if (typeof error !== "object" || error === null) return null;
-  const value = (error as { retryAfter?: unknown }).retryAfter;
-  const seconds = typeof value === "string" ? Number(value) : NaN;
-  return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : null;
+/** A backoff wait that a cancel cuts short. */
+function pause(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        resolve();
+      },
+      { once: true },
+    );
+  });
 }
 
 /** Cache hits and page overlap between batches can surface the same question. */

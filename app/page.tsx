@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="page-shell py-[64px]">
       <section className="max-w-[900px]">
-        <Pill tone="sky-tint">Evidence-weighted, never predictive</Pill>
+        <Pill tone="sky-tint">Evidence-weighted, never a forecast</Pill>
 
         <h1 className="mt-[24px] text-display-sm md:text-display font-medium text-ink-black">
           Every course has a question{" "}
