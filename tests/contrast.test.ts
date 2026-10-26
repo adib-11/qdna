@@ -14,15 +14,15 @@ describe("contrastRatio", () => {
   });
 
   it("is 1:1 for a colour against itself", () => {
-    expect(contrastRatio("#0075de", "#0075de")).toBe(1);
+    expect(contrastRatio("#0066c4", "#0066c4")).toBe(1);
   });
 });
 
 describe("mixOver", () => {
   it("lays a colour over a background at the given opacity", () => {
     expect(mixOver("#000000", 0.5, "#ffffff")).toBe("#808080");
-    expect(mixOver("#0075de", 1, "#ffffff")).toBe("#0075de");
-    expect(mixOver("#0075de", 0, "#ffffff")).toBe("#ffffff");
+    expect(mixOver("#0066c4", 1, "#ffffff")).toBe("#0066c4");
+    expect(mixOver("#0066c4", 0, "#ffffff")).toBe("#ffffff");
   });
 });
 

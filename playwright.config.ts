@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * End-to-end tests against the built app (`npm run build` first). Gemini is
- * stubbed at the network level in `e2e/gemini.ts`, so no test ever reaches
+ * stubbed at the network level in `e2e/fixtures.ts`, so no test ever reaches
  * Google or needs a real key.
  */
 const PORT = Number(process.env.PORT ?? 3108);

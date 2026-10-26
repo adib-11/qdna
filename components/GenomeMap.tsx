@@ -2,7 +2,7 @@ import { paperOrder } from "@/lib/analysis/papers";
 import { mixOver, readableInk } from "@/lib/contrast";
 import type { Question, TopicStat } from "@/lib/types";
 
-/** `--color-notion-blue` over the card's white, as hex so contrast can be computed. */
+/** `--color-notion-blue` (app/globals.css) over the card's white, as hex so contrast can be computed. Change both together. */
 const CELL_BLUE = "#0066c4";
 const CELL_GROUND = "#ffffff";
 
