@@ -1,0 +1,60 @@
+{
+  "topics": [
+    {
+      "topic": "Memory Hierarchy and Cache",
+      "labels": [
+        "Memory Hierarchy",
+        "Cache Memory Design"
+      ]
+    },
+    {
+      "topic": "Digital and Floating Point Arithmetic",
+      "labels": [
+        "Digital Arithmetic",
+        "Floating Point Representation",
+        "Floating Point Arithmetic"
+      ]
+    },
+    {
+      "topic": "Instruction Set and Addressing",
+      "labels": [
+        "Addressing Modes",
+        "Memory Addressing"
+      ]
+    },
+    {
+      "topic": "Processor Micro-operations",
+      "labels": [
+        "Micro-operations"
+      ]
+    },
+    {
+      "topic": "Input and Output Systems",
+      "labels": [
+        "I/O Systems",
+        "DMA"
+      ]
+    },
+    {
+      "topic": "MIPS Architecture and Programming",
+      "labels": [
+        "MIPS Architecture",
+        "MIPS Assembly",
+        "MIPS Procedure Calls"
+      ]
+    },
+    {
+      "topic": "Hardware Design and Performance",
+      "labels": [
+        "Hardware Design",
+        "Performance Analysis"
+      ]
+    },
+    {
+      "topic": "Operating Systems",
+      "labels": [
+        "Operating Systems"
+      ]
+    }
+  ]
+}

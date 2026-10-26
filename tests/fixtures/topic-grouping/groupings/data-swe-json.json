@@ -1,0 +1,109 @@
+{
+  "topics": [
+    {
+      "topic": "Software Engineering Fundamentals",
+      "labels": [
+        "Software Engineering Fundamentals",
+        "Software Engineering Basics",
+        "System Fundamentals",
+        "System Engineering",
+        "System Theory",
+        "Information Systems"
+      ]
+    },
+    {
+      "topic": "System Analysis and Requirements Engineering",
+      "labels": [
+        "SDLC Requirements",
+        "Requirements Analysis",
+        "Requirements Engineering",
+        "Information Gathering",
+        "Requirements Gathering",
+        "System Analysis",
+        "System Analyst Role",
+        "System Analyst Roles",
+        "Requirement Elicitation",
+        "Requirements Elicitation",
+        "System Requirements",
+        "Requirement Analysis",
+        "Software Requirements"
+      ]
+    },
+    {
+      "topic": "SDLC Models and Agile Methodology",
+      "labels": [
+        "SDLC Models",
+        "SDLC",
+        "SDLC and Project Management",
+        "SDLC and Feasibility",
+        "Agile Methodology",
+        "Process Models",
+        "Prototyping",
+        "System Prototyping"
+      ]
+    },
+    {
+      "topic": "Feasibility and Cost Analysis",
+      "labels": [
+        "Feasibility Study",
+        "Feasibility Analysis",
+        "Cost Analysis",
+        "Cost Benefit Analysis",
+        "Cost Estimation",
+        "Break Even Analysis",
+        "Profit Analysis",
+        "Software Estimation",
+        "Strategic Planning"
+      ]
+    },
+    {
+      "topic": "System Design and Modeling",
+      "labels": [
+        "System Design",
+        "Software Design",
+        "Software Design Principles",
+        "Software Architecture",
+        "Data Flow Diagrams",
+        "Data Flow Diagram",
+        "Data Modeling",
+        "System Modeling",
+        "Decision Tree",
+        "Decision Trees",
+        "Decision Table",
+        "Decision Tables",
+        "User Interface Design",
+        "Software Maintenance and Design"
+      ]
+    },
+    {
+      "topic": "Software Quality and Testing",
+      "labels": [
+        "Software Testing",
+        "Software Quality",
+        "Software Quality Attributes",
+        "Software Quality Assurance",
+        "Quality Assurance",
+        "Verification and Validation",
+        "Software Design and Testing"
+      ]
+    },
+    {
+      "topic": "Project and Risk Management",
+      "labels": [
+        "Project Management",
+        "Risk Management",
+        "Configuration Management",
+        "SWOT Analysis",
+        "Interviewing",
+        "Evaluation Methods"
+      ]
+    },
+    {
+      "topic": "Software Maintenance and Re-engineering",
+      "labels": [
+        "Software Maintenance",
+        "Software Re-engineering"
+      ]
+    }
+  ]
+}

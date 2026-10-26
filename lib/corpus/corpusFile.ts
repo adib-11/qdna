@@ -1,3 +1,4 @@
+import type { TopicOverride } from "@/lib/analysis/topics";
 import type { Question } from "@/lib/types";
 
 /**
@@ -24,14 +25,14 @@ export interface CorpusFile {
   format: typeof CORPUS_FILE_FORMAT;
   version: typeof CORPUS_FILE_VERSION;
   papers: FilePaper[];
-  /**
-   * Reserved for the student's topic overrides, which the topic-grouping work
-   * fills in. Always written empty for now, and ignored on import.
-   */
-  topicOverrides: unknown[];
+  /** The student's topic overrides, in the order they were made. */
+  topicOverrides: TopicOverride[];
 }
 
-export function exportCorpusFile(questions: Question[]): string {
+export function exportCorpusFile(
+  questions: Question[],
+  topicOverrides: TopicOverride[] = [],
+): string {
   const papers = new Map<string, FilePaper>();
   for (const question of questions) {
     const { label } = question.paper;
@@ -44,7 +45,7 @@ export function exportCorpusFile(questions: Question[]): string {
     format: CORPUS_FILE_FORMAT,
     version: CORPUS_FILE_VERSION,
     papers: [...papers.values()],
-    topicOverrides: [],
+    topicOverrides,
   };
   return JSON.stringify(file, null, 2);
 }
@@ -58,6 +59,8 @@ export type ImportResult =
       added: string[];
       /** Paper labels already in the corpus, whose existing copy was kept. */
       skipped: string[];
+      /** The importer's overrides, plus the imported ones that do not contradict them. */
+      topicOverrides: TopicOverride[];
     }
   | { ok: false; error: string };
 
@@ -69,6 +72,7 @@ export type ImportResult =
 export function importCorpusFile(
   existing: Question[],
   text: string,
+  existingOverrides: TopicOverride[] = [],
 ): ImportResult {
   const parsed = parseCorpusFile(text);
   if (!parsed.ok) return parsed;
@@ -89,7 +93,27 @@ export function importCorpusFile(
     questions.push(...paper.questions);
   }
 
-  return { ok: true, questions, added, skipped };
+  return {
+    ok: true,
+    questions,
+    added,
+    skipped,
+    topicOverrides: mergeOverrides(existingOverrides, file.topicOverrides),
+  };
+}
+
+/**
+ * The importer's overrides win: an imported override touching any topic the
+ * importer's own overrides touch is dropped, and the importer's are applied
+ * last, so nothing imported can undo or redirect one of their choices.
+ */
+export function mergeOverrides(
+  own: TopicOverride[],
+  imported: TopicOverride[],
+): TopicOverride[] {
+  const touched = new Set(own.flatMap((o) => [...o.from, o.to]));
+  const kept = imported.filter((o) => ![...o.from, o.to].some((t) => touched.has(t)));
+  return [...kept, ...own];
 }
 
 /** The import summary a student reads, e.g. "2 papers added (…). 1 already present, your copy kept (…)." */
@@ -131,7 +155,7 @@ function parseCorpusFile(text: string): Parsed {
       error: `This corpus file is format version ${String(data.version)}, which this version of qDNA cannot read. It reads version ${CORPUS_FILE_VERSION}.`,
     };
   }
-  if (!Array.isArray(data.papers) || !isOptionalArray(data.topicOverrides)) {
+  if (!Array.isArray(data.papers) || !isOptionalOverrides(data.topicOverrides)) {
     return { ok: false, error: DAMAGED };
   }
   if (data.papers.length === 0) {
@@ -157,11 +181,22 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isOptionalArray(value: unknown): value is unknown[] | undefined {
-  return value === undefined || Array.isArray(value);
+function isOptionalOverrides(value: unknown): value is TopicOverride[] | undefined {
+  return value === undefined || (Array.isArray(value) && value.every(isTopicOverride));
 }
 
 const isString = (value: unknown): value is string => typeof value === "string";
+
+export function isTopicOverride(value: unknown): value is TopicOverride {
+  return (
+    isRecord(value) &&
+    Array.isArray(value.from) &&
+    value.from.length > 0 &&
+    value.from.every(isString) &&
+    isString(value.to) &&
+    value.to.trim() !== ""
+  );
+}
 const isNumberOrNull = (value: unknown) =>
   value === null || (typeof value === "number" && Number.isFinite(value));
 

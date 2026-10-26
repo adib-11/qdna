@@ -1,0 +1,144 @@
+{
+  "topics": [
+    {
+      "topic": "Computer Architecture Fundamentals",
+      "labels": [
+        "Computer Architecture",
+        "Computer Components",
+        "Von Neumann Architecture",
+        "Computer Architecture & Design",
+        "Architecture vs Organization",
+        "CPU Components",
+        "Computer Architecture Basics",
+        "System Architecture",
+        "CPU Registers",
+        "Moore's Law"
+      ]
+    },
+    {
+      "topic": "Instruction Set Architecture",
+      "labels": [
+        "Addressing Modes",
+        "Instruction Cycle",
+        "Instruction Formats",
+        "Instruction Set Architecture",
+        "Instruction Set Design",
+        "Addressing Modes and DMA",
+        "RISC vs CISC",
+        "Endianness"
+      ]
+    },
+    {
+      "topic": "MIPS Architecture and Programming",
+      "labels": [
+        "MIPS Architecture",
+        "MIPS Assembly",
+        "MIPS Procedure Calls",
+        "MIPS Assembly Language",
+        "MIPS Procedure Call",
+        "MIPS Instruction Formats",
+        "MIPS Assembly Programming",
+        "MIPS Instruction Execution",
+        "Assembly Programming"
+      ]
+    },
+    {
+      "topic": "Computer Arithmetic",
+      "labels": [
+        "Digital Arithmetic",
+        "Floating Point Representation",
+        "Floating Point Arithmetic",
+        "Booth's Algorithm",
+        "Number Representation",
+        "Number Representation Conversion",
+        "Division Algorithms",
+        "Computer Arithmetic Hardware",
+        "Binary Division",
+        "Binary Representation",
+        "Binary Arithmetic"
+      ]
+    },
+    {
+      "topic": "Pipelining and Processor Performance",
+      "labels": [
+        "Performance Analysis",
+        "Pipelining",
+        "Performance Measurement",
+        "Performance Metrics",
+        "Pipeline Performance",
+        "Pipelining and Hazards",
+        "Flynn's Taxonomy",
+        "Data Hazards",
+        "Processor Architecture Comparison",
+        "Pipelining Performance",
+        "Processor Performance",
+        "Performance Calculation",
+        "Instruction Dependencies"
+      ]
+    },
+    {
+      "topic": "Memory Hierarchy and Management",
+      "labels": [
+        "Memory Hierarchy",
+        "Cache Memory Design",
+        "Memory Addressing",
+        "Cache Mapping",
+        "Paging and Hit Ratio",
+        "Memory Management",
+        "Cache Memory",
+        "Memory Types",
+        "Memory Systems",
+        "Storage Systems",
+        "RAID Levels"
+      ]
+    },
+    {
+      "topic": "I/O Systems and Interrupts",
+      "labels": [
+        "I/O Systems",
+        "DMA",
+        "DMA vs Interrupt-driven I/O",
+        "DMA Transfer Modes",
+        "Direct Memory Access (DMA)",
+        "Interrupts and Semaphores",
+        "Interrupt Handling",
+        "Interrupt-driven I/O",
+        "I/O Techniques",
+        "Bus Systems"
+      ]
+    },
+    {
+      "topic": "Hardware Description and FPGA Design",
+      "labels": [
+        "Hardware Design",
+        "HDL Modeling Styles",
+        "HDL Coding",
+        "FPGA vs Microcontroller",
+        "HDL and Hardware Platforms",
+        "Microcontroller vs FPGA",
+        "FPGA Architecture",
+        "Hardware Description Language",
+        "FPGA Applications",
+        "ASIC vs FPGA"
+      ]
+    },
+    {
+      "topic": "Micro-operations and Control",
+      "labels": [
+        "Micro-operations",
+        "Microinstructions",
+        "Program Execution"
+      ]
+    },
+    {
+      "topic": "System Software and Parallelism",
+      "labels": [
+        "Assembler vs Compiler",
+        "Language Translators",
+        "Operating Systems",
+        "Multicore Systems",
+        "Parallel Processing"
+      ]
+    }
+  ]
+}

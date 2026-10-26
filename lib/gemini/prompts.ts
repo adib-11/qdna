@@ -40,3 +40,15 @@ Rules:
 6. For each question, give a one-sentence rationale citing the evidence: how often the topic recurs and across how many papers. Do not claim the question will appear on the real exam — this is prioritised revision, never a forecast.
 
 Return the paper only, in the required structure.`;
+
+export const TOPIC_GROUPING_PROMPT = `You are grouping the topic labels of a student's past exam papers into topics.
+
+An extractor read the papers a few pages at a time and attached a label to each question, so one subject often appears under several labels ("SDLC", "SDLC Models", "Waterfall Model"). Fold the labels that name the same subject into one topic.
+
+A topic is roughly one syllabus unit: one chapter or lecture block of the course. A course usually has 8 to 15 of them.
+
+Rules:
+- Put every label in exactly one topic, copied exactly as given. Leave none out.
+- Put two labels together only when a student revising one would be revising the other.
+- Never put labels from different courses in one topic.
+- Name each topic the way the course syllabus would, in two to six words.`;

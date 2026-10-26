@@ -1,0 +1,506 @@
+[
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(a)",
+    "marks": 4,
+    "text": "What are the essential parts of a dc machine?",
+    "topic": "DC Machine Construction",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::1(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(b)",
+    "marks": 4,
+    "text": "Classify the dc machines. Also draw their electrical equivalent circuits.",
+    "topic": "DC Machine Classification",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::1(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(c)",
+    "marks": 2,
+    "text": "Why the armature core but not the magnetic pole core in a dc machine is constructed with laminated steel sheets instead of solid metal blocks?",
+    "topic": "DC Machine Construction",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::1(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "1(d)",
+    "marks": 2,
+    "text": "What are cumulative and differentially compound dc machines?",
+    "topic": "DC Machine Classification",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::1(d)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(a)",
+    "marks": 4,
+    "text": "Describe the voltage build up process of a self excited shunt generator.",
+    "topic": "DC Generator Voltage Build-up",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::2(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(b)",
+    "marks": 4,
+    "text": "List the causes for the failure of a dc generator to self excite.",
+    "topic": "DC Generator Voltage Build-up",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::2(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "2(c)",
+    "marks": 4,
+    "text": "A train is driven by a dc generator with separately excited field. The OCC of the machine at 1500 rpm has been measured as follows:\nE_a (volts): 50 420 780 950 1120 1180 1260\nI_f (A) : 0 4.0 8.0 10.0 12.8 14.4 28.8\n(i) Draw the OCC of the machine and determine the value of critical resistance.\n(ii) Why is a voltage in the armature at zero field current?\n(iii) Why does the induced voltage at high field currents not increase proportional to field current?\n(iv) What should be the field resistance for an armature induced voltage of 1000 volts?",
+    "topic": "DC Generator Characteristics",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3107::2(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(a)",
+    "marks": 2,
+    "text": "What are base speed and back emf of a dc motor?",
+    "topic": "DC Motor Basics",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::3(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(b)",
+    "marks": 3,
+    "text": "Explain the effect of change in shaft load on a dc shunt motor.",
+    "topic": "DC Motor Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::3(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(c)",
+    "marks": 3,
+    "text": "Why is it recommended to never unload a dc series motor while running?",
+    "topic": "DC Motor Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::3(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "3(d)",
+    "marks": 4,
+    "text": "Explain two basic speed control scheme of dc shunt motor.",
+    "topic": "DC Motor Speed Control",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::3(d)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(a)",
+    "marks": 4,
+    "text": "What is armature reaction? Describe the effect of brush shifting.",
+    "topic": "Armature Reaction",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::4(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(b)",
+    "marks": 4,
+    "text": "What are the conditions of parallel operation of dc generators?",
+    "topic": "Parallel Operation of DC Generators",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::4(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - A",
+      "year": 2018
+    },
+    "qNo": "4(c)",
+    "marks": 4,
+    "text": "Two shunt wound generators running in parallel each have armature resistance of 0.03Ω and field resistance of 60Ω. The combined external load is 4500A. The field of the generators are so excited that the induced voltage of one machine is 500v & another is 510v. Calculate,\n(i) bus bar voltage\n(ii) generated power",
+    "topic": "Parallel Operation of DC Generators",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3107::4(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(a)",
+    "marks": 3,
+    "text": "State various advantages of stationary armature in an alternator. Also differentiate between salient and non-salient pole synchronous machines.",
+    "topic": "Synchronous Machine Construction",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::5(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(b)",
+    "marks": 2,
+    "text": "What is a fractional pitch winding and why is it used in synchronous machines?",
+    "topic": "Synchronous Machine Windings",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::5(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(c)",
+    "marks": 4,
+    "text": "Define pitch factor and distribute factor. Also derive their equations.",
+    "topic": "Synchronous Machine Windings",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::5(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "5(d)",
+    "marks": 3,
+    "text": "What is torque angle? Derive the equation of output power of a synchronous generator in terms of the torque angle of the machine.",
+    "topic": "Synchronous Generator Power",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::5(d)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "6(a)",
+    "marks": 5,
+    "text": "Explain the loading effect on the generated voltage of the alternator operating at lagging pf, with necessary diagrams.",
+    "topic": "Synchronous Generator Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::6(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "6(b)",
+    "marks": 7,
+    "text": "A 3-φ synchronous generator is driven by a gas turbine. The synchronous reactance/phase is 4Ω and the armature resistance is zero. It has first been connected to an infinite bus with a phase voltage of 20 kv and a frequency of 50 Hz in a proper way.\n(i) What do you mean by infinite bus?\n(ii) What are the conditions that have to be satisfied before a synchronous machine can be connected to the bus?\n(iii) What is the induced voltage just at the time of connecting the machine with the bus?\n(iv) If the field current is doubled while the power remains the same as in (iii) determine the armature current.\n(v) If the power is increased to 300 MW while the field current remains the same as in (iv), calculate the torque/load angle.",
+    "topic": "Synchronous Generator Parallel Operation",
+    "isNumerical": true,
+    "id": "2018 Final ECE 3107::6(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(a)",
+    "marks": 3.5,
+    "text": "Explain the principle of operation of 3φ synchronous motor in brief.",
+    "topic": "Synchronous Motor Operation",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::7(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(b)",
+    "marks": 3.5,
+    "text": "What is synchronizing? Describe one method of synchronizing.",
+    "topic": "Synchronous Machine Synchronization",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::7(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(c)",
+    "marks": 4,
+    "text": "With a constant load on a synchronous motor, what are the effects produced by increasing the dc field current?",
+    "topic": "Synchronous Motor Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::7(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "7(d)",
+    "marks": 1,
+    "text": "What do you mean by V-curve of a synchronous motor?",
+    "topic": "Synchronous Motor Characteristics",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::7(d)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(a)",
+    "marks": 4,
+    "text": "What is servo motor? Write its applications.",
+    "topic": "Special Motors",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::8(a)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(b)",
+    "marks": 3,
+    "text": "Explain the operation of a steeper motor.",
+    "topic": "Special Motors",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::8(b)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(c)",
+    "marks": 3,
+    "text": "\"The speed regulation of a synchronous motor is 0% over its operating range\".- Explain.",
+    "topic": "Synchronous Motor Performance",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::8(c)"
+  },
+  {
+    "course": "Electrical Machine - II",
+    "courseCodes": [
+      "ECE 3107"
+    ],
+    "paper": {
+      "type": "Final",
+      "label": "2018 Final ECE 3107",
+      "section": "Section - B",
+      "year": 2018
+    },
+    "qNo": "8(d)",
+    "marks": 2,
+    "text": "What is synchronous condenser and why is it used?",
+    "topic": "Synchronous Condenser",
+    "isNumerical": false,
+    "id": "2018 Final ECE 3107::8(d)"
+  }
+]

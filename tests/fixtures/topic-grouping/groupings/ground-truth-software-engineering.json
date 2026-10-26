@@ -1,0 +1,56 @@
+{
+  "topics": [
+    {
+      "topic": "System Fundamentals and Characteristics",
+      "labels": [
+        "System Fundamentals",
+        "System Characteristics"
+      ]
+    },
+    {
+      "topic": "Requirements Engineering and Analysis",
+      "labels": [
+        "Requirements Analysis",
+        "Requirements Engineering",
+        "Requirements Elicitation",
+        "Feasibility Analysis"
+      ]
+    },
+    {
+      "topic": "SDLC and Agile Methodologies",
+      "labels": [
+        "SDLC Models",
+        "Agile Methodologies"
+      ]
+    },
+    {
+      "topic": "Project Management",
+      "labels": [
+        "Project Management"
+      ]
+    },
+    {
+      "topic": "Software Design and Architecture",
+      "labels": [
+        "Software Design Principles",
+        "Software Architecture",
+        "Data Flow Diagrams",
+        "Data Modeling",
+        "Decision Trees"
+      ]
+    },
+    {
+      "topic": "Software Testing and Quality",
+      "labels": [
+        "Software Testing",
+        "Software Quality"
+      ]
+    },
+    {
+      "topic": "Software Maintenance",
+      "labels": [
+        "Software Maintenance"
+      ]
+    }
+  ]
+}
