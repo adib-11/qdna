@@ -131,3 +131,42 @@ body {
       border-color 200ms ease;
   }
 }
+
+/* Print view: the browser's save-as-PDF should give clean pages. */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* Keep the genome map's density and the cards' fills, which carry meaning. */
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  html,
+  body {
+    background: var(--color-pure-white);
+  }
+
+  .page-shell {
+    padding-inline: 0;
+  }
+
+  .section-stack > * + * {
+    margin-top: 32px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  li,
+  tr,
+  article {
+    break-inside: avoid;
+  }
+}

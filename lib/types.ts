@@ -161,6 +161,27 @@ export interface BacktestResult {
   matchedLineages: LineageCluster[];
 }
 
+export interface StudyPlanTopic {
+  topic: string;
+  /** Questions asked on this topic across the corpus. */
+  count: number;
+  /** Papers that asked this topic. */
+  paperCount: number;
+  /** Mean marks this topic carries per paper, or null when none were recorded. */
+  marksPerPaper: number | null;
+  /** Share of every question covered by this topic and the ones before it, 0–100. */
+  cumulativePct: number;
+}
+
+/** The short, ordered list of topics to study first. */
+export interface StudyPlan {
+  topics: StudyPlanTopic[];
+  /** Share of every question the plan's topics cover, 0–100. */
+  coveragePct: number;
+  /** Marks the plan's topics carry together per paper, or null unless every topic's marks were recorded. */
+  marksPerPaper: number | null;
+}
+
 export interface AnalysisResult {
   questions: Question[];
   stats: TopicStat[];
@@ -172,4 +193,5 @@ export interface AnalysisResult {
   questionCount: number;
   /** True when fewer than MIN_PAPERS_FOR_CONFIDENCE papers were supplied. */
   lowConfidence: boolean;
+  studyPlan: StudyPlan;
 }

@@ -41,9 +41,9 @@ export function GenomeMap({
   return (
     <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
       <div className="p-[var(--card-padding)] pb-[16px]">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
           Genome map
-        </h2>
+        </h3>
         <p className="mt-[8px] text-body-sm text-graphite">
           {stats.length} topic{stats.length === 1 ? "" : "s"} across{" "}
           {papers.length} paper{papers.length === 1 ? "" : "s"}. Cell density is
@@ -51,7 +51,13 @@ export function GenomeMap({
         </p>
       </div>
 
-      <div className="overflow-x-auto px-[var(--card-padding)] pb-[var(--card-padding)]">
+      {/* Focusable so a keyboard can scroll it sideways on a phone. */}
+      <div
+        role="region"
+        aria-label="Genome map, scrolls sideways"
+        tabIndex={0}
+        className="overflow-x-auto px-[var(--card-padding)] pb-[var(--card-padding)] print:overflow-visible"
+      >
         <table className="w-full border-collapse text-caption">
           <caption className="sr-only">
             Question counts by topic and paper
@@ -68,9 +74,10 @@ export function GenomeMap({
                 <th
                   key={paper.label}
                   scope="col"
-                  className="min-w-[64px] px-[4px] pb-[8px] align-bottom font-medium text-[rgba(0,0,0,0.6)]"
+                  className="min-w-[72px] px-[4px] pb-[8px] align-bottom font-medium text-[rgba(0,0,0,0.6)] print:min-w-0"
                 >
-                  <span className="block whitespace-nowrap">{paper.label}</span>
+                  {/* Labels wrap, so a phone fits more than two papers across. */}
+                  <span className="block break-words">{paper.label}</span>
                 </th>
               ))}
               <th
@@ -86,9 +93,10 @@ export function GenomeMap({
               <tr key={stat.topic}>
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 max-w-[260px] bg-pure-white py-[4px] pr-[16px] text-left align-middle font-normal text-[rgba(0,0,0,0.95)]"
+                  className="sticky left-0 z-10 max-w-[120px] bg-pure-white py-[4px] pr-[8px] text-left align-middle font-normal text-[rgba(0,0,0,0.95)] sm:max-w-[260px] sm:pr-[16px]"
                 >
-                  <span className="block truncate">{stat.topic}</span>
+                  {/* Wraps rather than truncates: a phone has no hover to show the rest. */}
+                  <span className="block break-words">{stat.topic}</span>
                 </th>
                 {papers.map((paper) => {
                   const count = cellCount(stat.topic, paper.label);
