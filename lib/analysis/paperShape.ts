@@ -6,14 +6,14 @@ export const UNSECTIONED = "—";
 /**
  * The shape of a paper in this corpus, measured rather than assumed.
  *
- * Prediction has to produce a paper that looks like the ones the student
+ * The practice paper has to look like the ones the student
  * actually sits: the same sections, roughly the same number of questions, the
  * same mark denominations. All of that is derivable from the extracted corpus,
  * so it is derived here — deterministically — and handed to the model as a
  * constraint instead of being left to its idea of what an exam looks like.
  *
  * Medians rather than means throughout: one over-extracted paper should not
- * stretch the predicted paper to eighteen questions.
+ * stretch the practice paper to eighteen questions.
  */
 export function inferPaperShape(questions: Question[]): PaperShape | null {
   if (questions.length === 0) return null;

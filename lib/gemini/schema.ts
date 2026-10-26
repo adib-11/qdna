@@ -97,7 +97,7 @@ export const EXTRACTION_SCHEMA = {
  * question's topic is guaranteed to resolve against a real TopicStat, so the
  * frequency shown beneath it is looked up, never invented (GUD-006).
  */
-export function predictionSchema(topics: string[], sections: string[]) {
+export function practicePaperSchema(topics: string[], sections: string[]) {
   return {
     type: Type.OBJECT,
     properties: {

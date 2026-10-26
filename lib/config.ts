@@ -37,11 +37,23 @@ export const MAX_RETRIES = 2;
 export const RETRY_BASE_DELAY_MS = 2000;
 
 /**
- * Per-request ceiling. Sits just under the function's own maxDuration so a
- * stalled batch fails and gets retried or recorded, rather than holding the
- * whole extraction open indefinitely.
+ * Wall-clock budget for one walk down the model chain. Kept at the 60s the
+ * server routes were measured against, so a stalled batch fails and gets
+ * retried or recorded rather than holding the whole extraction open.
  */
-export const REQUEST_TIMEOUT_MS = 58_000;
+export const MODEL_BUDGET_MS = 60_000;
+// The extraction eval (#6) should revisit this budget and the attempt caps
+// below: they were sized for a 60s Vercel function window, which no longer
+// bounds a browser-to-Gemini call.
+
+/**
+ * Longest a single model attempt may run, per action. Verbatim transcription
+ * of a dense page was measured at 25–47s; a whole practice paper with
+ * rationales at 35s and more; a hint, being short, at around 13s.
+ */
+export const EXTRACTION_ATTEMPT_MS = 45_000;
+export const PRACTICE_PAPER_ATTEMPT_MS = 50_000;
+export const HINT_ATTEMPT_MS = 25_000;
 
 /** Rasterisation width. Wide enough for subscripted maths, small enough to batch. */
 export const TARGET_PAGE_WIDTH_PX = 1200;
@@ -50,10 +62,18 @@ export const TARGET_PAGE_WIDTH_PX = 1200;
 export const JPEG_QUALITY = 0.75;
 
 /**
- * Per-request payload ceiling. Vercel caps function request bodies at ~4.5 MB;
- * this leaves margin for base64 overhead and the JSON envelope.
+ * Per-request payload ceiling. Chosen when batches went through a Vercel
+ * function (~4.5 MB bodies); requests now go straight to Gemini, whose inline
+ * limit is higher, so this is conservative rather than binding.
  */
 export const MAX_BATCH_BYTES = 3_500_000;
+
+/**
+ * Largest single page qDNA will send, as base64 bytes. Gemini caps a whole
+ * request with inline data at 20 MB; a page over this is skipped with a clear
+ * message rather than sent to fail. Photos are never downscaled to fit.
+ */
+export const GEMINI_INLINE_LIMIT_BYTES = 20_000_000;
 
 /** Proportion of non-white pixels below which a page is treated as blank. */
 export const LOW_INK_THRESHOLD = 0.02;
@@ -114,9 +134,9 @@ export const NUMERIC_BONUS = 0.15;
  * against the binding daily quota. Examples per topic are what teach the model
  * the examiner's register, so a few full questions beat many truncated ones.
  */
-export const PREDICT_TOPIC_LIMIT = 8;
-export const PREDICT_EXAMPLES_PER_TOPIC = 3;
-export const PREDICT_EXAMPLE_CHARS = 400;
+export const PRACTICE_PAPER_TOPIC_LIMIT = 8;
+export const PRACTICE_PAPER_EXAMPLES_PER_TOPIC = 3;
+export const PRACTICE_PAPER_EXAMPLE_CHARS = 400;
 
 /** Coverage target marked on the Pareto curve. */
 export const PARETO_TARGET_PCT = 70;

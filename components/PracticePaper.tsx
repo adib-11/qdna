@@ -1,11 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRequestKey } from "@/components/OwnKeyProvider";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
-import { PREDICT_EXAMPLES_PER_TOPIC, PREDICT_TOPIC_LIMIT } from "@/lib/config";
-import type { AnalysisResult, PredictedPaper as Paper, TopicStat } from "@/lib/types";
+import { browserModelClient } from "@/lib/gemini/browserClient";
+import { practicePaperTopics, writePracticePaper } from "@/lib/gemini/practicePaper";
+import { handleModelError } from "@/lib/key/ownKey";
+import type { AnalysisResult, PracticePaper as Paper, TopicStat } from "@/lib/types";
 
 type State =
   | { status: "idle" }
@@ -15,7 +18,7 @@ type State =
 
 /**
  * A practice paper written from the corpus, on the page's one dark island
- * (PAT-005).
+ * (PAT-005). It is a revision aid, and is never described as a forecast.
  *
  * The structure is not the model's invention: sections, question counts, and
  * mark denominations are measured from the uploaded papers and sent as a
@@ -25,7 +28,8 @@ type State =
  * Every question carries its own evidence line, and those numbers are looked up
  * from the local analysis by topic, never taken from the model (GUD-006).
  */
-export function PredictedPaper({ result }: { result: AnalysisResult }) {
+export function PracticePaper({ result }: { result: AnalysisResult }) {
+  const requestKey = useRequestKey();
   const [state, setState] = useState<State>({ status: "idle" });
 
   const shape = useMemo(
@@ -42,43 +46,20 @@ export function PredictedPaper({ result }: { result: AnalysisResult }) {
 
   async function generate() {
     if (!shape) return;
+    // Writing the paper is a model action, so this is where the key is asked for.
+    const apiKey = await requestKey();
+    if (!apiKey) return;
     setState({ status: "loading" });
     try {
-      const response = await fetch("/api/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          shape,
-          topics: result.stats.slice(0, PREDICT_TOPIC_LIMIT).map((stat) => ({
-            topic: stat.topic,
-            count: stat.count,
-            papers: stat.papers,
-            examples: stat.questions
-              .slice(0, PREDICT_EXAMPLES_PER_TOPIC)
-              .map((q) => q.text),
-          })),
-        }),
+      const paper = await writePracticePaper(browserModelClient(apiKey), {
+        shape,
+        topics: practicePaperTopics(result.stats),
       });
-
-      const data = (await response.json()) as {
-        paper?: Paper;
-        error?: string;
-      };
-
-      if (!response.ok || !data.paper) {
-        throw new Error(
-          response.status === 429
-            ? "The model is rate limited right now. Try again in a moment."
-            : (data.error ?? "The paper could not be generated."),
-        );
-      }
-
-      setState({ status: "ready", paper: data.paper });
+      setState({ status: "ready", paper });
     } catch (error) {
       setState({
         status: "error",
-        message:
-          error instanceof Error ? error.message : "The request failed.",
+        message: handleModelError(error, "The paper could not be generated."),
       });
     }
   }
@@ -99,14 +80,15 @@ export function PredictedPaper({ result }: { result: AnalysisResult }) {
     <div className="rounded-[var(--radius-xl)] bg-midnight-ink p-[var(--card-padding)] text-pure-white">
       <div className="flex flex-wrap items-start justify-between gap-[16px]">
         <div className="min-w-0">
-          <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+          <Pill tone="marigold">Revision aid · never a forecast</Pill>
+          <h2 className="mt-[12px] text-heading-sm font-bold tracking-[-0.242px]">
             {paper?.title ?? "Write me a practice paper"}
           </h2>
           <p className="mt-[8px] max-w-[62ch] text-body-sm text-[rgba(255,255,255,0.6)]">
             {paper
               ? (paper.instructions ??
                 "Generated from this corpus. Every question is annotated with the evidence that put it there.")
-              : `Built from the ${shape.paperCount} paper${shape.paperCount === 1 ? "" : "s"} you uploaded: ${shape.sections.length} section${shape.sections.length === 1 ? "" : "s"}, about ${shape.questionsPerPaper} questions${shape.marksPerPaper !== null ? `, ${shape.marksPerPaper} marks` : ""}. Weighted by what this examiner keeps asking — a revision aid, not a leak.`}
+              : `Built from the ${shape.paperCount} paper${shape.paperCount === 1 ? "" : "s"} you uploaded: ${shape.sections.length} section${shape.sections.length === 1 ? "" : "s"}, about ${shape.questionsPerPaper} questions${shape.marksPerPaper !== null ? `, ${shape.marksPerPaper} marks` : ""}. Weighted by what this examiner keeps asking — a revision aid, never a forecast of the next exam.`}
           </p>
         </div>
 

@@ -8,6 +8,7 @@ const page = (pageIndex: number, bytes: number): PageImage => ({
   pageIndex,
   base64: "x".repeat(8),
   bytes,
+  mimeType: "image/jpeg",
 });
 
 describe("batchPages", () => {

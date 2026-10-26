@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRequestKey } from "@/components/OwnKeyProvider";
 import { TutorPanel } from "@/components/TutorPanel";
 import { Pill } from "@/components/ui/Pill";
 import type { Question, TopicStat } from "@/lib/types";
@@ -143,10 +144,18 @@ export function TopicDossier({
   expectedMarks: Record<string, number | null>;
   totalQuestions: number;
 }) {
+  const requestKey = useRequestKey();
   const [asked, setAsked] = useState<{
     question: Question;
     stat: TopicStat;
+    apiKey: string;
   } | null>(null);
+
+  /** A hint is a model action, so this is where the key is asked for. */
+  async function askTutor(question: Question, stat: TopicStat) {
+    const apiKey = await requestKey();
+    if (apiKey) setAsked({ question, stat, apiKey });
+  }
 
   if (stats.length === 0) return null;
 
@@ -171,7 +180,7 @@ export function TopicDossier({
             totalQuestions={totalQuestions}
             expectedMarks={expectedMarks[stat.topic] ?? null}
             defaultOpen={index === 0}
-            onAskTutor={(question) => setAsked({ question, stat })}
+            onAskTutor={(question) => void askTutor(question, stat)}
           />
         ))}
       </div>
@@ -180,6 +189,7 @@ export function TopicDossier({
         <TutorPanel
           question={asked.question}
           stat={asked.stat}
+          apiKey={asked.apiKey}
           onClose={() => setAsked(null)}
         />
       )}

@@ -43,7 +43,7 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
     );
   }
 
-  const named = report.predictedTopics.length;
+  const named = report.rankedTopics.length;
 
   // Questions on the hidden paper that an earlier paper had already asked, in
   // some other clothes — counted as questions, not as clusters.
@@ -115,7 +115,7 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
             The topics qDNA would have told you to study, in order.
           </p>
           <ol className="mt-[16px] space-y-[8px]">
-            {report.predictedTopics.map((stat, index) => (
+            {report.rankedTopics.map((stat, index) => (
               <TopicRow
                 key={stat.topic}
                 rank={index + 1}

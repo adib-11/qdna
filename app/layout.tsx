@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
+import { OwnKeyProvider } from "@/components/OwnKeyProvider";
 import "./globals.css";
 
 // NotionInter substitute
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${sourceSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper-warmth">
-        {children}
+        <OwnKeyProvider>{children}</OwnKeyProvider>
       </body>
     </html>
   );

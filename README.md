@@ -11,31 +11,40 @@ question into structured JSON with Gemini vision, and computes a deterministic
 lineage (near-duplicate clustering across papers and departments), and
 expected-marks ranking.
 
-It is a prioritization tool, not a prediction tool. Every number it shows is
+It is a prioritization tool, never a forecast. Every number it shows is
 counted from the corpus you uploaded, and every topic links back to the source
 questions that produced it.
 
 ## How it works
 
 ```
-Browser                              Server                    Gemini
-───────                              ──────                    ──────
-PDF → canvas → JPEG pages
-  → blank-page filter
-  → batches of 2 pages  ──POST──▶  /api/extract  ──vision──▶  structured JSON
-  ◀── questions ──────────────────      ◀──────────────────
+Browser (student's own Gemini key)                         Gemini
+──────────────────────────────────                         ──────
+PDF → canvas → JPEG pages, or JPG / PNG / HEIC photos as is
+  → blank-page filter (PDF pages)
+  → batches of 2 pages  ─────────── generateContent ──────▶  structured JSON
+  ◀── questions ─────────────────────────────────────────────
   → SHA-256 content cache
   → deterministic analysis (zero API calls)
   → genome map · Pareto · lineage · dossier
 
-  measured paper shape + ranked topics  ──POST──▶  /api/predict  ──▶  practice paper
-  one question + its recurrence         ──POST──▶  /api/tutor    ──▶  hint, not solution
+  measured paper shape + ranked topics  ── generateContent ──▶  practice paper
+  one question + its recurrence         ── generateContent ──▶  hint, not solution
 ```
 
-Pages are rasterised **in the browser** — no PDF is ever uploaded or persisted
-server-side. Batches stay under Vercel's request-body ceiling, extraction
-results are cached by page-image content hash so re-analysis costs no API
-quota, and a failed batch never discards the batches that succeeded.
+Every model call goes from the student's browser straight to Gemini on the
+student's **own key** (ADR 0001). The key is asked for only when an action
+needs a model, checked with a models-list call, held in memory unless the
+student chooses to remember it, and sent only to Google. The bundled samples
+and all analysis need no key. qDNA's server routes (`/api/extract`,
+`/api/tutor`, `/api/practice-paper`) are kept for a possible paid tier but
+hold no key and answer 503.
+
+Pages are prepared **in the browser** — no file is ever uploaded to or
+persisted on qDNA's server. Extraction results are cached by page-image
+content hash so re-analysis costs no API quota, a failed batch never discards
+the batches that succeeded, and a cancelled extraction keeps the pages that
+finished.
 
 The statistics are ours; Gemini is the sensor. Rankings are counts over a
 corpus that vision made countable, not a model's opinion about what matters.
@@ -91,7 +100,7 @@ Three things follow, and all three are in the code:
 
 - Next.js (App Router) + TypeScript + Tailwind CSS v4
 - `pdfjs-dist` for client-side page rasterisation
-- `@google/genai` for structured vision extraction, server-side only
+- `@google/genai` for structured vision extraction, called from the browser on the student's own key
 - `recharts` for the Pareto view
 - Vitest for the pure analysis functions
 - Deployed on Vercel
@@ -100,13 +109,12 @@ Three things follow, and all three are in the code:
 
 ```bash
 npm install
-cp .env.example .env.local   # add your GEMINI_API_KEY
 npm run dev
 ```
 
-`GEMINI_API_KEY` is read only inside server route handlers. It is never
-exposed through a `NEXT_PUBLIC_*` variable, never reaches the client bundle,
-and never gets committed.
+The app needs no server-side key: paste your own Gemini key when an action
+asks for one. `GEMINI_API_KEY` in `.env.local` is read only by the offline
+`scripts/extract-corpus.mjs`; it is never committed.
 
 ## Build status
 

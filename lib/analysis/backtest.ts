@@ -40,8 +40,8 @@ export function defaultHeldOutPaper(questions: Question[]): string | null {
  * well.
  *
  * Coverage is question-weighted rather than topic-weighted. A held-out paper
- * whose one unpredicted topic carries a single question is not the same
- * failure as one whose unpredicted topic carries six, and the student cares
+ * whose one unranked topic carries a single question is not the same
+ * failure as one whose unranked topic carries six, and the student cares
  * about marks on the page, not about labels.
  */
 export function backtest(
@@ -60,11 +60,11 @@ export function backtest(
   const actualTopics = topicFrequency(heldOut);
 
   const topicsNamed = topicsToReach(trainingStats, PARETO_TARGET_PCT);
-  const predictedTopics = trainingStats.slice(0, topicsNamed);
-  const predictedKeys = new Set(predictedTopics.map((s) => key(s.topic)));
+  const rankedTopics = trainingStats.slice(0, topicsNamed);
+  const rankedKeys = new Set(rankedTopics.map((s) => key(s.topic)));
 
-  const hits = actualTopics.filter((s) => predictedKeys.has(key(s.topic)));
-  const misses = actualTopics.filter((s) => !predictedKeys.has(key(s.topic)));
+  const hits = actualTopics.filter((s) => rankedKeys.has(key(s.topic)));
+  const misses = actualTopics.filter((s) => !rankedKeys.has(key(s.topic)));
 
   const covered = hits.reduce((sum, stat) => sum + stat.count, 0);
   const overlapPct = heldOut.length === 0 ? 0 : (covered / heldOut.length) * 100;
@@ -84,7 +84,7 @@ export function backtest(
   return {
     heldOutPaper: heldOutPaperLabel,
     trainingPapers: [...new Set(training.map((q) => q.paper.label))],
-    predictedTopics,
+    rankedTopics,
     actualTopics,
     hits,
     misses,
