@@ -185,7 +185,8 @@
           "section": "B",
           "marks": 3,
           "text": "Distinguish between ASCI and FPGA.",
-          "topic": "FPGA, HDL & ASIC"
+          "topic": "FPGA, HDL & ASIC",
+          "uncertain": "\"ASCI\" is printed (presumably ASIC); recorded verbatim."
         }
       ]
     }

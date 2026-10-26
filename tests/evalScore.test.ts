@@ -56,6 +56,12 @@ describe("normalizeQuestionNumber", () => {
     expect(normalizeQuestionNumber("q.1 (a)(ii)")).toBe("1.a.ii");
   });
 
+  it("drops a printed \"No.\" or \"Qn\" prefix", () => {
+    expect(normalizeQuestionNumber("Q.No.2(b)")).toBe("2.b");
+    expect(normalizeQuestionNumber("Q. No. 2(b)")).toBe("2.b");
+    expect(normalizeQuestionNumber("Qn 2b")).toBe("2.b");
+  });
+
   it("keeps different sub-parts apart", () => {
     expect(normalizeQuestionNumber("2(a)")).not.toBe(normalizeQuestionNumber("2(b)"));
     expect(normalizeQuestionNumber("2(a)(i)")).not.toBe(normalizeQuestionNumber("2(a)"));
@@ -97,7 +103,23 @@ describe("scoreExtraction", () => {
       textAccuracy: 1,
       marksAccuracy: 1,
       groupingAgreement: 1,
+      groupingPairPrecision: 1,
+      groupingPairRecall: 1,
+      groupingPairF1: 1,
     });
+  });
+
+  it("refuses ground truth with two questions that normalise to the same number", () => {
+    const clash = [truthQuestion("1(a)", "Cache"), truthQuestion("Q.1 (a)", "Cache")];
+
+    expect(() => scoreExtraction([], [course(clash)])).toThrow(/duplicate/i);
+  });
+
+  it("refuses ground truth with two papers that normalise to the same label", () => {
+    const one = course(truth, "2024 Final ECE 3119");
+    const two = course(truth, "2024 final ECE-3119");
+
+    expect(() => scoreExtraction([], [one, two])).toThrow(/duplicate/i);
   });
 
   it("matches by paper and normalised question number, not by position", () => {
@@ -205,6 +227,25 @@ describe("scoreExtraction", () => {
 
       expect(scoreExtraction(extracted, [course(truth)]).topicsPerQuestion).toBe(3 / 4);
     });
+
+    it("is also broken down per course, beside the pooled value", () => {
+      const other = {
+        ...course([truthQuestion("1(a)", "Noise"), truthQuestion("1(b)", "Noise")], "2018 Final ECE 3207"),
+        course: "Communication Engineering",
+      };
+      const extracted = [
+        ...truth.map((q, i) => ({ ...echo(q), topic: `T${i}` })),
+        ...other.papers[0].questions.map((q) => ({ ...echo(q, "2018 Final ECE 3207"), topic: "Noise" })),
+        { ...echo(truth[0], "Some Unknown Paper"), topic: "Stray" },
+      ];
+      const score = scoreExtraction(extracted, [course(truth), other]);
+
+      expect(score.topicsPerQuestionByCourse).toEqual({
+        "Computer Architecture and Design": 4 / 4,
+        "Communication Engineering": 1 / 2,
+      });
+      expect(score.topicsPerQuestion).toBe(6 / 7);
+    });
   });
 
   describe("grouping agreement", () => {
@@ -230,6 +271,37 @@ describe("scoreExtraction", () => {
 
       // Only the four cross pairs agree.
       expect(scoreExtraction(split, [course(truth)]).groupingAgreement).toBe(4 / 6);
+    });
+
+    it("reports pair precision, recall and F1 over same-topic pairs", () => {
+      // Truth pairs: (1a,1b), (2a,2b).
+      const extracted = truth.map((q) => ({
+        ...echo(q),
+        topic: q.qNo === "2(b)" ? "B" : "A",
+      }));
+      // A = {1a, 1b, 2a} gives three extracted pairs, of which only (1a,1b) is true.
+      const score = scoreExtraction(extracted, [course(truth)]);
+
+      expect(score.groupingPairPrecision).toBe(1 / 3);
+      expect(score.groupingPairRecall).toBe(1 / 2);
+      expect(score.groupingPairF1).toBeCloseTo(0.4);
+    });
+
+    it("gives pair F1 0.5 for merging everything here: full recall, a third precision", () => {
+      const merged = truth.map((q) => ({ ...echo(q), topic: "Everything" }));
+      const score = scoreExtraction(merged, [course(truth)]);
+
+      expect(score.groupingPairPrecision).toBe(2 / 6);
+      expect(score.groupingPairRecall).toBe(1);
+      expect(score.groupingPairF1).toBe(0.5);
+    });
+
+    it("gives pair F1 0 for splitting everything: no same-topic pair is recovered", () => {
+      const split = truth.map((q) => ({ ...echo(q), topic: q.qNo }));
+      const score = scoreExtraction(split, [course(truth)]);
+
+      expect(score.groupingPairRecall).toBe(0);
+      expect(score.groupingPairF1).toBe(0);
     });
 
     it("counts only pairs of matched questions", () => {
@@ -263,6 +335,9 @@ describe("scoreExtraction", () => {
       marksAccuracy: 0,
       topicsPerQuestion: 0,
       groupingAgreement: 0,
+      groupingPairPrecision: 0,
+      groupingPairRecall: 0,
+      groupingPairF1: 0,
     });
   });
 });
