@@ -23,35 +23,24 @@
  * <papers-dir> holds the source PDFs the ground truth names (never committed);
  * pages are rendered into <pages-dir> the way extract-corpus.mjs renders them,
  * and everything after that is the app's own code, through lib/eval/run.ts.
- * Needs Node 23.5+ for `registerHooks`, and pdftoppm and pdftotext (poppler).
+ * Needs Node 23.5+ (scripts/ts-paths.mjs uses `registerHooks`), and pdftoppm and pdftotext (poppler).
  *
  * Environment:
  *   EVAL_PROGRESS_FILE    progress file, outside the repo (default /tmp/qd/eval6-progress.json)
  *   EVAL_DAILY_CAPS       "model=n,model=n": per-model requests per quota day, over lib/config.ts's
  *   EVAL_MIN_INTERVAL_MS  gap between requests (default: free-tier pacing)
  */
+// Resolves the app's "@/" alias, extensionless and directory imports for plain Node.
+import "./ts-paths.mjs";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import { registerHooks } from "node:module";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GROUND_TRUTH_DIR = path.join(ROOT, "tests", "fixtures", "ground-truth");
 const CONFIG_FILE = path.join(ROOT, "lib", "config.ts");
 
-// The app's modules import each other through tsconfig's "@/" alias and
-// without extensions, as the bundler allows; plain Node needs both spelled out.
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    let target = specifier.startsWith("@/")
-      ? pathToFileURL(path.join(ROOT, specifier.slice(2))).href
-      : specifier;
-    const fromTs = context.parentURL?.endsWith(".ts");
-    if (fromTs && /^(file:|\.)/.test(target) && !path.extname(target)) target += ".ts";
-    return nextResolve(target, context);
-  },
-});
 const { EVAL_DAILY_CAPS, EVAL_LIVE_BATCH_PAGES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
 const { RESULTS_DOC, advanceEval, emptyProgress, evalStatus, resultsDoc, setExtractionSetup, textLayerRecall } =
   await import("../lib/eval/run.ts");
