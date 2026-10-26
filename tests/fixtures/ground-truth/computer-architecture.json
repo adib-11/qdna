@@ -1,0 +1,193 @@
+{
+  "course": "Computer Architecture and Design",
+  "courseCodes": ["ECE 3119"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "Memory Organisation & Storage",
+    "Computer Arithmetic",
+    "Floating-Point Representation",
+    "Addressing Modes & Micro-operations",
+    "Cache Memory & Mapping",
+    "I/O Transfer & DMA",
+    "MIPS Instruction Set & Programming",
+    "FPGA, HDL & ASIC",
+    "Processor Performance (CPI & MIPS Rate)",
+    "Multiprogramming & Multiprocessing"
+  ],
+  "papers": [
+    {
+      "label": "2024 Final ECE 3119",
+      "exam": "B.Sc. Engineering 3rd Year Odd Semester Examination, 2024",
+      "year": 2024,
+      "source": {
+        "file": "CAD_Prev_Question.pdf",
+        "pages": [1, 2],
+        "capture": "phone-photo",
+        "textLayer": false
+      },
+      "notes": [
+        "Phone photos of a folded sheet; no text layer. Drafted from a read of the page images only: the model pass on these two pages failed twice (deadline exceeded, then aborted).",
+        "Full marks 60: every question totals 10. A CO column is printed beside the marks and is not recorded."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 3,
+          "text": "Why secondary is necessary? Discuss about SSD.",
+          "topic": "Memory Organisation & Storage",
+          "uncertain": "The word \"memory\" is handwritten above the line (\"Why secondary memory is necessary?\"); the printed text is recorded."
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "Draw a parallel adder to add the following values. How much time is saved here compared to serial adder?",
+          "topic": "Computer Arithmetic",
+          "uncertain": "The values \"x = 11, y = 1010\" are handwritten after the question, not printed; they are left out."
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "What will happen if exponent is not biased? Determine the bias for single and double precision with explanation.",
+          "topic": "Floating-Point Representation"
+        },
+        {
+          "qNo": "2(a)",
+          "section": "A",
+          "marks": 3,
+          "text": "Differentiate between base-index and base relative plus index addressing modes with example.",
+          "topic": "Addressing Modes & Micro-operations"
+        },
+        {
+          "qNo": "2(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "What is the micro operation for the following case? (The content from a particular address will be moved to register BX)",
+          "topic": "Addressing Modes & Micro-operations"
+        },
+        {
+          "qNo": "2(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Write only the necessary parts of floating point algorithms for adding the two numbers. Don't mention the steps that doesn't need to be executed. 4.002 × 10⁻² & 20.23 × 10⁻⁵",
+          "topic": "Floating-Point Representation"
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 5,
+          "text": "Suppose a PC has the following configuration. Main memory size = 64kB, Cache size = 4kB, Block size = 16 bytes. Calculate the - i) number of cache block ii) number of sets in main memory iii) bits for tag iv) number of bits for offset v) number of bits in main memory for fully associative and one way set associative.",
+          "topic": "Cache Memory & Mapping"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 5,
+          "text": "'The worst case of one way set associative is an ideal case for two way set associative' – justify this statement.",
+          "topic": "Cache Memory & Mapping"
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 6,
+          "text": "Divide (14)₁₀ by (3)₁₀ in 4-bit binary 2's complement notation by using unsigned binary division algorithm.",
+          "topic": "Computer Arithmetic"
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Write your answer with explanation for the followings: (i) Given a memory system with 32 – bit words and byte addressing how many address bits are needed to access 4GB of memory. (ii) In a word addressable system with 16 – bit words and 64 KB memory, how many unique addresses are there?",
+          "topic": "Memory Organisation & Storage"
+        },
+        {
+          "qNo": "5(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "A PC was transferring data quickly but become unresponsive during large transfers because the CPU couldn't use the bus. Engineers switched to a slower method that let CPU stay active. What is the new method & what are the advantages of it?",
+          "topic": "I/O Transfer & DMA"
+        },
+        {
+          "qNo": "5(b)",
+          "section": "B",
+          "marks": 5,
+          "text": "Define DMA. Discuss the sequence of DMA operations.",
+          "topic": "I/O Transfer & DMA"
+        },
+        {
+          "qNo": "5(c)",
+          "section": "B",
+          "marks": 2,
+          "text": "Can booth's algorithm perform signed multiplication and division?",
+          "topic": "Computer Arithmetic"
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "What is MIPS? Discuss different types of instruction format of MIPS.",
+          "topic": "MIPS Instruction Set & Programming"
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "Convert the following C code into MIPS instructions. if (i == j){ a = i + j; } else { a = i - j; }",
+          "topic": "MIPS Instruction Set & Programming"
+        },
+        {
+          "qNo": "6(c)",
+          "section": "B",
+          "marks": 3,
+          "text": "What are sequencing in MIPS? Convert the following C code into MIPS format. for (i = 0; i < 20; i++){ a = a + i; }",
+          "topic": "MIPS Instruction Set & Programming"
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "A student writes two MIPS function. One function overwrites registers used by other, and the return address gets lost after nested call. There is also confusion in passing and restoring values. What is the solution to avoid such problem.",
+          "topic": "MIPS Instruction Set & Programming"
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Discuss about FPGA and HDL.",
+          "topic": "FPGA, HDL & ASIC"
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 3,
+          "text": "When microcontroller is preferred over FPGA? Explain briefly.",
+          "topic": "FPGA, HDL & ASIC"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "Consider execution of 2 million instructions on a 600 MHz processor. The program consists of four major type of instructions. The instruction mix and the CPI for each instruction type are given below. Instruction type | CPI | Instruction mix: Arithmatic and logic | 2 | 45%; Branch | 4 | 25%; Bad/ store with cache | 6 | 10%; Memory reference with miss | 10 | 20%. Now calculate the average CPI and corresponding MIPS rate when the program is executed on a microprocessor.",
+          "topic": "Processor Performance (CPI & MIPS Rate)",
+          "uncertain": "\"Bad/ store with cache\" is printed as such (presumably Load/store); recorded verbatim."
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Differentiate between multiprogramming and multiprocessing.",
+          "topic": "Multiprogramming & Multiprocessing"
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 3,
+          "text": "Distinguish between ASCI and FPGA.",
+          "topic": "FPGA, HDL & ASIC"
+        }
+      ]
+    }
+  ]
+}

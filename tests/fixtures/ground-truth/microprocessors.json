@@ -1,0 +1,242 @@
+{
+  "course": "Microprocessors & Assembly Language",
+  "courseCodes": ["ECE 3111"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "Microprocessor Fundamentals",
+    "8086/8088 Architecture & Registers",
+    "Memory Segmentation & Physical Addressing",
+    "CISC, RISC & Pipelining",
+    "Memory Access & Cache",
+    "8086 Instruction Set",
+    "I/O Interfacing & DMA",
+    "Assembly Programming",
+    "Decision Structures in Assembly",
+    "Procedures, Stack & Strings",
+    "Instruction Execution & System Start-up"
+  ],
+  "papers": [
+    {
+      "label": "2018 Final ECE 3111",
+      "exam": "B.Sc. Engineering 3rd Year Odd Semester Examination, 2018",
+      "year": 2018,
+      "source": {
+        "file": "ECE_3111_Microprocessors_Assembly_Language_Semester_Final_Questions.pdf",
+        "pages": [1, 2],
+        "capture": "scan",
+        "textLayer": false
+      },
+      "notes": [
+        "Scan without a text layer, heavily annotated in blue pen (ticks over most question letters, underlining). Drafted from a model pass checked against a read of each page.",
+        "Full marks 72: every question totals 12."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What is the importance of microprocessor in microprocessor-based computer system? How does a microprocessor differ with a microcontroller?",
+          "topic": "Microprocessor Fundamentals"
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Draw and discuss the organization of 8088 microprocessor system design.",
+          "topic": "8086/8088 Architecture & Registers"
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Write down the specific use of general purpose registers and control flags.",
+          "topic": "8086/8088 Architecture & Registers"
+        },
+        {
+          "qNo": "2(a)",
+          "section": "A",
+          "marks": 2.5,
+          "text": "Explain why the system with multi-core processor is better than the system with single core processor?",
+          "topic": "Microprocessor Fundamentals"
+        },
+        {
+          "qNo": "2(b)",
+          "section": "A",
+          "marks": 1.5,
+          "text": "How many cores are available in the following processor family? (i) Core i3 (ii) Core i5 (iii) Core i7",
+          "topic": "Microprocessor Fundamentals"
+        },
+        {
+          "qNo": "2(c)",
+          "section": "A",
+          "marks": 6,
+          "text": "Draw and describe the system block diagram of Microprocessor system design.",
+          "topic": "8086/8088 Architecture & Registers",
+          "uncertain": "Topic: could equally be Microprocessor Fundamentals."
+        },
+        {
+          "qNo": "2(d)",
+          "section": "A",
+          "marks": 2,
+          "text": "Find the unknowns value for each of the following physical addresses. Assume all numbers are hexadecimal numbers. (i) 6765 : ? = DABC0 (ii) ? : CD21 = 32D21",
+          "topic": "Memory Segmentation & Physical Addressing"
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the differences between CISC and RISC? Write down the instruction codes both for RISC and CISC processor of the statement a[i] = a[i]+b[i]:",
+          "topic": "CISC, RISC & Pipelining"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the advantages of pipelining in the process of instruction execution by a microprocessor? Discuss briefly the pipelining process.",
+          "topic": "CISC, RISC & Pipelining"
+        },
+        {
+          "qNo": "3(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Discuss about the components of a microprocessor with necessary diagram.",
+          "topic": "Microprocessor Fundamentals"
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 5,
+          "text": "How can the overhead to access memory by processor be reduced? Discuss briefly about such kind device and its process with necessary diagram if exist.",
+          "topic": "Memory Access & Cache",
+          "uncertain": "Marks read as 05; a pen mark sits on the digit."
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "Suppose AL contains 11001010b. Give the new contents of AL and CF after each of the following instruction is executed. (i) ROL Al, CL where CL contains 2 (ii) ROR AL, CL where CL contains 2",
+          "topic": "8086 Instruction Set"
+        },
+        {
+          "qNo": "4(c)",
+          "section": "A",
+          "marks": 2,
+          "text": "Which components of a microprocessor need to be redesigned to speed up the processing speed? Write your opinion.",
+          "topic": "Microprocessor Fundamentals"
+        },
+        {
+          "qNo": "4(d)",
+          "section": "A",
+          "marks": 2,
+          "text": "As larger size RAM is better for good performance but still why we can't install any larger size RAM as we want? Answer briefly.",
+          "topic": "Memory Access & Cache"
+        },
+        {
+          "qNo": "5(a)",
+          "section": "B",
+          "marks": 2,
+          "text": "Distinguish between memory mapped I/O and Isolated I/O.",
+          "topic": "I/O Interfacing & DMA"
+        },
+        {
+          "qNo": "5(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is the mode and I/O configuration A, B and C of an 8255 PPI chip after it's control register loaded with 82H.",
+          "topic": "I/O Interfacing & DMA"
+        },
+        {
+          "qNo": "5(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Write an assembly code to calculate the factorial of a given number.",
+          "topic": "Assembly Programming"
+        },
+        {
+          "qNo": "5(d)",
+          "section": "B",
+          "marks": 2,
+          "text": "Why DMA mode is faster than the instruction mode?",
+          "topic": "I/O Interfacing & DMA"
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "Write down a sequence of instructions to perform following problem. Put the sum 100+95+90+....+5 in AX.",
+          "topic": "Assembly Programming"
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 6,
+          "text": "Write assembly code for each of the following decision structure. (i) IF AL<0 THEN Put FFh in AH ELSE Put 0 in AH END_IF (ii) IF (AX<BX) OR (BX<CX) THEN Put 0 in DX ELSE Put 1 in DX END_IF",
+          "topic": "Decision Structures in Assembly"
+        },
+        {
+          "qNo": "6(c)",
+          "section": "B",
+          "marks": 2,
+          "text": "Suppose DX register contains a number which may be positive or negative. Now write down the ways to reverse the sign of the number only.",
+          "topic": "Assembly Programming"
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 2,
+          "text": "What is the basic difference between AND and TEST instructions?",
+          "topic": "8086 Instruction Set"
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "Write down an assembly program which will take a single digit as input and will calculate the sum of all one bits of its ASCII value.",
+          "topic": "Assembly Programming"
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Write a procedure to take a string up to new line and another procedure to reversely display the string using stack. The two procedures will then be called by main procedure.",
+          "topic": "Procedures, Stack & Strings"
+        },
+        {
+          "qNo": "7(d)",
+          "section": "B",
+          "marks": 2,
+          "text": "What are the restrictions on MOV and XCHG instructions in assembly language?",
+          "topic": "8086 Instruction Set"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "Discuss what happens when the PC is powered up.",
+          "topic": "Instruction Execution & System Start-up"
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Briefly describe how an assembly instruction is executed?",
+          "topic": "Instruction Execution & System Start-up"
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 3,
+          "text": "How a 20-bit physical address for 8086 is handled by 16-bit register.",
+          "topic": "Memory Segmentation & Physical Addressing"
+        },
+        {
+          "qNo": "8(d)",
+          "section": "B",
+          "marks": 3,
+          "text": "Describe the function of each status flag in 8086 microprocessor.",
+          "topic": "8086/8088 Architecture & Registers"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "course": "Software Engineering & Information System Design",
+  "courseCodes": ["ECE 3117"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "System Concepts",
+    "Requirements Analysis & Information Gathering",
+    "SDLC & Process Models",
+    "Agile & Scrum",
+    "Software Design",
+    "Software Testing, Verification & Validation",
+    "Software Quality",
+    "Software Maintenance & Re-engineering",
+    "Feasibility Analysis",
+    "Structured Analysis Tools (DFD & Decision Trees)"
+  ],
+  "papers": [
+    {
+      "label": "2020 Final ECE 3117",
+      "exam": "B.Sc. Engineering 3rd Year Odd Examination, 2020",
+      "year": 2020,
+      "source": {
+        "file": "Previous SWE Questions.pdf",
+        "pages": [9],
+        "capture": "phone-photo",
+        "textLayer": true
+      },
+      "notes": [
+        "Phone photo of the whole paper on one page, dim and slightly skewed, with an OCR text layer (\"Esamlna~on, ~020\", \"team nwmJ2~\"). Drafted from that layer and a model pass, checked against a read of the page.",
+        "Full marks 72: every question totals 12.",
+        "Q.2(a) prints \"3x4 =12\" and Q.5(a) prints \"4x3 =12\": each roman sub-part carries its own marks, so each is a question, with the shared scenario stem repeated in its text."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the elements of a system? Can you have a viable system without feedback? Explain.",
+          "topic": "System Concepts"
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "Distinguish between: (i) Interaction and independence (ii) Open and closed systems",
+          "topic": "System Concepts"
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "How would an analysis determine the user's needs for a system? Explain briefly.",
+          "topic": "Requirements Analysis & Information Gathering"
+        },
+        {
+          "qNo": "2(a)(i)",
+          "section": "A",
+          "marks": 4,
+          "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions. (i) What is SDLC? Will you follow any SDLC model for ECE-RUET website project? If so, which one and why?",
+          "topic": "SDLC & Process Models",
+          "uncertain": "Splitting: marks are printed once as \"3x4 =12\" beside 2(a), not beside each sub-part. Split on the reading that each sub-part carries 4; the alternative is one 12-mark question 2(a)."
+        },
+        {
+          "qNo": "2(a)(ii)",
+          "section": "A",
+          "marks": 4,
+          "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions. (ii) For developing online result publishing system, which SDLC model will you choose and why?",
+          "topic": "SDLC & Process Models",
+          "uncertain": "Splitting: see 2(a)(i)."
+        },
+        {
+          "qNo": "2(a)(iii)",
+          "section": "A",
+          "marks": 4,
+          "text": "Suppose you were assigned to make a website for ECE-RUET. The project was small and you were provided 2 team members. Watching your progress RUET administration has decided to give you a project of result publishing system of RUET. Here, the budget is limited and result system is too complex. Now, answer the following questions. (iii) If you are provided a team of 10 members, which framework will you use for team management? Also explain the roles of different people involved with the result publishing project.",
+          "topic": "Agile & Scrum",
+          "uncertain": "Splitting: see 2(a)(i). Topic: the expected framework is presumably Scrum."
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 2,
+          "text": "Explain coupling and cohesion.",
+          "topic": "Software Design"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "What is software testing? Differentiate between black-box and white-box testing.",
+          "topic": "Software Testing, Verification & Validation"
+        },
+        {
+          "qNo": "3(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "Why quality control is important in software engineering? How it is different from quality assurance.",
+          "topic": "Software Quality"
+        },
+        {
+          "qNo": "3(d)",
+          "section": "A",
+          "marks": 2,
+          "text": "What is software re-engineering?",
+          "topic": "Software Maintenance & Re-engineering"
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "Describe the steps of requirement analysis.",
+          "topic": "Requirements Analysis & Information Gathering",
+          "uncertain": "Printed \"recruitment analysis\" is struck through with \"requirement\" handwritten above; the handwritten correction is recorded."
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "What are the differences between functional and non-functional requirements?",
+          "topic": "Requirements Analysis & Information Gathering"
+        },
+        {
+          "qNo": "4(c)",
+          "section": "A",
+          "marks": 5,
+          "text": "What is architectural design? Describe the issues involved in architectural design.",
+          "topic": "Software Design"
+        },
+        {
+          "qNo": "5(a)(i)",
+          "section": "B",
+          "marks": 3,
+          "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions- (i) How will you determine the users' actual need?",
+          "topic": "Requirements Analysis & Information Gathering",
+          "uncertain": "Splitting: marks are printed once as \"4x3 =12\" beside 5(a); split on the reading that each sub-part carries 3. \"fiance\" (finance) is printed."
+        },
+        {
+          "qNo": "5(a)(ii)",
+          "section": "B",
+          "marks": 3,
+          "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions- (ii) Which difficulties you may face in the process of information gathering why?",
+          "topic": "Requirements Analysis & Information Gathering",
+          "uncertain": "Splitting: see 5(a)(i)."
+        },
+        {
+          "qNo": "5(a)(iii)",
+          "section": "B",
+          "marks": 3,
+          "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions- (iii) Which tools will you use for information gathering and why?",
+          "topic": "Requirements Analysis & Information Gathering",
+          "uncertain": "Splitting: see 5(a)(i)."
+        },
+        {
+          "qNo": "5(a)(iv)",
+          "section": "B",
+          "marks": 3,
+          "text": "Suppose, you want to develop an automated system for the fiance section of RUET. Salaries, bonuses, TA-DA etc. will be processed digitally in the new system. Now answer the following questions- (iv) If you need to take the interview of the Vice-chancellor of RUET in the process, which strategy will you follow to have a successful interview?",
+          "topic": "Requirements Analysis & Information Gathering",
+          "uncertain": "Splitting: see 5(a)(i)."
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 6,
+          "text": "Give a real-world example where you can implement the spiral model.",
+          "topic": "SDLC & Process Models"
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 6,
+          "text": "What are the roles of scrum?",
+          "topic": "Agile & Scrum"
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "What are the key considerations involved in feasibility analysis?",
+          "topic": "Feasibility Analysis"
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "What is DFD? Explain each symbol used in a DFD.",
+          "topic": "Structured Analysis Tools (DFD & Decision Trees)"
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 2,
+          "text": "Explain logical data description hierarchy.",
+          "topic": "Structured Analysis Tools (DFD & Decision Trees)",
+          "uncertain": "Topic: could be its own data-modelling topic."
+        },
+        {
+          "qNo": "7(d)",
+          "section": "B",
+          "marks": 4,
+          "text": "Suppose, a publisher company provides 25% discount for the bookstores. If the number of books ordered by a bookstore is less than 30, then no discount is allowed. The publisher also provides 20% and 5% discounts for libraries and individuals respectively. For individuals discount is allowed only if at least 5 books are purchased at a time. Now draw a decision tree for the given information.",
+          "topic": "Structured Analysis Tools (DFD & Decision Trees)"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "Differentiate between verification and validation.",
+          "topic": "Software Testing, Verification & Validation"
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is software quality assurance? Explain briefly.",
+          "topic": "Software Quality"
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is the quality attribute of a software?",
+          "topic": "Software Quality"
+        }
+      ]
+    }
+  ]
+}

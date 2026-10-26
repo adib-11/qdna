@@ -1,0 +1,232 @@
+{
+  "course": "Basic Mechanical Engineering",
+  "courseCodes": ["ME 2101"],
+  "topicGroupingStatus": "Agent draft. The topic grouping is the maintainer's call.",
+  "topics": [
+    "Fuels & Calorific Value",
+    "Steam Boilers",
+    "Internal Combustion Engines",
+    "Gas Turbines",
+    "Refrigeration & Air Conditioning",
+    "Hydroelectric Power Plants",
+    "Turbomachines & Hydraulic Turbines",
+    "Centrifugal Pumps",
+    "Reciprocating Pumps",
+    "Blowers & Compressors"
+  ],
+  "papers": [
+    {
+      "label": "2021 Final ME 2101",
+      "exam": "B.Sc. Engineering 2nd Year Odd Semester Examination 2021",
+      "year": 2021,
+      "source": {
+        "file": "EEE dept Semester Questions(ME).pdf",
+        "pages": [1, 2],
+        "capture": "scan",
+        "textLayer": false
+      },
+      "notes": [
+        "CamScanner scan, Department of Electrical & Electronic Engineering; the PDF's only text is the CamScanner watermark. Drafted from a model pass checked against a read of each page.",
+        "Full marks 72: every question totals 12.",
+        "The marks column on page 1 sits about half a line above its sub-parts (most visibly in Q.1 and Q.2); marks were assigned to sub-parts in order."
+      ],
+      "questions": [
+        {
+          "qNo": "1(a)",
+          "section": "A",
+          "marks": 3,
+          "text": "Define fuels and classify their various types.",
+          "topic": "Fuels & Calorific Value",
+          "uncertain": "Marks column is offset; 03/05/04 assigned to (a)/(b)/(c) in order."
+        },
+        {
+          "qNo": "1(b)",
+          "section": "A",
+          "marks": 5,
+          "text": "What is meant by H.CV and L.CV? What are the advantages of gaseous fuels?",
+          "topic": "Fuels & Calorific Value",
+          "uncertain": "Marks column is offset; see 1(a)."
+        },
+        {
+          "qNo": "1(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "A sample of coal has the following composition by mass: Carbon 75%; Hydrogen 6%, Oxygen 8%; Nitrogen 2.5%, Sulpher 1.5% and ash 7%. Calculate its higher and lower calorific values per kg of coal.",
+          "topic": "Fuels & Calorific Value"
+        },
+        {
+          "qNo": "2(a)",
+          "section": "A",
+          "marks": 5,
+          "text": "What is steam boiler? Describe the working principle of a Cochran boiler with neat sketch.",
+          "topic": "Steam Boilers",
+          "uncertain": "Marks column is offset; 05/03/04 assigned to (a)/(b)/(c) in order."
+        },
+        {
+          "qNo": "2(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "Distinguish between boiler mountings and boiler accessories.",
+          "topic": "Steam Boilers"
+        },
+        {
+          "qNo": "2(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "The following observation were made in a boiler trial: Coal used 250kg of calorific value 29800 kJ/kg, water evaporated 2000 kg, steam pressure 11.5 bar, dryness fraction 0.95 and feed water temperature 34°C. Calculate the equivalent evaporation from and at 100°C per kg of coal and efficiency of the boiler.",
+          "topic": "Steam Boilers"
+        },
+        {
+          "qNo": "3(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What is an Internal Combustion(IC) Engine? Explain the working principle of a four-stroke diesel engine with necessary sketches.",
+          "topic": "Internal Combustion Engines"
+        },
+        {
+          "qNo": "3(b)",
+          "section": "A",
+          "marks": 3,
+          "text": "What is Octane number? Explain how SI engine fuels are rated.",
+          "topic": "Internal Combustion Engines"
+        },
+        {
+          "qNo": "3(c)",
+          "section": "A",
+          "marks": 2,
+          "text": "Define the following terms: (i) Clearance Volume (ii) Compression ratio.",
+          "topic": "Internal Combustion Engines"
+        },
+        {
+          "qNo": "3(d)",
+          "section": "A",
+          "marks": 3,
+          "text": "An engine uses 100gm of oil per minute of calorific value 30000 kJ/kg. If the Brake power of the engine is 22kW and mechanical efficiency 87%, calculate (i) Indicated thermal efficiency; (ii) Brake thermal efficiency and (iii) Specific fuel consumption in kg/B.P./h.",
+          "topic": "Internal Combustion Engines"
+        },
+        {
+          "qNo": "4(a)",
+          "section": "A",
+          "marks": 4,
+          "text": "What are the merits and demerits of gas turbine plants over IC Engine plants.",
+          "topic": "Gas Turbines"
+        },
+        {
+          "qNo": "4(b)",
+          "section": "A",
+          "marks": 4,
+          "text": "State the human comfort conditions. What are the factors which affect the human comfort?",
+          "topic": "Refrigeration & Air Conditioning"
+        },
+        {
+          "qNo": "4(c)",
+          "section": "A",
+          "marks": 4,
+          "text": "The temperature limits of an ammonia refrigeration system are 298K and 263K. If the gas is dry at the end of compression, calculate the COP of the cycle assuming no undercooling of the liquid ammonia. Also determine the capacity of the refrigerator if the liquid flow is at the rate of 6 kg/min. The properties of ammonia refrigerant are: Temperature (K) | Liquid heat (kJ/kg) | Latent heat (kJ/kg) | Liquid entropy (kJ/kg K): 298 | 298.9 | 1166.94 | 1.1242; 263 | 135.37 | 1297.68 | 0.5443",
+          "topic": "Refrigeration & Air Conditioning"
+        },
+        {
+          "qNo": "5(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "Classify gas turbine, and briefly describe closed cycle gas turbine with intercooling.",
+          "topic": "Gas Turbines"
+        },
+        {
+          "qNo": "5(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "In an oil-gas turbine installation, air is taken at pressure of 1 bar and 27°C and compressed to a pressure of 4 bar. The oil with a calorific value of 42000 kJ/kg is burnt in the combustion chamber to raise the temperature of air to 550°C. If the air flows at the rate of 1.2 kg/s, find the net power of the installation. Take Cp = 1.05 kJ/kg K.",
+          "topic": "Gas Turbines"
+        },
+        {
+          "qNo": "5(c)",
+          "section": "B",
+          "marks": 2,
+          "text": "Distinguish between a gas turbine and steam turbine.",
+          "topic": "Gas Turbines"
+        },
+        {
+          "qNo": "5(d)",
+          "section": "B",
+          "marks": 4,
+          "text": "Draw a general layout of a hydroelectric power plant using an impulse turbine and describe it.",
+          "topic": "Hydroelectric Power Plants"
+        },
+        {
+          "qNo": "6(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is the more common term for an energy producing turbomachine? How about an energy producing turbomachine? Explain this terminology.",
+          "topic": "Turbomachines & Hydraulic Turbines",
+          "uncertain": "\"energy producing\" is printed twice; the second is presumably \"energy absorbing\" (the model pass silently corrected it). The printed text is recorded."
+        },
+        {
+          "qNo": "6(b)",
+          "section": "B",
+          "marks": 3,
+          "text": "Name and briefly discuss the differences between the two basic types of dynamic turbines.",
+          "topic": "Turbomachines & Hydraulic Turbines"
+        },
+        {
+          "qNo": "6(c)",
+          "section": "B",
+          "marks": 5,
+          "text": "A pelton wheel is running under a head of 150m at the speed of 300 rpm. The overall efficiency of the turbine is 85% and the ratio of Jet to the wheel diameter is 1/10. Find the following: (i) Diameter of the wheel, (ii) Diameter of the Jet, (iii) Width of buckets, (iv) Depth of buckets, (v) Number of buckets.",
+          "topic": "Turbomachines & Hydraulic Turbines"
+        },
+        {
+          "qNo": "7(a)",
+          "section": "B",
+          "marks": 4,
+          "text": "What is cavitation? What are the effects of cavitation and how it is avoided?",
+          "topic": "Centrifugal Pumps",
+          "uncertain": "Topic: cavitation also belongs with hydraulic turbines; placed with pumps because Q.7 is a pump question."
+        },
+        {
+          "qNo": "7(b)",
+          "section": "B",
+          "marks": 4,
+          "text": "Define specific speed of a centrifugal pump. How is the model testing of the centrifugal pump carried out?",
+          "topic": "Centrifugal Pumps"
+        },
+        {
+          "qNo": "7(c)",
+          "section": "B",
+          "marks": 4,
+          "text": "Two geometrically similar pumps are running at the same speed of 1000 rpm. One pump has an impeller diameter of 300 mm and lifts water at the rate of 0.02 m³/s against a head of 15m. Determine the head and impeller diameter of the other pump to deliver half the discharge.",
+          "topic": "Centrifugal Pumps"
+        },
+        {
+          "qNo": "8(a)",
+          "section": "B",
+          "marks": 3,
+          "text": "Define actual efficiency, manometric efficiency and hydraulic efficiency of a centrifugal pump.",
+          "topic": "Centrifugal Pumps",
+          "uncertain": "The \"Q.8\" label is not visible at the top of page 2 (cut off or never printed); the number is inferred from the sequence."
+        },
+        {
+          "qNo": "8(b)",
+          "section": "B",
+          "marks": 5,
+          "text": "A single acting reciprocating pump has a stroke length of 150mm, suction pipe is 7m long and the ratio of suction pipe diameter to the piston diameter is 3/4. The water level in the sump is 2.5m below the axis of the pump cylinder and the pipe connecting the sump and pump cylinder is 75 mm in diameter. If the crank is running at 75 rpm, determine the pressure head on the piston at the begining and end of the suction stroke. Take friction coefficient, f = 0.01.",
+          "topic": "Reciprocating Pumps"
+        },
+        {
+          "qNo": "8(c)",
+          "section": "B",
+          "marks": 2,
+          "text": "Why air vessels are used in a reciprocating pump?",
+          "topic": "Reciprocating Pumps"
+        },
+        {
+          "qNo": "8(d)",
+          "section": "B",
+          "marks": 2,
+          "text": "Write short notes on blower and compressor.",
+          "topic": "Blowers & Compressors"
+        }
+      ]
+    }
+  ]
+}
