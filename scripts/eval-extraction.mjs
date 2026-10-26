@@ -29,6 +29,7 @@
  *   EVAL_PROGRESS_FILE    progress file, outside the repo (default ~/.config/qdna/eval6-progress.json)
  *   EVAL_DAILY_CAPS       "model=n,model=n": per-model requests per quota day, over lib/config.ts's
  *   EVAL_MIN_INTERVAL_MS  gap between requests (default: free-tier pacing)
+ *   POPPLER_BIN_DIR       where pdftoppm and pdftotext are, checked before the usual system dirs
  */
 // Resolves the app's "@/" alias, extensionless and directory imports for plain Node.
 import "./ts-paths.mjs";
@@ -37,12 +38,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { popplerTool } from "./poppler.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GROUND_TRUTH_DIR = path.join(ROOT, "tests", "fixtures", "ground-truth");
 const CONFIG_FILE = path.join(ROOT, "lib", "config.ts");
-/** Where poppler is looked up: fixed system directories only, never the caller's PATH. */
-const SYSTEM_PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
 
 const { EVAL_DAILY_CAPS, EVAL_LIVE_BATCH_PAGES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
 const {
@@ -118,9 +118,9 @@ function measureTextLayer(dir) {
     label: paper.label,
     pages: paper.source.pages.map((n) => ({
       text: execFileSync(
-        "pdftotext",
+        popplerTool("pdftotext"),
         ["-layout", "-f", String(n), "-l", String(n), path.join(dir, paper.source.file), "-"],
-        { encoding: "utf8", env: { ...process.env, PATH: SYSTEM_PATH } },
+        { encoding: "utf8" },
       ),
     })),
   }));

@@ -20,6 +20,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { popplerTool } from "./poppler.mjs";
 
 import {
   BATCH_PAGES,
@@ -121,7 +122,7 @@ export function rasterise(file, { page, dir } = {}) {
   fs.mkdirSync(outDir, { recursive: true });
   const range = page ? ["-f", String(page), "-l", String(page)] : [];
 
-  execFileSync("pdftoppm", [
+  execFileSync(popplerTool("pdftoppm"), [
     ...range,
     "-jpeg",
     "-jpegopt", `quality=${Math.round(JPEG_QUALITY * 100)}`,
@@ -130,7 +131,7 @@ export function rasterise(file, { page, dir } = {}) {
     file,
     path.join(outDir, "page"),
   ]);
-  execFileSync("pdftoppm", [...range, "-gray", "-r", "20", file, path.join(outDir, "ink")]);
+  execFileSync(popplerTool("pdftoppm"), [...range, "-gray", "-r", "20", file, path.join(outDir, "ink")]);
 
   const jpegs = fs.readdirSync(outDir).filter((f) => f.endsWith(".jpg")).sort();
   const grays = fs.readdirSync(outDir).filter((f) => f.endsWith(".pgm")).sort();
