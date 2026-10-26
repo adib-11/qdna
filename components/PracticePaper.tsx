@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { browserModelClient } from "@/lib/gemini/browserClient";
@@ -17,8 +18,8 @@ type State =
   | { status: "error"; message: string };
 
 /**
- * A practice paper written from the corpus, on the page's one dark island
- * (PAT-005). It is a revision aid, and is never described as a forecast.
+ * A practice paper written from the corpus, set as the one sheet of white paper
+ * inside an ink edge. It is a revision aid, and is never described as a forecast.
  *
  * The structure is not the model's invention: sections, question counts, and
  * mark denominations are measured from the uploaded papers and sent as a
@@ -78,21 +79,23 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
 
   return (
     // Printed only once a paper has been written: an unused prompt is noise on paper.
-    <div
-      className={`rounded-[var(--radius-xl)] bg-midnight-ink p-[var(--card-padding)] text-pure-white ${paper ? "" : "print:hidden"}`}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-[16px]">
+    <Card tone="sheet" className={paper ? "" : "print:hidden"}>
+      <div
+        className={`flex flex-wrap items-start justify-between gap-4 ${paper ? "border-b-4 border-ink pb-6" : ""}`}
+      >
         <div className="min-w-0">
-          <Pill tone="marigold">Revision aid · never a forecast</Pill>
-          <h2 className="mt-[12px] text-heading-sm font-bold tracking-[-0.242px]">
+          <h2 className="text-2xl sm:text-3xl">
             {paper?.title ?? "Write me a practice paper"}
           </h2>
-          <p className="mt-[8px] max-w-[62ch] text-body-sm text-[rgba(255,255,255,0.6)]">
+          <p className="mt-3 max-w-[62ch] text-ink-2">
             {paper
               ? (paper.instructions ??
                 "Generated from this corpus. Every question is annotated with the evidence that put it there.")
               : `Built from the ${shape.paperCount} paper${shape.paperCount === 1 ? "" : "s"} you uploaded: ${shape.sections.length} section${shape.sections.length === 1 ? "" : "s"}, about ${shape.questionsPerPaper} questions${shape.marksPerPaper !== null ? `, ${shape.marksPerPaper} marks` : ""}. Weighted by what this examiner keeps asking — a revision aid, never a forecast of the next exam.`}
           </p>
+          <Pill tone="on" className="mt-4">
+            Revision aid · never a forecast
+          </Pill>
         </div>
 
         <Button
@@ -110,11 +113,11 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
       </div>
 
       {state.status === "loading" && (
-        <div className="mt-[24px] space-y-[12px]" aria-live="polite">
+        <div className="mt-6 space-y-3" aria-live="polite">
           {[100, 88, 94, 72].map((width, index) => (
             <div
               key={index}
-              className="h-[12px] animate-pulse rounded-[var(--radius-md)] bg-[rgba(255,255,255,0.12)]"
+              className="h-3 animate-pulse rounded-control bg-surface-3"
               style={{ width: `${width}%` }}
             />
           ))}
@@ -122,22 +125,20 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
       )}
 
       {state.status === "error" && (
-        <p className="mt-[24px] text-body-sm text-marigold" aria-live="polite">
+        <p className="mt-6 text-error" aria-live="polite">
           {state.message}
         </p>
       )}
 
       {sections.length > 0 && (
-        <div className="mt-[32px] space-y-[32px]">
+        <div className="mt-10 space-y-10">
           {sections.map((section) => (
             <section key={section.name}>
               {section.name !== UNSECTIONED && (
-                <h3 className="text-caption font-medium tracking-[0.12px] text-[rgba(255,255,255,0.6)] uppercase">
-                  Section {section.name}
-                </h3>
+                <h3 className="text-lg">Section {section.name}</h3>
               )}
 
-              <ol className="mt-[16px] space-y-[24px]">
+              <ol className="mt-4 border-t border-ink">
                 {section.questions.map((question, index) => {
                   const stat = statByTopic.get(question.topic);
                   const share =
@@ -148,44 +149,42 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
                   return (
                     <li
                       key={`${question.qNo}-${index}`}
-                      className="border-t border-[rgba(255,255,255,0.12)] pt-[16px] first:border-t-0 first:pt-0"
+                      className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] gap-x-3 border-b border-rule py-4 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
                     >
-                      <div className="flex flex-wrap items-baseline justify-between gap-[8px]">
-                        <span className="text-body-sm font-medium tabular-nums">
-                          {question.qNo}
+                      <span className="font-outlier text-sm">{question.qNo}</span>
+                      {/* The marks in the right margin, as the papers print them,
+                          and read straight after the number, as before. */}
+                      <span className="col-start-3 row-start-1 text-right font-outlier text-sm whitespace-nowrap">
+                        <span className="block">
+                          {question.marks !== null ? `${question.marks} marks` : ""}
+                        </span>{" "}
+                        <span className="block text-ink-2">
+                          {question.isNumerical ? "numerical" : "theory"}
                         </span>
-                        <span className="text-caption tabular-nums text-[rgba(255,255,255,0.6)]">
-                          {question.marks !== null
-                            ? `${question.marks} marks`
-                            : ""}
-                          {question.isNumerical ? " · numerical" : " · theory"}
-                        </span>
-                      </div>
+                      </span>
 
-                      <p className="mt-[8px] break-words text-body">
-                        {question.text}
-                      </p>
+                      <div className="col-start-2 row-start-1 min-w-0">
+                        <p className="max-w-[65ch] break-words">{question.text}</p>
 
-                      <div className="mt-[12px] flex flex-wrap items-center gap-[8px]">
-                        <Pill tone="sky-wash" wrap>
-                          {question.topic}
-                        </Pill>
-                        {stat && (
-                          <Pill tone="marigold">
-                            asked {stat.count}× across {stat.papers.length} paper
-                            {stat.papers.length === 1 ? "" : "s"}
-                            {share !== null
-                              ? ` · ${share.toFixed(1)}% of corpus`
-                              : ""}
-                          </Pill>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <Pill wrap>{question.topic}</Pill>
+                          {stat && (
+                            <Pill wrap>
+                              asked {stat.count}× across {stat.papers.length} paper
+                              {stat.papers.length === 1 ? "" : "s"}
+                              {share !== null
+                                ? ` · ${share.toFixed(1)}% of corpus`
+                                : ""}
+                            </Pill>
+                          )}
+                        </div>
+
+                        {question.rationale && (
+                          <p className="mt-2 max-w-[65ch] text-sm text-ink-2">
+                            {question.rationale}
+                          </p>
                         )}
                       </div>
-
-                      {question.rationale && (
-                        <p className="mt-[8px] text-caption text-[rgba(255,255,255,0.6)]">
-                          {question.rationale}
-                        </p>
-                      )}
                     </li>
                   );
                 })}
@@ -196,12 +195,12 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
       )}
 
       {paper && (
-        <p className="mt-[32px] text-caption text-[rgba(255,255,255,0.7)]">
+        <p className="mt-10 max-w-[65ch] text-sm text-ink-2">
           Written by Gemini from the structure and topic frequencies measured
           above. Recurrence is evidence of what matters to this examiner, not a
           forecast of the next paper.
         </p>
       )}
-    </div>
+    </Card>
   );
 }

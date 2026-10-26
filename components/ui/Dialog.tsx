@@ -100,7 +100,7 @@ export function Dialog({
   return createPortal(
     <div ref={hostRef} className={`fixed inset-0 flex ${PLACEMENT[placement]}`}>
       <div
-        className="absolute inset-0 bg-[rgba(0,0,0,0.4)]"
+        className="absolute inset-0 bg-ink/40"
         onClick={() => close.current()}
         aria-hidden
       />

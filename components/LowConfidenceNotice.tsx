@@ -1,8 +1,8 @@
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
 
 /**
- * Ghost-styled banner: the same sky-tint/blue pairing as a secondary action, so
- * it reads as guidance rather than as an error.
+ * A note between two ink rules, in ink rather than the error red, so it reads
+ * as guidance rather than as an error.
  *
  * Shown whenever the corpus is too thin for recurrence to mean anything. A
  * topic that appears twice in one paper is not a pattern, and the tool says so
@@ -21,13 +21,13 @@ export function LowConfidenceNotice({
   return (
     <div
       role="note"
-      className="rounded-[var(--radius-lg)] bg-sky-tint px-[24px] py-[16px]"
+      className="max-w-[760px] border-y border-ink py-4"
     >
-      <p className="text-body-sm font-medium text-notion-blue">
+      <p className="font-semibold">
         Upload {MIN_PAPERS_FOR_CONFIDENCE} or more papers from the same course
         for reliable pattern detection.
       </p>
-      <p className="mt-[4px] text-caption text-[rgba(0,0,0,0.6)]">
+      <p className="mt-1 text-sm text-ink-2">
         {paperCount === 1
           ? "One paper was detected"
           : `${paperCount} papers were detected`}

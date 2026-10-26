@@ -1,64 +1,72 @@
-import { Card, CardBody, CardTitle } from "@/components/ui/Card";
 import { SavedCorpora } from "@/components/SavedCorpora";
 import { UploadZone } from "@/components/UploadZone";
-import { HighlightPill, Pill } from "@/components/ui/Pill";
+
+/** What qDNA computes, set as rows: the name on the left, what it shows on the right. */
+const COMPUTES = [
+  [
+    "Genome map",
+    "Topics down, papers across. Cell density shows where a course spends its marks, semester after semester.",
+  ],
+  [
+    "Question lineage",
+    "Near-identical questions cluster together, even when the numbers change and the wording is rewritten.",
+  ],
+  [
+    "Pareto coverage",
+    "How few topics account for most of the paper — computed from your corpus, not asserted.",
+  ],
+] as const;
 
 export default function Home() {
   return (
-    <main id="main" tabIndex={-1} className="page-shell py-[64px] focus:outline-none">
-      <section className="max-w-[900px]">
-        <Pill tone="sky-tint">Evidence-weighted, never a forecast</Pill>
+    <main
+      id="main"
+      tabIndex={-1}
+      className="page-shell pb-(--section-gap) focus:outline-none"
+    >
+      {/* The drop zone is the hero's visual: the one thing a visitor came to do. */}
+      <section className="grid gap-10 border-t-4 border-ink pt-10 lg:min-h-dvh lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-16 lg:py-16">
+        <div className="min-w-0">
+          <h1>Every course has a question genome</h1>
 
-        <h1 className="mt-[24px] text-display-sm md:text-display font-medium text-ink-black">
-          Every course has a question{" "}
-          <HighlightPill tone="marigold">genome</HighlightPill>
-        </h1>
+          <p className="lead mt-6 text-ink-2">
+            Upload the past papers you already have. qDNA reads every scanned
+            page, extracts each question with its marks and provenance, and
+            computes what actually recurs — topic frequency, Pareto coverage,
+            and the lineage of questions that keep coming back in new clothes.
+          </p>
 
-        <p className="mt-[24px] font-lyon-text text-[18px] leading-[1.56] text-graphite max-w-[640px]">
-          Upload the past papers you already have. qDNA reads every scanned
-          page, extracts each question with its marks and provenance, and
-          computes what actually recurs — topic frequency, Pareto coverage,
-          and the lineage of questions that keep coming back in new clothes.
-        </p>
+          <p className="mt-6 max-w-[52ch] border-t border-ink pt-3 text-sm font-semibold">
+            Evidence-weighted, never a forecast
+          </p>
+        </div>
+
+        <div className="min-w-0">
+          <UploadZone />
+        </div>
       </section>
 
-      <section className="mt-[64px]">
-        <UploadZone />
-      </section>
-
-      <section className="mt-[64px]">
+      <section className="mt-(--section-gap-s) border-t border-ink pt-10">
         <SavedCorpora />
       </section>
 
       <section
         aria-labelledby="what-qdna-computes"
-        className="mt-[80px] grid gap-[24px] md:grid-cols-3"
+        className="mt-(--section-gap) border-t border-ink"
       >
-        {/* Names the cards' section, so they do not read as part of the one above. */}
+        {/* Names the rows' section, so they do not read as part of the one above. */}
         <h2 id="what-qdna-computes" className="sr-only">
           What qDNA computes
         </h2>
-        <Card tone="white">
-          <CardTitle>Genome map</CardTitle>
-          <CardBody className="mt-[8px]">
-            Topics down, papers across. Cell density shows where a course
-            spends its marks, semester after semester.
-          </CardBody>
-        </Card>
-        <Card tone="white">
-          <CardTitle>Question lineage</CardTitle>
-          <CardBody className="mt-[8px]">
-            Near-identical questions cluster together, even when the numbers
-            change and the wording is rewritten.
-          </CardBody>
-        </Card>
-        <Card tone="marigold">
-          <CardTitle>Pareto coverage</CardTitle>
-          <p className="mt-[8px] text-body text-[rgba(0,0,0,0.7)]">
-            How few topics account for most of the paper — computed from your
-            corpus, not asserted.
-          </p>
-        </Card>
+        {COMPUTES.map(([title, body]) => (
+          <div
+            key={title}
+            className="grid gap-3 border-b border-rule py-10 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-8"
+          >
+            <h3>{title}</h3>
+            <p className="max-w-[52ch] text-lg text-ink-2">{body}</p>
+          </div>
+        ))}
       </section>
     </main>
   );

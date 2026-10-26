@@ -72,14 +72,16 @@ export default function AnalyzePage() {
 
   if (!corpus || !outcome || !result) {
     return (
-      <main id="main" tabIndex={-1} className="page-shell py-[64px] focus:outline-none">
-        <h1 className="text-heading-sm font-bold">Nothing to analyze yet</h1>
-        <p className="mt-[16px] text-body text-graphite">
-          Upload a few past papers first.
-        </p>
+      <main
+        id="main"
+        tabIndex={-1}
+        className="page-shell py-16 focus:outline-none"
+      >
+        <h1 className="text-3xl sm:text-section">Nothing to analyze yet</h1>
+        <p className="mt-4 text-lg text-ink-2">Upload a few past papers first.</p>
         <Link
           href="/"
-          className="mt-[24px] inline-block text-body-sm font-medium text-notion-blue"
+          className="mt-6 inline-flex min-h-11 items-center font-semibold underline decoration-ink-2 underline-offset-4 hover:decoration-accent"
         >
           ← Back to upload
         </Link>
@@ -94,40 +96,44 @@ export default function AnalyzePage() {
 
   return (
     <>
-      <header className="page-shell flex flex-wrap items-center justify-between gap-[16px] py-[12px] print:hidden">
-        <Link href="/" className="text-body-sm font-medium text-notion-blue">
-          ← New analysis
-        </Link>
-        <div className="flex flex-wrap items-start gap-[8px]">
-          <StudyPackButton result={result} />
-          <Button variant="ghost" onClick={() => window.print()}>
-            Print
-          </Button>
-          <ExportCorpusButton
-            questions={outcome.questions}
-            topicOverrides={corpus.topicOverrides ?? []}
-          />
-          <ImportCorpusButton
-            existing={outcome.questions}
-            existingOverrides={corpus.topicOverrides}
-            onMerged={saveMerged}
-          />
+      <header className="page-shell print:hidden">
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-t-4 border-ink py-3">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center text-sm font-semibold underline decoration-ink-2 underline-offset-4 hover:decoration-accent"
+          >
+            ← New analysis
+          </Link>
+          <div className="flex flex-wrap items-start gap-2">
+            <StudyPackButton result={result} />
+            <Button variant="ghost" onClick={() => window.print()}>
+              Print
+            </Button>
+            <ExportCorpusButton
+              questions={outcome.questions}
+              topicOverrides={corpus.topicOverrides ?? []}
+            />
+            <ImportCorpusButton
+              existing={outcome.questions}
+              existingOverrides={corpus.topicOverrides}
+              onMerged={saveMerged}
+            />
+          </div>
+          <OwnKeyStatus />
         </div>
-        <OwnKeyStatus />
       </header>
 
-      {/* Elevation is permitted here and nowhere else (PAT-002). */}
+      {/* Flat: the ink rules part the nav from the page, not a shadow. */}
       <nav
         aria-label="Sections"
-        className="sticky top-0 z-20 bg-pure-white print:hidden"
-        style={{ boxShadow: "var(--elevation-nav)" }}
+        className="sticky top-0 z-20 border-y border-ink bg-surface print:hidden"
       >
-        <ul className="page-shell flex gap-[4px] overflow-x-auto py-[8px]">
+        <ul className="page-shell flex gap-1 overflow-x-auto">
           {SECTIONS.map(([id, label]) => (
             <li key={id} className="shrink-0">
               <a
                 href={`#${id}`}
-                className="block whitespace-nowrap rounded-[var(--radius-lg)] px-[10px] py-[6px] text-body-sm font-medium text-ink-black hover:bg-[rgba(0,0,0,0.04)]"
+                className="flex min-h-11 items-center whitespace-nowrap px-3 text-sm font-semibold underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-(--dur-micro) ease-out first:pl-0 hover:decoration-accent"
               >
                 {label}
               </a>
@@ -136,37 +142,52 @@ export default function AnalyzePage() {
         </ul>
       </nav>
 
-      <main id="main" tabIndex={-1} className="page-shell section-stack py-[32px] sm:py-[64px] focus:outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="page-shell space-y-(--section-gap-s) pt-10 print:space-y-8 pb-(--section-gap) focus:outline-none sm:pt-16"
+      >
         <section id="study-plan" className={SCROLL_CLEARANCE}>
           {/* Course names are long and often one unbreakable word, so the
               display size steps down before it can push the page sideways. */}
-          <h1 className="text-heading-sm sm:text-heading-lg md:text-display-sm font-medium tracking-[-0.242px] md:tracking-[-1.89px] break-words text-ink-black">
+          <h1 className="max-w-[24ch] text-2xl sm:text-3xl md:text-section">
             {corpusTitle(courses)}
           </h1>
 
-          <p className="mt-[8px] text-caption text-graphite tabular-nums">
-            {result.questionCount} questions · {papers.length} paper
-            {papers.length === 1 ? "" : "s"} · {result.stats.length} topics ·{" "}
-            {result.lineages.length} lineage
-            {result.lineages.length === 1 ? "" : "s"}
+          {/* The corpus at a glance, one figure to a column. */}
+          <p className="mt-6 grid max-w-[640px] grid-cols-2 border-t border-ink sm:grid-cols-4">
+            {[
+              [result.questionCount, "questions"],
+              [papers.length, papers.length === 1 ? "paper" : "papers"],
+              [result.stats.length, "topics"],
+              [result.lineages.length, result.lineages.length === 1 ? "lineage" : "lineages"],
+            ].map(([figure, label], index) => (
+              <span
+                key={label}
+                className={`py-2 ${index < 2 ? "border-b border-rule sm:border-b-0" : ""}`}
+              >
+                <span className="block text-2xl font-bold tabular-nums">{figure}</span>{" "}
+                <span className="text-sm text-ink-2">{label}</span>{" "}
+              </span>
+            ))}
           </p>
 
           {partial && (
-            <p className="mt-[16px] text-body-sm text-vermillion">
+            <p className="mt-4 max-w-[65ch] text-error">
               {progress.pagesDone} of {progress.pagesTotal} pages analyzed —{" "}
               {shortfallNote(progress)} Every figure below is computed from
               what was successfully extracted.
             </p>
           )}
 
-          <div className="mt-[16px] empty:hidden">
+          <div className="mt-4 empty:hidden">
             <LowConfidenceNotice
               lowConfidence={result.lowConfidence}
               paperCount={result.paperCount}
             />
           </div>
 
-          <div className="mt-[24px]">
+          <div className="mt-10">
             <StudyPlan
               plan={result.studyPlan}
               questionCount={result.questionCount}
@@ -174,7 +195,7 @@ export default function AnalyzePage() {
             />
           </div>
 
-          <div className="mt-[24px] flex flex-wrap gap-[8px]">
+          <div className="mt-6 flex flex-wrap gap-2">
             {papers.map((paper) => (
               <Pill key={paper.label} tone="neutral">
                 {paper.label}
@@ -185,7 +206,7 @@ export default function AnalyzePage() {
         </section>
 
         <section id="questions" className={SCROLL_CLEARANCE}>
-          <div className="mb-[24px] print:hidden">
+          <div className="mb-16 print:hidden">
             <TopicEditor
               corpus={corpus}
               topics={result.stats.map((stat) => stat.topic)}
@@ -199,11 +220,9 @@ export default function AnalyzePage() {
         </section>
 
         <section id="lineages" className={SCROLL_CLEARANCE}>
-          <div className="flex flex-wrap items-baseline justify-between gap-[16px]">
-            <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-              Lineages
-            </h2>
-            <p className="text-body-sm text-graphite">
+          <div className="border-t border-ink pt-6">
+            <h2 className="text-2xl sm:text-3xl">Lineages</h2>
+            <p className="mt-3 text-ink-2">
               {result.lineages.length === 0
                 ? "No recurring question found in this corpus."
                 : `${result.lineages.length} recurring question${result.lineages.length === 1 ? "" : "s"} detected${crossDept > 0 ? `, ${crossDept} spanning more than one course code` : ""}.`}
@@ -211,7 +230,7 @@ export default function AnalyzePage() {
           </div>
 
           {result.lineages.length > 0 && (
-            <div className="mt-[24px] grid min-w-0 gap-[24px] xl:grid-cols-2">
+            <div className="mt-10 grid min-w-0 gap-x-8 gap-y-16 xl:grid-cols-2">
               {result.lineages.map((cluster, index) => (
                 <LineageCard key={`${cluster.id}-${index}`} cluster={cluster} />
               ))}
@@ -224,15 +243,15 @@ export default function AnalyzePage() {
         </section>
 
         <section id="how-we-know" className={SCROLL_CLEARANCE}>
-          <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-            How we know
-          </h2>
-          <p className="mt-[8px] max-w-[640px] text-body-sm text-graphite">
+          <div className="border-t border-ink pt-6">
+            <h2 className="text-2xl sm:text-3xl">How we know</h2>
+            <p className="mt-3 max-w-[65ch] text-ink-2">
             The evidence behind the study plan: where each topic was asked, how
             quickly the top topics cover the papers, and how well the ranking
             would have covered a paper it never saw.
-          </p>
-          <div className="mt-[24px] space-y-[24px]">
+            </p>
+          </div>
+          <div className="mt-16 space-y-24">
             <GenomeMap questions={result.questions} stats={result.stats} />
             <ParetoChart pareto={result.pareto} />
             <BacktestPanel result={result} />

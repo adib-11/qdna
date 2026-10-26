@@ -1,138 +1,24 @@
+/* Hallmark · shape: kept · genre: editorial · theme: Ink (deal 1/3, seed study-tool-turns-student-50bf·0582e8b8·2026-10-26·r0) · redesign: full · copy: verbatim
+ * hero: Counter (/), app screen (/analyze) · nav: kept, a section tab row under an ink rule (/analyze) · footer: none, kept · imagery: none · signature: the results set like an exam paper, numbers in the left margin and marks in the right · ink: paper
+ * axes: light/grotesk-sans/chromatic-teal · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R5 V3 · weakest: V, the landing keeps its owner's order; the drop zone carries the hero instead of a head over a feature row */
+/* Hallmark · waive 22 · ink and greys at zero chroma · an exam paper is printed in plain black, as the Ink notice is */
+/* Hallmark · waive 39b · one 44px control height on both screens · phones first, so every tap target on /analyze stays whole */
+/* Hallmark · waive 77 · saved corpora and the computed rows are the owner's whole content · issue #9 adds nothing, and the saved list fills as corpora are analyzed */
+/* Hallmark · dismissed 77 · the landing keeps its three sections and /analyze is an app screen of results, not a strip of marketing sections */
+/* Hallmark · dismissed 49 · the topic row is a disclosure whose name and counts wrap by design on a phone, not a button label */
 @import "tailwindcss";
+@import "./tokens.css";
+@import "./base.css" layer(base);
 
-@theme {
-  /* Colors. Every text pairing in the system reaches WCAG AA (4.5:1): the
-     blue is 5.0:1 on sky-tint and 5.7:1 under white text, the vermillion
-     5.2:1 on the page canvas. Checked by axe in e2e/a11y.spec.ts. */
-  --color-notion-blue: #0066c4;
-  --color-paper-warmth: #f6f5f4;
-  --color-pure-white: #ffffff;
-  --color-ink-black: #000000;
-  --color-charcoal: #111111;
-  --color-stone: #757575;
-  --color-graphite: #615d59;
-  --color-slate: #696969;
-  --color-sky-tint: #e6f3fe;
-  --color-marigold: #ffb110;
-  --color-coral: #f64932;
-  --color-saffron: #e89d01;
-  --color-vermillion: #c8260f;
-  --color-mocha: #b18164;
-  /* Primary-button hover: darker than the blue, so white text stays legible. */
-  --color-signal-blue: #00529f;
-  --color-sky-wash: #62aef0;
-  --color-midnight-ink: #02093a;
-  --color-peach: #f6d5b8;
-
-  /* Typography — Families. NotionInter -> Inter, Lyon Text -> Source Serif */
-  --font-notioninter: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-lyon-text: var(--font-source-serif), Georgia, "Times New Roman", serif;
-
-  /* Typography — Scale */
-  --text-caption: 12px;
-  --text-caption--line-height: 1.33;
-  --text-caption--letter-spacing: 0.12px;
-  --text-body-sm: 14px;
-  --text-body-sm--line-height: 1.43;
-  --text-body: 16px;
-  --text-body--line-height: 1.5;
-  --text-subheading: 20px;
-  --text-subheading--line-height: 1;
-  --text-heading-sm: 22px;
-  --text-heading-sm--line-height: 1.27;
-  --text-heading-sm--letter-spacing: -0.242px;
-  --text-heading: 40px;
-  --text-heading--line-height: 1.5;
-  --text-heading-lg: 48px;
-  --text-heading-lg--line-height: 1.5;
-  --text-display-sm: 54px;
-  --text-display-sm--line-height: 1.04;
-  --text-display-sm--letter-spacing: -1.89px;
-  --text-display: 72px;
-  --text-display--line-height: 1.21;
-  --text-display--letter-spacing: -2.016px;
-  --text-display-lg: 96px;
-  --text-display-lg--line-height: 1.04;
-  --text-display-lg--letter-spacing: -4.608px;
-
-  /* Typography — Weights */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Spacing */
-  --spacing-4: 4px;
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-20: 20px;
-  --spacing-24: 24px;
-  --spacing-28: 28px;
-  --spacing-32: 32px;
-  --spacing-36: 36px;
-  --spacing-64: 64px;
-  --spacing-80: 80px;
-
-  /* Border Radius */
-  --radius-md: 4px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-full: 9999px;
-}
-
-:root {
-  /* Layout tokens — not Tailwind utilities, consumed via var() */
-  --page-max-width: 1440px;
-  --section-gap: 80px;
-  --card-padding: 24px;
-  --element-gap: 8px;
-
-  /* Hairline border used instead of shadows on content cards */
-  --border-hairline: rgba(0, 0, 0, 0.08);
-
-  /* Surfaces */
-  --surface-page-canvas: #f6f5f4;
-  --surface-card-surface: #ffffff;
-  --surface-accent-card-surface: #ffb110;
-  --surface-dark-card-surface: #02093a;
-
-  /* Elevation — permitted on sticky nav only */
-  --elevation-nav: 0px 0.7px 1.462px 0px rgb(0% 0% 0% / 0.015),
-    0px 3px 9px 0px rgb(0% 0% 0% / 0.03);
-}
-
-html,
-body {
-  background: var(--color-paper-warmth);
-  color: var(--color-ink-black);
-}
-
-body {
-  font-family: var(--font-notioninter);
-  font-feature-settings: "lnum";
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Shared page shell */
-.page-shell {
+/* The page's one container, capped and centred: at 1920 the gutters grow and the
+   measure does not. Named apart from Tailwind's own `container`, which steps
+   its width at every breakpoint. */
+@utility page-shell {
   width: 100%;
-  max-width: var(--page-max-width);
+  max-width: var(--container);
   margin-inline: auto;
-  padding-inline: 24px;
-}
-
-.section-stack > * + * {
-  margin-top: var(--section-gap);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a,
-  button {
-    transition: background-color 200ms ease, color 200ms ease,
-      border-color 200ms ease;
-  }
+  padding-inline: var(--gutter);
 }
 
 /* Print view: the browser's save-as-PDF should give clean pages. */
@@ -141,23 +27,14 @@ body {
     margin: 14mm;
   }
 
-  /* Keep the genome map's density and the cards' fills, which carry meaning. */
+  /* Keep the genome map's density and the wells' fills, which carry meaning. */
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
-  html,
-  body {
-    background: var(--color-pure-white);
-  }
-
   .page-shell {
     padding-inline: 0;
-  }
-
-  .section-stack > * + * {
-    margin-top: 32px;
   }
 
   h1,

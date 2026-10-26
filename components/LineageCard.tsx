@@ -42,12 +42,12 @@ function QuestionText({
   const parts = text.split(NUMBER_SPLIT);
 
   return (
-    <p className="text-body-sm break-words text-graphite">
+    <p className="max-w-[65ch] break-words">
       {parts.map((part, index) =>
         varying.has(part) ? (
           <mark
             key={index}
-            className="rounded-[var(--radius-md)] bg-marigold px-[4px] font-medium text-ink-black"
+            className="rounded-sm bg-surface-3 px-1 font-semibold text-ink underline decoration-ink decoration-2 underline-offset-4"
           >
             {part}
           </mark>
@@ -71,9 +71,9 @@ export function LineageCard({ cluster }: { cluster: LineageCluster }) {
   const papers = [...new Set(cluster.members.map((q) => q.paper.label))];
 
   return (
-    <article className="min-w-0 rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[var(--card-padding)]">
-      <div className="flex flex-wrap items-center gap-[8px]">
-        <Pill tone="sky-tint" wrap>
+    <article className="min-w-0 border-t border-ink pt-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Pill wrap>
           {cluster.topic}
         </Pill>
         <Pill tone="neutral">
@@ -81,33 +81,35 @@ export function LineageCard({ cluster }: { cluster: LineageCluster }) {
           {papers.length === 1 ? "" : "s"}
         </Pill>
         {cluster.cohesion >= NEAR_IDENTICAL_THRESHOLD && (
-          <Pill tone="marigold">near-identical</Pill>
+          <Pill tone="out">near-identical</Pill>
         )}
         <CrossDeptBadge courseCodes={cluster.courseCodes} />
       </div>
 
-      <ol className="mt-[16px]">
+      <ol className="mt-4">
         {cluster.members.map((question, index) => (
           <li
             key={`${question.id}-${index}`}
-            className="border-t border-[var(--border-hairline)] py-[12px] first:border-t-0 first:pt-0"
+            className="border-t border-rule py-4"
           >
-            <div className="flex flex-wrap items-center justify-between gap-[8px]">
-              <div className="flex flex-wrap items-center gap-[8px]">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Pill tone="neutral">{question.paper.label}</Pill>
-                <span className="text-caption text-[rgba(0,0,0,0.6)]">
-                  {question.qNo}
-                  {question.marks !== null ? ` · ${question.marks} marks` : ""}
-                </span>
+                <span className="font-outlier text-sm">{question.qNo}</span>
+                {question.marks !== null && (
+                  <span className="font-outlier text-sm text-ink-2">
+                    {question.marks} marks
+                  </span>
+                )}
               </div>
-              <span className="text-caption font-medium tabular-nums text-notion-blue">
+              <span className="font-outlier text-sm">
                 {index === 0
                   ? "reference"
                   : `${Math.round(cluster.pairwiseSimilarity[index] * 100)}% match`}
               </span>
             </div>
 
-            <div className="mt-[8px]">
+            <div className="mt-2">
               <QuestionText text={question.text} varying={varying} />
             </div>
           </li>

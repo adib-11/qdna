@@ -158,8 +158,8 @@ export function UploadZone() {
           setDragging(false);
           if (!working && !grouping) addFiles(e.dataTransfer.files);
         }}
-        className={`rounded-[var(--radius-xl)] border border-dashed bg-pure-white p-[36px] text-center transition-colors ${
-          dragging ? "border-notion-blue bg-sky-tint" : "border-[rgba(0,0,0,0.2)]"
+        className={`rounded-card border border-dashed p-6 transition-[background-color,border-color] duration-(--dur-short) ease-out sm:p-10 ${
+          dragging ? "border-accent bg-accent-soft" : "border-muted bg-surface-2"
         }`}
       >
         <input
@@ -174,16 +174,16 @@ export function UploadZone() {
           }}
         />
 
-        <h2 className="text-subheading font-medium text-[rgba(0,0,0,0.95)]">
+        <h2 className="text-xl sm:text-2xl">
           Drop your exam paper PDFs or photos here
         </h2>
-        <p className="mt-[16px] text-body-sm text-graphite">
+        <p className="mt-4 max-w-[60ch] text-ink-2">
           PDFs, and JPG, PNG or HEIC photos of paper pages. Pages are prepared
           in your browser and sent straight to Gemini on your own key, in small
           batches. Your files are never stored on a server.
         </p>
 
-        <div className="mt-[24px] flex items-center justify-center gap-[8px]">
+        <div className="mt-6 flex flex-wrap items-center gap-2">
           <Button
             variant="ghost"
             onClick={() => inputRef.current?.click()}
@@ -210,17 +210,20 @@ export function UploadZone() {
         </div>
 
         {files.length > 0 && !working && (
-          <ul className="mt-[24px] flex flex-wrap justify-center gap-[8px]">
+          <ul className="mt-6 border-t border-ink">
             {files.map((f, i) => (
-              <li key={`${f.name}-${i}`} className="flex items-center gap-[4px]">
-                <Pill tone="sky-tint">
+              <li
+                key={`${f.name}-${i}`}
+                className="flex min-w-0 items-center justify-between gap-2 border-b border-rule py-1"
+              >
+                <Pill wrap className="min-w-0 break-all">
                   {f.name} · {(f.size / 1_000_000).toFixed(1)} MB
                 </Pill>
                 <button
                   type="button"
                   onClick={() => removeFile(i)}
                   aria-label={`Remove ${f.name}`}
-                  className="rounded-[var(--radius-full)] px-[8px] text-body-sm text-graphite hover:bg-[rgba(0,0,0,0.06)]"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-control text-lg text-ink-2 transition-[background-color] duration-(--dur-micro) ease-out hover:bg-surface-3 active:bg-rule"
                 >
                   ×
                 </button>
@@ -230,20 +233,20 @@ export function UploadZone() {
         )}
 
         {files.length > 0 && files.length < MIN_PAPERS_FOR_CONFIDENCE && !working && (
-          <p className="mt-[16px] text-caption text-graphite">
+          <p className="mt-4 text-sm text-ink-2">
             {plural(files.length, "file")} — recurrence needs{" "}
             {MIN_PAPERS_FOR_CONFIDENCE} or more papers to mean much.
           </p>
         )}
 
-        <div className="mt-[16px] flex justify-center">
+        <div className="mt-4">
           <OwnKeyStatus />
         </div>
       </div>
 
       {!working && (
-        <div className="mt-[24px] flex flex-wrap items-center gap-[8px]">
-          <span className="text-body-sm text-graphite">
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          <span className="w-full text-sm text-ink-2">
             Or open a corpus we already extracted, no key needed:
           </span>
           {SAMPLES.map((sample) => (
@@ -265,14 +268,14 @@ export function UploadZone() {
       )}
 
       {phase === "cancelled" && stopped && kept && (
-        <div className="mt-[16px] text-body-sm text-graphite">
+        <div className="mt-4 text-ink-2">
           <p>
             Extraction cancelled. {kept.progress.pagesDone} of{" "}
             {plural(kept.progress.pagesTotal, "page")} finished and are saved in
             this browser, so analyzing again will not pay for them.
           </p>
           {kept.questions.length > 0 && (
-            <Button variant="ghost" className="mt-[12px]" onClick={() => void openOutcome(stopped)}>
+            <Button variant="ghost" className="mt-3" onClick={() => void openOutcome(stopped)}>
               Open the {plural(kept.questions.length, "question")} extracted so far
             </Button>
           )}
@@ -287,7 +290,7 @@ export function UploadZone() {
       </p>
 
       {error && (
-        <p className="mt-[16px] text-body-sm text-vermillion" role="alert">
+        <p className="mt-4 text-error" role="alert">
           {error}
         </p>
       )}
@@ -332,19 +335,22 @@ const STATUS_TEXT: Record<FileProgress["status"], string> = {
 /** One row per paper, so a slow or failing paper is visible on its own. */
 function PaperProgressList({ files }: { files: FileProgress[] }) {
   return (
-    <ul className="mt-[24px] space-y-[16px] rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[24px]">
+    <ul className="mt-6 border-t border-ink">
       {files.map((file, index) => {
         const pct =
           file.pagesTotal > 0 ? Math.round((file.pagesDone / file.pagesTotal) * 100) : 0;
         return (
-          <li key={`${file.name}-${index}`}>
-            <div className="flex flex-wrap items-baseline justify-between gap-[16px]">
-              <span className="min-w-0 break-words text-body-sm font-medium">{file.name}</span>
-              <span className="text-body-sm text-graphite tabular-nums">
-                {STATUS_TEXT[file.status]}
-                {file.pagesTotal > 0 &&
-                  ` · ${file.pagesDone} of ${plural(file.pagesTotal, "page")}`}{" "}
-                · {plural(file.questionsFound, "question")}
+          <li key={`${file.name}-${index}`} className="border-b border-rule py-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <span className="min-w-0 break-words font-semibold">{file.name}</span>
+              <span className="flex flex-wrap gap-x-3 text-sm text-ink-2 tabular-nums">
+                <span>{STATUS_TEXT[file.status]}</span>{" "}
+                {file.pagesTotal > 0 && (
+                  <span>
+                    {file.pagesDone} of {plural(file.pagesTotal, "page")}
+                  </span>
+                )}{" "}
+                <span>{plural(file.questionsFound, "question")}</span>
               </span>
             </div>
             <div
@@ -358,15 +364,15 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
                   ? `${file.pagesDone} of ${plural(file.pagesTotal, "page")}`
                   : STATUS_TEXT[file.status]
               }
-              className="mt-[8px] h-[6px] w-full overflow-hidden rounded-[var(--radius-full)] bg-[rgba(0,0,0,0.06)]"
+              className="mt-2 h-1.5 w-full overflow-hidden rounded-pill bg-surface-3"
             >
               <div
-                className="h-full bg-notion-blue transition-[width] duration-200"
-                style={{ width: `${pct}%` }}
+                className="h-full w-full origin-left bg-ink transition-transform duration-(--dur-short) ease-out"
+                style={{ transform: `scaleX(${pct / 100})` }}
               />
             </div>
             {file.pagesTooLarge > 0 && (
-              <p className="mt-[8px] text-caption text-vermillion">
+              <p className="mt-2 text-sm text-error">
                 {plural(file.pagesTooLarge, "page")}{" "}
                 {file.pagesTooLarge === 1 ? "is" : "are"} over Gemini&apos;s 20 MB
                 limit for one request and{" "}
@@ -375,7 +381,7 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
               </p>
             )}
             {file.pagesFailed > file.pagesTooLarge && (
-              <p className="mt-[8px] text-caption text-vermillion">
+              <p className="mt-2 text-sm text-error">
                 {plural(file.pagesFailed - file.pagesTooLarge, "page")} could not
                 be read and {file.pagesFailed - file.pagesTooLarge === 1 ? "was" : "were"}{" "}
                 skipped.

@@ -74,7 +74,7 @@ export function OwnKeyStatus() {
   if (!key) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-[8px] text-caption text-graphite">
+    <div className="flex flex-wrap items-center gap-x-2 text-sm text-ink-2">
       <span>
         {remembered
           ? "Your Gemini key is remembered in this browser."
@@ -115,25 +115,25 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
       labelledBy={titleId}
       onClose={() => onDone(null)}
       initialFocus={inputRef}
-      className="w-full max-w-[480px] rounded-[var(--radius-xl)] bg-pure-white p-[var(--card-padding)]"
+      className="max-h-full w-full max-w-[480px] overflow-y-auto rounded-card bg-surface p-6 shadow-card sm:p-10"
     >
       <form onSubmit={submit}>
-        <h2 id={titleId} className="text-heading-sm font-bold tracking-[-0.242px]">
+        <h2 id={titleId} className="text-2xl">
           Use your own Gemini key
         </h2>
-        <p className="mt-[8px] text-body-sm text-graphite">
+        <p className="mt-4 text-ink-2">
           This needs a Gemini model. qDNA calls it from your browser with your
           own key, which is sent only to Google and never to qDNA&apos;s server.
         </p>
 
-        <ol className="mt-[16px] list-decimal space-y-[4px] pl-[20px] text-body-sm text-graphite">
+        <ol className="mt-4 list-decimal space-y-1 pl-6 text-ink-2">
           <li>
             Open{" "}
             <a
               href="https://aistudio.google.com/apikey"
               target="_blank"
               rel="noreferrer"
-              className="font-medium text-notion-blue underline"
+              className="font-semibold text-ink underline decoration-ink-2 hover:decoration-accent"
             >
               Google AI Studio
             </a>{" "}
@@ -143,7 +143,7 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
           <li>Copy the key and paste it below.</li>
         </ol>
 
-        <label htmlFor={inputId} className="mt-[20px] block text-body-sm font-medium">
+        <label htmlFor={inputId} className="mt-6 block text-sm font-semibold">
           Gemini API key
         </label>
         <input
@@ -156,14 +156,15 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
           onChange={(e) => setValue(e.target.value)}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${inputId}-error` : undefined}
-          className="mt-[8px] w-full rounded-[var(--radius-md)] border border-[var(--border-hairline)] px-[12px] py-[8px] text-body-sm"
+          className="mt-2 min-h-11 w-full rounded-control border border-muted bg-surface px-3 aria-invalid:border-error"
         />
 
-        <label className="mt-[12px] flex items-center gap-[8px] text-body-sm text-graphite">
+        <label className="mt-3 flex min-h-11 items-center gap-2 text-ink-2">
           <input
             type="checkbox"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
+            className="size-4 accent-ink"
           />
           Remember this key in this browser
         </label>
@@ -171,12 +172,12 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
         <p
           id={`${inputId}-error`}
           role="alert"
-          className="mt-[12px] min-h-[20px] text-body-sm text-vermillion"
+          className="mt-3 min-h-6 text-sm text-error"
         >
           {error}
         </p>
 
-        <div className="mt-[8px] flex justify-end gap-[8px]">
+        <div className="mt-2 flex flex-wrap justify-end gap-2">
           <Button type="button" variant="text" onClick={() => onDone(null)}>
             Cancel
           </Button>

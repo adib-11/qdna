@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { ungroupedLabels, type TopicOverride } from "@/lib/analysis/topics";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
 import { corpusChanged, groupSavedCorpus } from "@/lib/corpus/useCorpora";
@@ -89,16 +90,16 @@ export function TopicEditor({
   }
 
   return (
-    <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[var(--card-padding)]">
-      <h2 className="text-heading-sm font-bold tracking-[-0.242px]">Your topics</h2>
-      <p className="mt-[8px] text-body-sm text-graphite">
+    <Card>
+      <h2 className="text-xl sm:text-2xl">Your topics</h2>
+      <p className="mt-3 max-w-[65ch] text-ink-2">
         Merge topics your course treats as one, or rename a topic to match your
         teacher&apos;s name for it. Every figure on this page follows.
       </p>
 
       {pending > 0 && (
-        <div className="mt-[16px] flex flex-wrap items-center gap-[12px]">
-          <p className="text-body-sm text-graphite">
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <p className="text-ink-2">
             {plural(pending, "topic label")} {pending === 1 ? "has" : "have"} not been
             grouped yet.
           </p>
@@ -108,19 +109,20 @@ export function TopicEditor({
         </div>
       )}
 
-      <form onSubmit={apply} className="mt-[16px]">
+      <form onSubmit={apply} className="mt-6">
         <fieldset>
-          <legend className="text-body-sm font-medium">
+          <legend className="font-semibold">
             Choose one topic to rename, or several to merge
           </legend>
-          <ul className="mt-[8px] flex flex-wrap gap-[8px]">
+          <ul className="mt-3 flex flex-wrap gap-2">
             {topics.map((topic) => (
               <li key={topic}>
-                <label className="flex items-center gap-[6px] rounded-[var(--radius-full)] border border-[var(--border-hairline)] px-[12px] py-[4px] text-body-sm">
+                <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-pill border border-rule bg-surface px-3 text-sm transition-[background-color,border-color] duration-(--dur-micro) ease-out hover:border-muted has-checked:border-ink has-checked:bg-ink has-checked:text-surface has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus">
                   <input
                     type="checkbox"
                     checked={selected.includes(topic)}
                     onChange={() => toggle(topic)}
+                    className="size-4 accent-surface"
                   />
                   {topic}
                 </label>
@@ -129,14 +131,14 @@ export function TopicEditor({
           </ul>
         </fieldset>
 
-        <div className="mt-[16px] flex flex-wrap items-end gap-[8px]">
-          <label className="text-body-sm font-medium">
+        <div className="mt-6 flex flex-wrap items-end gap-2">
+          <label className="text-sm font-semibold">
             New topic name
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-[4px] block w-[280px] max-w-full rounded-[var(--radius-md)] border border-[var(--border-hairline)] px-[12px] py-[8px] font-normal"
+              className="mt-2 block min-h-11 w-[280px] max-w-full rounded-control border border-muted bg-surface px-3 text-md font-normal"
             />
           </label>
           <Button type="submit" variant="ghost" disabled={!canApply}>
@@ -146,13 +148,13 @@ export function TopicEditor({
       </form>
 
       {overrides.length > 0 && (
-        <div className="mt-[24px]">
-          <h3 className="text-body font-medium">Your changes</h3>
-          <ul className="mt-[8px] space-y-[8px]">
+        <div className="mt-10">
+          <h3 className="text-lg">Your changes</h3>
+          <ul className="mt-3 border-t border-ink">
             {overrides.map((override, index) => (
               <li
                 key={`${index}-${override.to}`}
-                className="flex flex-wrap items-center gap-[12px] text-body-sm"
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-rule py-1"
               >
                 <span>
                   {override.from.join(" + ")} → {override.to}
@@ -177,10 +179,10 @@ export function TopicEditor({
 
       <p
         role="status"
-        className={`mt-[16px] min-h-[20px] text-body-sm ${message?.error ? "text-vermillion" : "text-graphite"}`}
+        className={`mt-4 min-h-6 text-sm ${message?.error ? "text-error" : "text-ink-2"}`}
       >
         {message?.text}
       </p>
-    </div>
+    </Card>
   );
 }

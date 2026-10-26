@@ -150,7 +150,7 @@ export function ImportCorpusButton({
       </Button>
       <p
         role="status"
-        className={`mt-[8px] text-body-sm ${message?.error ? "text-vermillion" : "text-graphite"}`}
+        className={`mt-2 max-w-[48ch] text-sm ${message?.error ? "text-error" : "text-ink-2"}`}
       >
         {message?.text}
       </p>
