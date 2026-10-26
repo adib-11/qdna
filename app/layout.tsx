@@ -30,6 +30,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${sourceSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper-warmth">
+        {/* The first Tab stop on every page. Every page's <main> is #main. */}
+        <a
+          href="#main"
+          className="sr-only rounded-[var(--radius-lg)] bg-pure-white px-[15px] py-[6px] text-body-sm font-medium text-notion-blue focus:not-sr-only focus:fixed focus:left-[16px] focus:top-[16px] focus:z-[70] print:hidden"
+        >
+          Skip to content
+        </a>
         <OwnKeyProvider>{children}</OwnKeyProvider>
       </body>
     </html>

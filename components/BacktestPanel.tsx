@@ -79,7 +79,7 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
       </div>
 
       <Card tone="sky-wash" className="mt-[24px] p-[20px] sm:p-[36px]">
-        <p className="text-caption font-medium tracking-[0.12px] text-[rgba(0,0,0,0.6)]">
+        <p className="text-caption font-medium tracking-[0.12px] text-[rgba(0,0,0,0.8)]">
           {report.trainingPapers.length} paper
           {report.trainingPapers.length === 1 ? "" : "s"} in, {report.heldOutPaper}{" "}
           hidden
@@ -90,7 +90,7 @@ export function BacktestPanel({ result }: { result: AnalysisResult }) {
           covered {report.overlapPct.toFixed(1)}% of {report.heldOutPaper}
         </p>
 
-        <p className="mt-[16px] text-body-sm text-[rgba(0,0,0,0.6)] max-w-[720px]">
+        <p className="mt-[16px] text-body-sm text-[rgba(0,0,0,0.8)] max-w-[720px]">
           {report.questionsCovered} of {report.questionsHeldOut} questions on
           that paper came from a topic the ranking had already named — without
           ever seeing it. {recurrences > 0 && (
@@ -167,7 +167,7 @@ function TopicRow({
 }) {
   return (
     <li className="flex items-baseline gap-[12px]">
-      <span className="w-[20px] shrink-0 text-caption tabular-nums text-[rgba(0,0,0,0.4)]">
+      <span className="w-[20px] shrink-0 text-caption tabular-nums text-[rgba(0,0,0,0.6)]">
         {rank}
       </span>
       <span className="min-w-0 flex-1 text-body-sm text-ink-black break-words">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useId, useState } from "react";
 import {
   Bar,
   CartesianGrid,
@@ -11,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { pointsToReach } from "@/lib/analysis/pareto";
 import { PARETO_TARGET_PCT } from "@/lib/config";
 import type { ParetoPoint } from "@/lib/types";
 
@@ -21,7 +23,7 @@ import type { ParetoPoint } from "@/lib/types";
  */
 const BAR_FILL = "var(--color-notion-blue)";
 const LINE_STROKE = "rgba(0,0,0,0.95)";
-const AXIS_COLOR = "rgba(0,0,0,0.4)";
+const AXIS_COLOR = "rgba(0,0,0,0.6)";
 const GRID_COLOR = "rgba(0,0,0,0.08)";
 
 /** Enough room per topic that the axis labels stay readable; scroll past that. */
@@ -32,7 +34,14 @@ function truncate(label: string, max = 16): string {
 }
 
 export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
+  const summaryId = useId();
+  const tableId = useId();
+  const [showTable, setShowTable] = useState(false);
   if (pareto.length === 0) return null;
+
+  // The chart's one finding, in words, for anyone who cannot see the crossing.
+  const reach = pointsToReach(pareto, PARETO_TARGET_PCT);
+  const summary = `The top ${reach} of ${pareto.length} topic${pareto.length === 1 ? "" : "s"} ${reach === 1 ? "covers" : "cover"} ${pareto[reach - 1].cumulativePct.toFixed(1)}% of every question, the first to reach the ${PARETO_TARGET_PCT}% line.`;
 
   const data = pareto.map((point, index) => ({
     ...point,
@@ -51,11 +60,24 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
           overlaid. The dashed line marks {PARETO_TARGET_PCT}% of every question
           in the corpus.
         </p>
+        <p id={summaryId} className="mt-[8px] text-body-sm font-medium">
+          {summary}
+        </p>
+        <button
+          type="button"
+          aria-expanded={showTable}
+          aria-controls={tableId}
+          onClick={() => setShowTable((open) => !open)}
+          className="mt-[8px] rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd] print:hidden"
+        >
+          {showTable ? "Hide the table" : "Show the numbers as a table"}
+        </button>
       </div>
 
       <div
         role="region"
         aria-label="Pareto chart, scrolls sideways"
+        aria-describedby={summaryId}
         tabIndex={0}
         className="overflow-x-auto px-[8px] pb-[var(--card-padding)] print:hidden"
       >
@@ -148,8 +170,13 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
         </div>
       </div>
 
-      {/* The chart is wider than a page, so print carries its numbers instead. */}
-      <table className="mx-[var(--card-padding)] mb-[var(--card-padding)] hidden text-caption print:table">
+      {/* The chart's text equivalent, on request. The chart is wider than a
+          page, so print always carries its numbers instead. */}
+      <table
+        id={tableId}
+        className={`mx-[var(--card-padding)] mb-[var(--card-padding)] text-caption ${showTable ? "" : "hidden"} print:table`}
+      >
+        <caption className="sr-only">Pareto coverage by topic</caption>
         <thead>
           <tr className="text-left">
             <th scope="col" className="pr-[16px]">Rank</th>

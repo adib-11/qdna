@@ -143,6 +143,7 @@ export function UploadZone() {
   const working = phase === "working";
   const grouping = phase === "grouping";
   const kept = stopped?.outcome;
+  const sample = SAMPLES.find((s) => s.id === loadingSample);
 
   return (
     <div>
@@ -173,9 +174,9 @@ export function UploadZone() {
           }}
         />
 
-        <p className="text-subheading font-medium text-[rgba(0,0,0,0.95)]">
+        <h2 className="text-subheading font-medium text-[rgba(0,0,0,0.95)]">
           Drop your exam paper PDFs or photos here
-        </p>
+        </h2>
         <p className="mt-[16px] text-body-sm text-graphite">
           PDFs, and JPG, PNG or HEIC photos of paper pages. Pages are prepared
           in your browser and sent straight to Gemini on your own key, in small
@@ -264,7 +265,7 @@ export function UploadZone() {
       )}
 
       {phase === "cancelled" && stopped && kept && (
-        <div className="mt-[16px] text-body-sm text-graphite" role="status">
+        <div className="mt-[16px] text-body-sm text-graphite">
           <p>
             Extraction cancelled. {kept.progress.pagesDone} of{" "}
             {plural(kept.progress.pagesTotal, "page")} finished and are saved in
@@ -278,6 +279,13 @@ export function UploadZone() {
         </div>
       )}
 
+      {/* Always in the page, so a screen reader hears each change to it. */}
+      <p role="status" className="sr-only">
+        {sample
+          ? `Opening the ${sample.name} sample…`
+          : uploadStatus(phase, files.length, progress, kept)}
+      </p>
+
       {error && (
         <p className="mt-[16px] text-body-sm text-vermillion" role="alert">
           {error}
@@ -285,6 +293,33 @@ export function UploadZone() {
       )}
     </div>
   );
+}
+
+/** What the status region says, in one sentence, for the upload's current phase. */
+function uploadStatus(
+  phase: Phase,
+  fileCount: number,
+  progress: FileProgress[],
+  kept: ExtractionRun["outcome"] | undefined,
+): string {
+  const total = (key: "pagesDone" | "pagesTotal" | "questionsFound") =>
+    progress.reduce((sum, file) => sum + file[key], 0);
+  switch (phase) {
+    case "working":
+      return total("pagesTotal") === 0
+        ? "Preparing pages…"
+        : `Extracting: ${total("pagesDone")} of ${plural(total("pagesTotal"), "page")} done, ${plural(total("questionsFound"), "question")} found.`;
+    case "grouping":
+      return "Pages extracted. Grouping topics…";
+    case "cancelled":
+      return kept
+        ? `Extraction cancelled. ${kept.progress.pagesDone} of ${plural(kept.progress.pagesTotal, "page")} finished.`
+        : "Extraction cancelled.";
+    case "failed":
+      return "";
+    case "idle":
+      return fileCount > 0 ? `${plural(fileCount, "file")} ready to analyze.` : "";
+  }
 }
 
 const STATUS_TEXT: Record<FileProgress["status"], string> = {
@@ -297,10 +332,7 @@ const STATUS_TEXT: Record<FileProgress["status"], string> = {
 /** One row per paper, so a slow or failing paper is visible on its own. */
 function PaperProgressList({ files }: { files: FileProgress[] }) {
   return (
-    <ul
-      className="mt-[24px] space-y-[16px] rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[24px]"
-      aria-live="polite"
-    >
+    <ul className="mt-[24px] space-y-[16px] rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white p-[24px]">
       {files.map((file, index) => {
         const pct =
           file.pagesTotal > 0 ? Math.round((file.pagesDone / file.pagesTotal) * 100) : 0;
@@ -321,6 +353,11 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={pct}
+              aria-valuetext={
+                file.pagesTotal > 0
+                  ? `${file.pagesDone} of ${plural(file.pagesTotal, "page")}`
+                  : STATUS_TEXT[file.status]
+              }
               className="mt-[8px] h-[6px] w-full overflow-hidden rounded-[var(--radius-full)] bg-[rgba(0,0,0,0.06)]"
             >
               <div
@@ -329,7 +366,7 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
               />
             </div>
             {file.pagesTooLarge > 0 && (
-              <p className="mt-[8px] text-caption text-coral">
+              <p className="mt-[8px] text-caption text-vermillion">
                 {plural(file.pagesTooLarge, "page")}{" "}
                 {file.pagesTooLarge === 1 ? "is" : "are"} over Gemini&apos;s 20 MB
                 limit for one request and{" "}
@@ -338,7 +375,7 @@ function PaperProgressList({ files }: { files: FileProgress[] }) {
               </p>
             )}
             {file.pagesFailed > file.pagesTooLarge && (
-              <p className="mt-[8px] text-caption text-coral">
+              <p className="mt-[8px] text-caption text-vermillion">
                 {plural(file.pagesFailed - file.pagesTooLarge, "page")} could not
                 be read and {file.pagesFailed - file.pagesTooLarge === 1 ? "was" : "were"}{" "}
                 skipped.

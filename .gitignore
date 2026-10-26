@@ -56,3 +56,9 @@ next-env.d.ts
 
 # hackathon submission plugin state — local tooling, not project code
 /.devpost-hackathon-state.json
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

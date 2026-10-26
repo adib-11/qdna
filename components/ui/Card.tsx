@@ -7,7 +7,7 @@ const TONE_CLASS: Record<CardTone, string> = {
   white: "bg-pure-white border border-[var(--border-hairline)] text-ink-black",
   // Accent Feature Cards — full-bleed single-hue fills, no border.
   marigold: "bg-marigold text-ink-black",
-  coral: "bg-coral text-pure-white",
+  coral: "bg-coral text-ink-black",
   "sky-wash": "bg-sky-wash text-ink-black",
   "sky-tint": "bg-sky-tint text-ink-black",
   // Dark Feature Card — the sparing "dark island" on the light page.

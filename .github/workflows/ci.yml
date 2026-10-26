@@ -1,0 +1,62 @@
+# Every push and pull request: lint, unit tests, a production build, and the
+# Playwright suite (own-key flow, export and import, print view, and axe on
+# every app state) against that build. Gemini is stubbed at the network level
+# in e2e/fixtures.ts, so no secret is needed and no model is ever called.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PORT: 3108
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # Lifecycle scripts are not needed: native binaries come as optional deps.
+      - run: npm ci --ignore-scripts
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests (Vitest)
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # After the build, which generates the route types the app's own types use.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Install Playwright's Chromium
+        run: npm run test:e2e:install
+
+      - name: End-to-end and accessibility tests (Playwright)
+        run: npm run test:e2e
+
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

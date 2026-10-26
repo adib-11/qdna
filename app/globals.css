@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-notion-blue: #0075de;
+  /* Colors. Every text pairing in the system reaches WCAG AA (4.5:1): the
+     blue is 5.0:1 on sky-tint and 5.7:1 under white text, the vermillion
+     5.2:1 on the page canvas. Checked by axe in e2e/a11y.spec.ts. */
+  --color-notion-blue: #0066c4;
   --color-paper-warmth: #f6f5f4;
   --color-pure-white: #ffffff;
   --color-ink-black: #000000;
@@ -14,9 +16,10 @@
   --color-marigold: #ffb110;
   --color-coral: #f64932;
   --color-saffron: #e89d01;
-  --color-vermillion: #e32d14;
+  --color-vermillion: #c8260f;
   --color-mocha: #b18164;
-  --color-signal-blue: #097fe8;
+  /* Primary-button hover: darker than the blue, so white text stays legible. */
+  --color-signal-blue: #00529f;
   --color-sky-wash: #62aef0;
   --color-midnight-ink: #02093a;
   --color-peach: #f6d5b8;

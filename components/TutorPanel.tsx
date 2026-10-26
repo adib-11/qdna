@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Dialog } from "@/components/ui/Dialog";
 import { Pill } from "@/components/ui/Pill";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { writeHint } from "@/lib/gemini/hint";
@@ -19,8 +20,9 @@ interface TutorState {
  *
  * The panel is an overlay rather than an inline expansion because it is opened
  * from a row inside a horizontally scrolling evidence table — expanding in
- * place would push the table wider still. It resolves on its own; the page
- * behind stays interactive and the analysis is never blocked on the network.
+ * place would push the table wider still. It is modal: the page behind is
+ * inert until it closes, and focus goes back to the Hint button that opened
+ * it. The analysis behind it is never blocked on the network.
  */
 export function TutorPanel({
   question,
@@ -78,97 +80,85 @@ export function TutorPanel({
     // Re-runs when the user opens a different question from the same panel.
   }, [question, stat, apiKey]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div
-        className="absolute inset-0 bg-[rgba(0,0,0,0.4)]"
-        onClick={onClose}
-        aria-hidden
-      />
-
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Hint for question ${question.qNo}`}
-        className="relative flex h-full w-full max-w-[480px] flex-col overflow-y-auto border-l border-[var(--border-hairline)] bg-pure-white"
-      >
-        <div className="flex items-start justify-between gap-[16px] p-[var(--card-padding)] pb-[16px]">
-          <div className="min-w-0">
-            <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-              Where to start
-            </h2>
-            <p className="mt-[4px] text-caption text-graphite">
-              The approach and the principle — never the final answer.
-            </p>
-          </div>
-          <Button variant="text" onClick={onClose} aria-label="Close hint">
-            Close
-          </Button>
-        </div>
-
-        <div className="border-t border-[var(--border-hairline)] p-[var(--card-padding)]">
-          <div className="flex flex-wrap gap-[8px]">
-            <Pill tone="neutral">{question.paper.label}</Pill>
-            <Pill tone="neutral">{question.qNo}</Pill>
-            {question.marks !== null && (
-              <Pill tone="neutral">{question.marks} marks</Pill>
-            )}
-            <Pill tone="sky-tint" wrap>
-              {stat?.topic ?? question.topic}
-            </Pill>
-          </div>
-          <p className="mt-[16px] text-body-sm break-words text-graphite">
-            {question.text}
+    <Dialog
+      placement="end"
+      label={`Hint for question ${question.qNo}`}
+      onClose={onClose}
+      className="flex h-full w-full max-w-[480px] flex-col overflow-y-auto border-l border-[var(--border-hairline)] bg-pure-white"
+    >
+      <div className="flex items-start justify-between gap-[16px] p-[var(--card-padding)] pb-[16px]">
+        <div className="min-w-0">
+          <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+            Where to start
+          </h2>
+          <p className="mt-[4px] text-caption text-graphite">
+            The approach and the principle — never the final answer.
           </p>
         </div>
+        <Button variant="text" onClick={onClose} aria-label="Close hint">
+          Close
+        </Button>
+      </div>
 
-        <div className="border-t border-[var(--border-hairline)] p-[var(--card-padding)]">
-          {state.status === "loading" && (
-            <div className="space-y-[12px]" aria-live="polite">
-              <p className="text-body-sm text-graphite">Thinking it through…</p>
-              {/* Three settling bars rather than a spinner: the wait is a few
-                  seconds and the shape previews what is about to arrive. */}
-              {[100, 92, 64].map((width, index) => (
-                <div
-                  key={index}
-                  className="h-[12px] animate-pulse rounded-[var(--radius-md)] bg-[rgba(0,0,0,0.06)]"
-                  style={{ width: `${width}%` }}
-                />
-              ))}
-            </div>
+      <div className="border-t border-[var(--border-hairline)] p-[var(--card-padding)]">
+        <div className="flex flex-wrap gap-[8px]">
+          <Pill tone="neutral">{question.paper.label}</Pill>
+          <Pill tone="neutral">{question.qNo}</Pill>
+          {question.marks !== null && (
+            <Pill tone="neutral">{question.marks} marks</Pill>
           )}
-
-          {state.status === "error" && (
-            <div aria-live="polite">
-              <p className="text-body-sm text-vermillion">{state.error}</p>
-              <p className="mt-[8px] text-caption text-graphite">
-                Everything else on the page is computed locally and is
-                unaffected.
-              </p>
-            </div>
-          )}
-
-          {state.status === "ready" && (
-            <div aria-live="polite">
-              <p className="whitespace-pre-wrap text-body text-graphite">
-                {state.hint}
-              </p>
-              <p className="mt-[16px] text-caption text-[rgba(0,0,0,0.4)]">
-                Generated by Gemini. Finish the last step yourself — that is
-                where the learning is.
-              </p>
-            </div>
-          )}
+          <Pill tone="sky-tint" wrap>
+            {stat?.topic ?? question.topic}
+          </Pill>
         </div>
-      </aside>
-    </div>
+        <p className="mt-[16px] text-body-sm break-words text-graphite">
+          {question.text}
+        </p>
+      </div>
+
+      {/* One region for every state, so the hint is announced as it arrives. */}
+      <div
+        className="border-t border-[var(--border-hairline)] p-[var(--card-padding)]"
+        aria-live="polite"
+      >
+        {state.status === "loading" && (
+          <div className="space-y-[12px]">
+            <p className="text-body-sm text-graphite">Thinking it through…</p>
+            {/* Three settling bars rather than a spinner: the wait is a few
+                seconds and the shape previews what is about to arrive. */}
+            {[100, 92, 64].map((width, index) => (
+              <div
+                key={index}
+                className="h-[12px] animate-pulse rounded-[var(--radius-md)] bg-[rgba(0,0,0,0.06)]"
+                style={{ width: `${width}%` }}
+              />
+            ))}
+          </div>
+        )}
+
+        {state.status === "error" && (
+          <div>
+            <p className="text-body-sm text-vermillion">{state.error}</p>
+            <p className="mt-[8px] text-caption text-graphite">
+              Everything else on the page is computed locally and is
+              unaffected.
+            </p>
+          </div>
+        )}
+
+        {state.status === "ready" && (
+          <div>
+            <p className="whitespace-pre-wrap text-body text-graphite">
+              {state.hint}
+            </p>
+            <p className="mt-[16px] text-caption text-[rgba(0,0,0,0.6)]">
+              Generated by Gemini. Finish the last step yourself — that is
+              where the learning is.
+            </p>
+          </div>
+        )}
+      </div>
+    </Dialog>
   );
 }

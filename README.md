@@ -103,6 +103,7 @@ Three things follow, and all three are in the code:
 - `@google/genai` for structured vision extraction, called from the browser on the student's own key
 - `recharts` for the Pareto view
 - Vitest for the pure analysis functions
+- Playwright and axe-core for end-to-end and WCAG 2.2 AA checks, run in GitHub Actions
 - Deployed on Vercel
 
 ## Local development
@@ -111,6 +112,19 @@ Three things follow, and all three are in the code:
 npm install
 npm run dev
 ```
+
+Tests:
+
+```bash
+npm test                  # Vitest: analysis, extraction, corpus files
+npm run build             # Playwright runs against the production build
+npx playwright install chromium
+npm run test:e2e          # Playwright + axe, Gemini stubbed at the network level
+```
+
+CI (`.github/workflows/ci.yml`) runs lint, Vitest, the build, typechecking and
+the Playwright suite on every push and pull request. The Playwright suite runs
+axe on every app state and allows zero violations.
 
 The app needs no server-side key: paste your own Gemini key when an action
 asks for one. `GEMINI_API_KEY` in `.env.local` is read only by the offline

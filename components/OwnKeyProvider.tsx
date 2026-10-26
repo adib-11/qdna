@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useId,
   useRef,
   useState,
@@ -13,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "@/components/ui/Button";
+import { Dialog } from "@/components/ui/Dialog";
 import { ownKeyStore, verifyKey } from "@/lib/key/ownKey";
 
 type RequestKey = () => Promise<string | null>;
@@ -94,22 +94,7 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
   const [remember, setRemember] = useState(false);
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const returnFocus = useRef<Element | null>(null);
-
-  useEffect(() => {
-    returnFocus.current = document.activeElement;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        onDone(null);
-      }
-    };
-    window.addEventListener("keydown", onKey, true);
-    return () => {
-      window.removeEventListener("keydown", onKey, true);
-      if (returnFocus.current instanceof HTMLElement) returnFocus.current.focus();
-    };
-  }, [onDone]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -126,19 +111,13 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-[16px]">
-      <div
-        className="absolute inset-0 bg-[rgba(0,0,0,0.4)]"
-        onClick={() => onDone(null)}
-        aria-hidden
-      />
-      <form
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        onSubmit={submit}
-        className="relative w-full max-w-[480px] rounded-[var(--radius-xl)] bg-pure-white p-[var(--card-padding)]"
-      >
+    <Dialog
+      labelledBy={titleId}
+      onClose={() => onDone(null)}
+      initialFocus={inputRef}
+      className="w-full max-w-[480px] rounded-[var(--radius-xl)] bg-pure-white p-[var(--card-padding)]"
+    >
+      <form onSubmit={submit}>
         <h2 id={titleId} className="text-heading-sm font-bold tracking-[-0.242px]">
           Use your own Gemini key
         </h2>
@@ -172,7 +151,7 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
           type="password"
           autoComplete="off"
           spellCheck={false}
-          autoFocus
+          ref={inputRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           aria-invalid={error ? true : undefined}
@@ -206,6 +185,6 @@ function KeyPrompt({ onDone }: { onDone: (key: string | null) => void }) {
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   );
 }

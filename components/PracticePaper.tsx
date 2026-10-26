@@ -196,7 +196,7 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
       )}
 
       {paper && (
-        <p className="mt-[32px] text-caption text-[rgba(255,255,255,0.4)]">
+        <p className="mt-[32px] text-caption text-[rgba(255,255,255,0.7)]">
           Written by Gemini from the structure and topic frequencies measured
           above. Recurrence is evidence of what matters to this examiner, not a
           forecast of the next paper.
