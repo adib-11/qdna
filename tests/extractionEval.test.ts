@@ -260,6 +260,8 @@ describe("advanceEval", () => {
     expect(saved.at(-1)).toEqual({
       measurements: {},
       usage: { "2026-10-26": { a: { requests: 4, spent: true } } },
+      // The last attempt was the eval's own refusal, once the model was spent.
+      retry: { [`1|Chain|${LABEL}`]: [{ status: 429, message: "a: out of quota today" }] },
     });
   });
 
@@ -277,17 +279,70 @@ describe("advanceEval", () => {
     });
   });
 
-  it("records a batch that keeps failing, or fails outright, as a failure", async () => {
-    const busy = { latencyMs: 1_000, error: { status: 503 } };
-    const { client, calls } = scripted([...Array(9).fill(busy), { latencyMs: 1_000, error: { status: 400 } }]);
+  it("leaves a measurement pending, with why, while the model stays overloaded, for the next run", async () => {
+    const busy = { latencyMs: 1_000, error: { status: 503, message: "503 UNAVAILABLE: high demand" } };
+    const today = scripted(Array(12).fill(busy));
+    const progress = emptyProgress();
+    await advance(today.client, progress);
+    const key = `1|Chain|${LABEL}`;
+
+    // Three measurement attempts of three app attempts each, and no more today.
+    expect(today.calls).toHaveLength(9);
+    expect(progress.measurements).toEqual({});
+    expect(progress.retry).toEqual({ [key]: [{ status: 503, message: "503 UNAVAILABLE: high demand" }] });
+    expect(evalStatus(progress, { truth, configurations: [chain] }, NOON).failures).toEqual([
+      { measurement: key, pending: true, status: 503, message: "503 UNAVAILABLE: high demand" },
+    ]);
+
+    const tomorrow = scripted([{ latencyMs: 1_000, text: noiseAndAm }]);
+    await advance(tomorrow.client, progress);
+    expect(Object.keys(progress.measurements)).toContain(key);
+    expect(progress.retry).toEqual({});
+  });
+
+  it.each([
+    [404, 1],
+    [500, 3],
+  ])("leaves a measurement pending when the model answers %i, without backing off", async (status, calls) => {
+    const { client, calls: sent } = scripted(Array(6).fill({ latencyMs: 1_000, error: { status } }));
+    const progress = emptyProgress();
+    await advance(client, progress);
+
+    expect(sent).toHaveLength(calls);
+    expect(progress.measurements).toEqual({});
+    expect(progress.retry?.[`1|Chain|${LABEL}`]).toEqual([{ status, message: `upstream ${status}` }]);
+  });
+
+  it("counts output the model gave but nobody can use as a measured failure, with why", async () => {
+    const { client, calls } = scripted([
+      ...Array(3).fill({ latencyMs: 1_000, text: "not json" }),
+      { latencyMs: 1_000, error: { status: 400, message: "400 INVALID_ARGUMENT: schema" } },
+    ]);
     const progress = emptyProgress();
     await advance(client, progress);
     const spec = { truth, configurations: [chain] };
 
-    expect(calls).toHaveLength(10);
-    expect(evalRows(progress, spec, 1)[0]).toMatchObject({ batches: 1, requests: 9, failureRate: 1, recall: 0 });
+    expect(calls).toHaveLength(4);
+    expect(evalRows(progress, spec, 1)[0]).toMatchObject({ batches: 1, requests: 3, failureRate: 1, recall: 0 });
     expect(evalRows(progress, spec, 1)[0].p95Ms).toBeNaN();
     expect(evalRows(progress, spec, 2)[0]).toMatchObject({ requests: 1, failureRate: 1 });
+    expect(progress.measurements[`1|Chain|${LABEL}`].failures).toEqual([
+      { status: null, message: expect.stringMatching(/JSON/) },
+    ]);
+    expect(evalStatus(progress, spec, NOON).failures).toEqual([
+      { measurement: `1|Chain|${LABEL}`, pending: false, status: null, message: expect.stringMatching(/JSON/) },
+      { measurement: `2|Chain|${LABEL}`, pending: false, status: 400, message: "400 INVALID_ARGUMENT: schema" },
+    ]);
+  });
+
+  it("never keeps an API key that an error message quotes", async () => {
+    const fakeKey = `AIza${"x".repeat(35)}`;
+    const { client } = scripted(Array(3).fill({ latencyMs: 1_000, error: { status: 400, message: `bad key=${fakeKey}` } }));
+    const saved: string[] = [];
+    await advance(client, emptyProgress(), { save: (p) => saved.push(JSON.stringify(p)) });
+
+    expect(saved.at(-1)).toContain("bad key=");
+    expect(saved.join("")).not.toContain(fakeKey);
   });
 
   it("paces requests across measurements, not only within one", async () => {
@@ -415,6 +470,8 @@ describe("formatResultsTable", () => {
     expect(lines[0]).toMatch(/p50.*p95.*Fail.*Requests.*Recall.*Precision.*Marks.*Topics/);
     expect(lines[2]).toContain("Chain");
     expect(lines[2]).toContain("recall");
+    expect(lines[0]).toContain("Answered by");
+    expect(lines[2]).toContain("m ×6");
   });
 });
 

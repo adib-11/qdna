@@ -26,7 +26,7 @@
  * Needs Node 23.5+ (scripts/ts-paths.mjs uses `registerHooks`), and pdftoppm and pdftotext (poppler).
  *
  * Environment:
- *   EVAL_PROGRESS_FILE    progress file, outside the repo (default /tmp/qd/eval6-progress.json)
+ *   EVAL_PROGRESS_FILE    progress file, outside the repo (default ~/.config/qdna/eval6-progress.json)
  *   EVAL_DAILY_CAPS       "model=n,model=n": per-model requests per quota day, over lib/config.ts's
  *   EVAL_MIN_INTERVAL_MS  gap between requests (default: free-tier pacing)
  */
@@ -34,6 +34,7 @@
 import "./ts-paths.mjs";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -42,10 +43,20 @@ const GROUND_TRUTH_DIR = path.join(ROOT, "tests", "fixtures", "ground-truth");
 const CONFIG_FILE = path.join(ROOT, "lib", "config.ts");
 
 const { EVAL_DAILY_CAPS, EVAL_LIVE_BATCH_PAGES, EVAL_MIN_INTERVAL_MS } = await import("../lib/config.ts");
-const { RESULTS_DOC, advanceEval, emptyProgress, evalStatus, resultsDoc, setExtractionSetup, textLayerRecall } =
-  await import("../lib/eval/run.ts");
+const {
+  RESULTS_DOC,
+  advanceEval,
+  emptyProgress,
+  evalStatus,
+  pendingWork,
+  resultsDoc,
+  setExtractionSetup,
+  textLayerRecall,
+} = await import("../lib/eval/run.ts");
 
-const progressFile = path.resolve(process.env.EVAL_PROGRESS_FILE ?? "/tmp/qd/eval6-progress.json");
+const progressFile = path.resolve(
+  (process.env.EVAL_PROGRESS_FILE ?? "~/.config/qdna/eval6-progress.json").replace(/^~(?=$|\/)/, os.homedir()),
+);
 if (!path.relative(ROOT, progressFile).startsWith("..")) {
   fail(`the progress file must live outside the repo: ${progressFile}`);
 }
@@ -156,6 +167,13 @@ async function run(papersDir, pagesDir) {
 function printStatus(progress) {
   const status = evalStatus(progress, spec, new Date());
   console.log(`Eval: ${status.phase}. Progress in ${progressFile}.`);
+  const measured = Object.keys(progress.measurements);
+  console.log(`  ${measured.length} measured, ${pendingWork(progress, spec).pending.length} pending this phase`);
+  for (const key of measured) console.log(`    done: ${key}`);
+  for (const f of status.failures) {
+    const how = f.pending ? "pending, retried next run" : "measured as a failure";
+    console.log(`    failed batch (${how}): ${f.measurement}: ${f.status ?? "no status"} ${f.message}`);
+  }
   for (const m of status.models) {
     const today = m.spentToday ? "spent today" : `${m.usedToday}/${m.cap} used today`;
     console.log(`  ${m.model}: ${m.sent} requests sent, at least ${m.left} left; ${today}`);

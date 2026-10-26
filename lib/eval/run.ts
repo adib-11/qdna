@@ -54,7 +54,32 @@ export interface Measurement {
   batches: number;
   /** Batches that failed or timed out after every retry. */
   batchesFailed: number;
+  /** Why each failed batch failed. Absent in progress saved before reasons were kept. */
+  failures?: BatchFailure[];
   questions: ExtractedQuestion[];
+}
+
+/** Why a batch failed: the HTTP status (null when there was none) and a short message. */
+export interface BatchFailure {
+  status: number | null;
+  message: string;
+}
+
+/**
+ * Statuses that say nothing about the setup, only that its model was missing,
+ * broken, overloaded or out of quota just then. A measurement hit by one stays
+ * pending for a later run; only output the model gave and nothing could use,
+ * or a timeout, is measured as a failure.
+ */
+const UNAVAILABLE = new Set([404, 429, 500, 503]);
+
+/** A failure, worded for the progress file: short, and never quoting an API key. */
+function describeFailure(error: unknown): BatchFailure {
+  const message = error instanceof Error ? error.message : String(error);
+  return {
+    status: extractStatus(error),
+    message: message.replace(/AIza[\w-]{35}/g, "[key]").replace(/\s+/g, " ").trim().slice(0, 200),
+  };
 }
 
 /** Requests sent to one model on one quota day, refusals included, and whether it is spent. */
@@ -72,9 +97,11 @@ export interface EvalProgress {
   measurements: Record<string, Measurement>;
   /** Quota day, then model. */
   usage: Record<string, Record<string, ModelUsage>>;
+  /** Measurements left pending because their model was unavailable, and why, by measurementKey. */
+  retry?: Record<string, BatchFailure[]>;
 }
 
-export const emptyProgress = (): EvalProgress => ({ measurements: {}, usage: {} });
+export const emptyProgress = (): EvalProgress => ({ measurements: {}, usage: {}, retry: {} });
 
 const measurementKey = (run: number, configuration: string, paper: string) =>
   `${run}|${configuration}|${paper}`;
@@ -182,6 +209,8 @@ export interface EvalStatus {
   daysLeft: number;
   /** What the next run will do. */
   next: string;
+  /** Every failed batch: measured as a failure, or pending for a later run. */
+  failures: Array<{ measurement: string; pending: boolean } & BatchFailure>;
 }
 
 /** Where the eval stands, and how long the rest takes under the caps. Needs no key and no network. */
@@ -224,6 +253,14 @@ export function evalStatus(progress: EvalProgress, spec: EvalSpec, now: Date): E
     phase,
     models,
     daysLeft: Math.max(0, ...models.map(daysFor)) + (phase === "first pass" ? 1 : 0),
+    failures: [
+      ...Object.entries(progress.measurements).flatMap(([measurement, m]) =>
+        (m.failures ?? []).map((f) => ({ measurement, pending: false, ...f })),
+      ),
+      ...Object.entries(progress.retry ?? {}).flatMap(([measurement, failures]) =>
+        failures.map((f) => ({ measurement, pending: true, ...f })),
+      ),
+    ],
     next: {
       "first pass": `measure the first pass: ${list}`,
       finalists: `re-run the finalists: ${list}`,
@@ -295,46 +332,67 @@ export async function advanceEval(
 
   /**
    * One measurement, measured again after a backoff while the model refuses
-   * (429) or is overloaded (503). Null when its model is out of quota today.
+   * (429) or is overloaded (503). The failures instead when its model stayed
+   * unavailable, and null when it is out of quota today before starting.
    */
-  const measureWithBackoff = async (configuration: EvalConfiguration, paper: EvalPaper) => {
+  const measureWithBackoff = async (
+    configuration: EvalConfiguration,
+    paper: EvalPaper,
+  ): Promise<Measurement | BatchFailure[] | null> => {
     const primary = configuration.models[0];
     /** Requests accepted so far, over every attempt: all of them are the measurement's cost. */
     let accepted: Record<string, number> = {};
+    /** The last attempt's failures, kept if the model runs out of quota before the next. */
+    let failures: BatchFailure[] | null = null;
     for (let attempt = 0; ; attempt++) {
-      if (!available(primary)) return null;
+      if (!available(primary)) return failures;
       if (attempt > 0) await sleep(EVAL_BACKOFF_BASE_MS * 2 ** (attempt - 1));
       // runExtraction paces within a measurement; this paces across them.
       await sleep(lastRequestAt + minIntervalMs - Date.now());
-      const { measurement, status } = await measure(guarded, configuration, paper, minIntervalMs);
+      const measurement = await measure(guarded, configuration, paper, minIntervalMs);
       for (const [model, n] of Object.entries(accepted)) {
         measurement.requests[model] = (measurement.requests[model] ?? 0) + n;
       }
       accepted = measurement.requests;
-      if (status !== 429 && status !== 503) return measurement;
-      if (attempt === EVAL_MEASUREMENT_RETRIES) {
-        if (status === 503) return measurement;
-        spend(primary);
-        return null;
-      }
+      failures = measurement.failures ?? [];
+      const status = failures.find((f) => f.status !== null && UNAVAILABLE.has(f.status))?.status;
+      if (status === undefined) return measurement;
+      const backOff = status === 429 || status === 503;
+      if (backOff && attempt < EVAL_MEASUREMENT_RETRIES) continue;
+      if (status === 429) spend(primary);
+      return failures;
     }
   };
+
+  /** Left pending in this run: the next run, on a later day, tries them again. */
+  const deferred = new Set<string>();
+  const retry = (progress.retry ??= {});
 
   for (;;) {
     let measured = false;
     for (const { run, configuration, paper } of pendingWork(progress, options).pending) {
-      if (!available(configuration.models[0])) continue;
+      const key = measurementKey(run, configuration.name, paper);
+      if (deferred.has(key) || !available(configuration.models[0])) continue;
       const pages = papers.find((p) => p.label === paper);
       if (!pages) throw new Error(`no pages for ${paper}`);
-      const measurement = await measureWithBackoff(configuration, pages);
-      if (!measurement) continue;
-      progress.measurements[measurementKey(run, configuration.name, paper)] = measurement;
+      const result = await measureWithBackoff(configuration, pages);
+      if (!result) continue;
+      const step = `${run === 1 ? "first pass" : "re-run"} · ${configuration.name} · ${paper}`;
+      if (Array.isArray(result)) {
+        deferred.add(key);
+        retry[key] = result;
+        save(progress);
+        log(`${step}: left for a later run, ${result.map((f) => `${f.status ?? "no status"} ${f.message}`).join("; ")}`);
+        continue;
+      }
+      progress.measurements[key] = result;
+      delete retry[key];
       save(progress);
       measured = true;
-      const outcome = measurement.batchesFailed
-        ? `${measurement.batchesFailed} of ${measurement.batches} batches failed`
-        : `${measurement.questions.length} questions`;
-      log(`${run === 1 ? "first pass" : "re-run"} · ${configuration.name} · ${paper}: ${outcome}`);
+      const outcome = result.batchesFailed
+        ? `${result.batchesFailed} of ${result.batches} batches failed`
+        : `${result.questions.length} questions`;
+      log(`${step}: ${outcome}`);
     }
     if (!measured) return;
   }
@@ -348,13 +406,14 @@ async function measure(
   configuration: EvalConfiguration,
   paper: EvalPaper,
   minIntervalMs: number,
-): Promise<{ measurement: Measurement; status: number | null }> {
+): Promise<Measurement> {
   const measurement: Measurement = {
     requests: {},
     answeredBy: {},
     latenciesMs: [],
     batches: 0,
     batchesFailed: 0,
+    failures: [],
     questions: [],
   };
   const bump = (counts: Record<string, number>, model: string) => {
@@ -378,15 +437,23 @@ async function measure(
 
   /** When each batch's first attempt started; a retry reuses the batch array. */
   const startedAt = new Map<PageImage[], number>();
+  /** Each batch's last failure, until it answers. */
+  const lastFailure = new Map<PageImage[], BatchFailure>();
   const extractBatch = async (pages: PageImage[], signal?: AbortSignal) => {
     if (!startedAt.has(pages)) startedAt.set(pages, Date.now());
-    const questions = await extractQuestions(counting, pages, {
-      signal,
-      models: configuration.models,
-      config: configuration.config,
-    });
-    measurement.latenciesMs.push(Date.now() - startedAt.get(pages)!);
-    return questions;
+    try {
+      const questions = await extractQuestions(counting, pages, {
+        signal,
+        models: configuration.models,
+        config: configuration.config,
+      });
+      measurement.latenciesMs.push(Date.now() - startedAt.get(pages)!);
+      lastFailure.delete(pages);
+      return questions;
+    } catch (error) {
+      lastFailure.set(pages, describeFailure(error));
+      throw error;
+    }
   };
 
   // runExtraction reads uploads; the paper stands in as an empty one.
@@ -407,7 +474,8 @@ async function measure(
     topic: q.topic,
     paper: { label: paper.label },
   }));
-  return { measurement, status: batchesFailed > 0 ? extractStatus(result.lastError) : null };
+  measurement.failures = [...lastFailure.values()];
+  return measurement;
 }
 
 /** The scored row of each configuration whose run has measured every paper. */
