@@ -124,6 +124,7 @@ function parseCorpusFile(text: string): Parsed {
   if (!isRecord(data) || data.format !== CORPUS_FILE_FORMAT) {
     return { ok: false, error: NOT_A_CORPUS_FILE };
   }
+  if (typeof data.version !== "number") return { ok: false, error: DAMAGED };
   if (data.version !== CORPUS_FILE_VERSION) {
     return {
       ok: false,
@@ -137,6 +138,9 @@ function parseCorpusFile(text: string): Parsed {
     return { ok: false, error: "This corpus file has no papers in it." };
   }
   if (!data.papers.every(isFilePaper)) return { ok: false, error: DAMAGED };
+  // The same paper twice would make "existing copy wins" depend on file order.
+  const labels = new Set(data.papers.map((paper) => paper.label));
+  if (labels.size !== data.papers.length) return { ok: false, error: DAMAGED };
 
   return {
     ok: true,
@@ -149,7 +153,7 @@ function parseCorpusFile(text: string): Parsed {
   };
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
@@ -173,7 +177,7 @@ function isFilePaper(value: unknown): value is FilePaper {
   );
 }
 
-function isQuestion(value: unknown): value is Question {
+export function isQuestion(value: unknown): value is Question {
   if (!isRecord(value) || !isRecord(value.paper)) return false;
   const { paper } = value;
   return (

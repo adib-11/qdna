@@ -109,6 +109,18 @@ describe("rejecting a corpus file", () => {
     expect(rejection(JSON.stringify(file))).toMatch(/damaged/i);
   });
 
+  it("rejects a corpus file that carries no version", () => {
+    const { version, ...file } = valid();
+    expect(version).toBe(CORPUS_FILE_VERSION);
+    expect(rejection(JSON.stringify(file))).toMatch(/damaged/i);
+  });
+
+  it("rejects a file that lists the same paper twice", () => {
+    const file = valid();
+    file.papers.push(file.papers[0]);
+    expect(rejection(JSON.stringify(file))).toMatch(/damaged/i);
+  });
+
   it("rejects a file with no papers in it", () => {
     expect(rejection(JSON.stringify({ ...valid(), papers: [] }))).toMatch(
       /no papers/i,

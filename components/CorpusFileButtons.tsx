@@ -50,7 +50,14 @@ export function ImportCorpusButton({
 
   async function importFile(file: File | undefined) {
     if (!file) return;
-    const result = importCorpusFile(existing, await file.text());
+    let text: string;
+    try {
+      text = await file.text();
+    } catch {
+      setMessage({ error: true, text: "This file could not be read. Your corpus is unchanged." });
+      return;
+    }
+    const result = importCorpusFile(existing, text);
     if (!result.ok) {
       setMessage({ error: true, text: `${result.error} Your corpus is unchanged.` });
       return;

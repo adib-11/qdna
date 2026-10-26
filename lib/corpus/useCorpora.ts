@@ -8,8 +8,9 @@ import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
  * is read through `useSyncExternalStore`: nothing during server rendering,
  * then the stored value once hydrated, then again after every `corpusChanged`.
  *
- * Other tabs' writes are deliberately not followed: two tabs may have two
- * different corpora open, and one should not switch the other's.
+ * Other tabs' writes are not followed live, so a tab keeps showing the corpus
+ * it read. The open-corpus pointer itself is shared by every tab, though: a
+ * reload shows whichever corpus any tab opened or saved most recently.
  */
 const listeners = new Set<() => void>();
 let revision = 0;

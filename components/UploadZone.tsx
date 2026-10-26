@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { runExtraction } from "@/lib/extract/runExtraction";
 import { saveSession } from "@/lib/extract/session";
+import { sampleCorpusId } from "@/lib/corpus/store";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
 import { SAMPLES, sampleOutcome } from "@/lib/samples";
 import type { ExtractionProgress } from "@/lib/types";
@@ -69,13 +70,15 @@ export function UploadZone() {
     setLoadingSample(id);
 
     try {
-      // A fixed id, so reopening a sample replaces its saved copy instead of
-      // piling up duplicates in the saved corpora list.
-      saveSession(sampleOutcome(await sample.load()), `sample-${sample.id}`);
+      saveSession(sampleOutcome(await sample.load()), sampleCorpusId(sample.id));
       router.push("/analyze");
-    } catch {
+    } catch (err) {
       setLoadingSample(null);
-      setError(`The ${sample.name} sample could not be loaded.`);
+      setError(
+        err instanceof Error
+          ? err.message
+          : `The ${sample.name} sample could not be loaded.`,
+      );
     }
   }
 

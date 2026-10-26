@@ -29,7 +29,9 @@ export default function AnalyzePage() {
   /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
   function saveMerged(questions: Question[]) {
     if (!corpus) return;
-    browserCorpusStore()?.save({ ...corpus.outcome, questions }, corpus.id);
+    // A merge into a sample is saved as a new corpus, so reopening the sample
+    // can never overwrite it.
+    browserCorpusStore()?.saveImport(corpus, questions);
     corpusChanged();
   }
 

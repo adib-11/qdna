@@ -50,6 +50,8 @@ export function SavedCorpora() {
             const { questions } = corpus.outcome;
             const paperCount = paperOrder(questions).length;
             const title = corpusTitle(corpusCourses(questions));
+            // Two corpora can share a title, so the labels also say which one.
+            const which = `${title}, ${paperCount} paper${paperCount === 1 ? "" : "s"}, saved ${new Date(corpus.savedAt).toLocaleString()}`;
             return (
               <li
                 key={corpus.id}
@@ -68,14 +70,14 @@ export function SavedCorpora() {
                 <div className="flex gap-[8px]">
                   <Button
                     variant="ghost"
-                    aria-label={`Reopen ${title}`}
+                    aria-label={`Reopen ${which}`}
                     onClick={() => reopen(corpus.id)}
                   >
                     Reopen
                   </Button>
                   <Button
                     variant="text"
-                    aria-label={`Delete ${title}`}
+                    aria-label={`Delete ${which}`}
                     onClick={() => remove(corpus.id, title)}
                   >
                     Delete

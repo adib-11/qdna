@@ -1,4 +1,5 @@
-import type { ExtractionOutcome } from "@/lib/types";
+import { isQuestion, isRecord } from "@/lib/corpus/corpusFile";
+import type { ExtractionOutcome, Question } from "@/lib/types";
 
 /**
  * Saved corpora, kept in localStorage so a semester's work outlives the tab.
@@ -10,6 +11,16 @@ import type { ExtractionOutcome } from "@/lib/types";
  */
 const CORPUS_PREFIX = "qdna:corpus:v1:";
 const OPEN_KEY = "qdna:open-corpus:v1";
+
+const SAMPLE_PREFIX = "sample-";
+
+/**
+ * The fixed id a bundled sample is saved under, so opening it again replaces
+ * its saved copy instead of piling up duplicates.
+ */
+export function sampleCorpusId(sampleId: string): string {
+  return `${SAMPLE_PREFIX}${sampleId}`;
+}
 
 export type KeyValueStorage = Pick<
   Storage,
@@ -30,7 +41,8 @@ export function createCorpusStore(
   function read(id: string): SavedCorpus | null {
     try {
       const raw = storage.getItem(CORPUS_PREFIX + id);
-      return raw ? (JSON.parse(raw) as SavedCorpus) : null;
+      const corpus: unknown = raw ? JSON.parse(raw) : null;
+      return isSavedCorpus(corpus) ? corpus : null;
     } catch {
       return null;
     }
@@ -45,6 +57,23 @@ export function createCorpusStore(
     return found;
   }
 
+  /** Save a corpus (replacing any under the same id) and make it the open one. */
+  function save(
+    outcome: ExtractionOutcome,
+    id: string = crypto.randomUUID(),
+  ): SavedCorpus {
+    const corpus: SavedCorpus = { id, savedAt: now(), outcome };
+    try {
+      storage.setItem(CORPUS_PREFIX + id, JSON.stringify(corpus));
+      storage.setItem(OPEN_KEY, id);
+    } catch {
+      throw new Error(
+        "Your browser's storage is full, so this corpus could not be saved. Delete a saved corpus and try again.",
+      );
+    }
+    return corpus;
+  }
+
   return {
     /** Every saved corpus, most recently saved first. */
     list(): SavedCorpus[] {
@@ -54,18 +83,16 @@ export function createCorpusStore(
         .sort((a, b) => b.savedAt - a.savedAt);
     },
 
-    /** Save a corpus (replacing any under the same id) and make it the open one. */
-    save(outcome: ExtractionOutcome, id: string = crypto.randomUUID()): SavedCorpus {
-      const corpus: SavedCorpus = { id, savedAt: now(), outcome };
-      try {
-        storage.setItem(CORPUS_PREFIX + id, JSON.stringify(corpus));
-        storage.setItem(OPEN_KEY, id);
-      } catch {
-        throw new Error(
-          "Your browser's storage is full, so this corpus could not be saved. Delete a saved corpus and try again.",
-        );
-      }
-      return corpus;
+    save,
+
+    /**
+     * Save the questions an import merged into `corpus`, and open the result.
+     * A sample's id is reserved for the pristine sample, which opening the
+     * sample again overwrites, so a merge into a sample becomes a new corpus.
+     */
+    saveImport(corpus: SavedCorpus, questions: Question[]): SavedCorpus {
+      const id = corpus.id.startsWith(SAMPLE_PREFIX) ? undefined : corpus.id;
+      return save({ ...corpus.outcome, questions }, id);
     },
 
     /** Make a saved corpus the open one. Null when no such corpus exists. */
@@ -86,6 +113,18 @@ export function createCorpusStore(
       if (storage.getItem(OPEN_KEY) === id) storage.removeItem(OPEN_KEY);
     },
   };
+}
+
+/** Enough of a shape check that a damaged entry is skipped rather than crashing the analysis. */
+function isSavedCorpus(value: unknown): value is SavedCorpus {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.savedAt === "number" &&
+    isRecord(value.outcome) &&
+    Array.isArray(value.outcome.questions) &&
+    value.outcome.questions.every(isQuestion)
+  );
 }
 
 export type CorpusStore = ReturnType<typeof createCorpusStore>;

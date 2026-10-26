@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createCorpusStore, type KeyValueStorage } from "@/lib/corpus/store";
+import {
+  createCorpusStore,
+  sampleCorpusId,
+  type KeyValueStorage,
+} from "@/lib/corpus/store";
 import { sampleOutcome } from "@/lib/samples";
 import { EMF_QUESTIONS } from "@/tests/fixtures/emf";
 
@@ -79,6 +83,47 @@ describe("saved corpora", () => {
     store.remove(second.id);
     expect(store.list()).toEqual([]);
     expect(store.current()).toBeNull();
+  });
+
+  it("never lets reopening a sample overwrite papers imported into it", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const sample = store.save(ct3, sampleCorpusId("emf"));
+
+    // Import finals into the open sample, then click the sample button again.
+    const merged = store.saveImport(sample, [...ct3.questions, ...finals.questions]);
+    store.save(ct3, sampleCorpusId("emf"));
+
+    expect(merged.id).not.toBe(sample.id);
+    expect(store.open(merged.id)?.outcome.questions).toEqual([
+      ...ct3.questions,
+      ...finals.questions,
+    ]);
+    expect(store.open(sample.id)?.outcome).toEqual(ct3);
+  });
+
+  it("saves an import into an ordinary corpus over that corpus", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const corpus = store.save(ct3);
+
+    const merged = store.saveImport(corpus, [...ct3.questions, ...finals.questions]);
+
+    expect(merged.id).toBe(corpus.id);
+    expect(store.list()).toHaveLength(1);
+    expect(store.current()?.outcome.questions).toHaveLength(
+      ct3.questions.length + finals.questions.length,
+    );
+  });
+
+  it("skips a damaged saved corpus instead of handing it to the analysis", () => {
+    const storage = memoryStorage();
+    const store = createCorpusStore(storage, tickingClock());
+    const kept = store.save(ct3);
+    const damaged = store.save(finals);
+    const key = [...storage.data.keys()].find((k) => k.endsWith(damaged.id))!;
+    storage.setItem(key, JSON.stringify({ id: damaged.id, outcome: { questions: [{}] } }));
+
+    expect(store.current()).toBeNull();
+    expect(store.list().map((c) => c.id)).toEqual([kept.id]);
   });
 
   it("explains a full browser storage", () => {
