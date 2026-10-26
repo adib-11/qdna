@@ -1,4 +1,5 @@
 import { Card, CardBody, CardTitle } from "@/components/ui/Card";
+import { SavedCorpora } from "@/components/SavedCorpora";
 import { UploadZone } from "@/components/UploadZone";
 import { HighlightPill, Pill } from "@/components/ui/Pill";
 
@@ -23,6 +24,10 @@ export default function Home() {
 
       <section className="mt-[64px]">
         <UploadZone />
+      </section>
+
+      <section className="mt-[64px]">
+        <SavedCorpora />
       </section>
 
       <section className="mt-[80px] grid gap-[24px] md:grid-cols-3">

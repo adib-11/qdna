@@ -69,7 +69,9 @@ export function UploadZone() {
     setLoadingSample(id);
 
     try {
-      saveSession(sampleOutcome(await sample.load()));
+      // A fixed id, so reopening a sample replaces its saved copy instead of
+      // piling up duplicates in the saved corpora list.
+      saveSession(sampleOutcome(await sample.load()), `sample-${sample.id}`);
       router.push("/analyze");
     } catch {
       setLoadingSample(null);
