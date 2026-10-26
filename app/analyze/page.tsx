@@ -35,7 +35,7 @@ const SECTIONS = [
 ] as const;
 
 /** Clears the sticky nav when a section link scrolls to it. */
-const SECTION = "scroll-mt-[64px]";
+const SCROLL_CLEARANCE = "scroll-mt-[64px]";
 
 export default function AnalyzePage() {
   // Undefined until browser storage can be read, after hydration.
@@ -124,7 +124,7 @@ export default function AnalyzePage() {
       </nav>
 
       <main className="page-shell section-stack py-[32px] sm:py-[64px]">
-        <section id="study-plan" className={SECTION}>
+        <section id="study-plan" className={SCROLL_CLEARANCE}>
           {/* Course names are long and often one unbreakable word, so the
               display size steps down before it can push the page sideways. */}
           <h1 className="text-heading-sm sm:text-heading-lg md:text-display-sm font-medium tracking-[-0.242px] md:tracking-[-1.89px] break-words text-ink-black">
@@ -171,7 +171,7 @@ export default function AnalyzePage() {
           </div>
         </section>
 
-        <section id="questions" className={SECTION}>
+        <section id="questions" className={SCROLL_CLEARANCE}>
           <TopicDossier
             stats={result.stats}
             expectedMarks={result.expectedMarks}
@@ -179,7 +179,7 @@ export default function AnalyzePage() {
           />
         </section>
 
-        <section id="lineages" className={SECTION}>
+        <section id="lineages" className={SCROLL_CLEARANCE}>
           <div className="flex flex-wrap items-baseline justify-between gap-[16px]">
             <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
               Lineages
@@ -200,11 +200,11 @@ export default function AnalyzePage() {
           )}
         </section>
 
-        <section id="practice-paper" className={SECTION}>
+        <section id="practice-paper" className={SCROLL_CLEARANCE}>
           <PracticePaper result={result} />
         </section>
 
-        <section id="how-we-know" className={SECTION}>
+        <section id="how-we-know" className={SCROLL_CLEARANCE}>
           <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
             How we know
           </h2>

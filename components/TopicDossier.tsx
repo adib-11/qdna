@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
-import { topicAnchor } from "@/components/StudyPlan";
 import { TutorPanel } from "@/components/TutorPanel";
 import { Pill } from "@/components/ui/Pill";
 import type { Question, TopicStat } from "@/lib/types";
+
+/** Id of a topic's row, by rank, so the study plan can link to it. */
+export const topicAnchor = (rank: number) => `topic-${rank}`;
 
 /**
  * The questions behind every count (REQ-009), topics in study plan order. Each
@@ -33,19 +35,21 @@ function TopicRow({
   const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
   const id = topicAnchor(rank);
 
-  // A study plan link to this topic opens it.
+  // A link to this topic opens it: on load, and on every click, since
+  // clicking a link to the hash already in the URL fires no hashchange.
   useEffect(() => {
-    const openIfTargeted = () => {
-      if (window.location.hash === `#${id}`) setOpen(true);
+    if (window.location.hash === `#${id}`) setOpen(true);
+    const onClick = (event: MouseEvent) => {
+      if ((event.target as Element).closest?.(`a[href="#${id}"]`)) setOpen(true);
     };
-    openIfTargeted();
-    window.addEventListener("hashchange", openIfTargeted);
-    return () => window.removeEventListener("hashchange", openIfTargeted);
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
   }, [id]);
 
   return (
     <div
       id={id}
+      // Clears the sticky section nav, as the page's sections do.
       className="scroll-mt-[64px] border-t border-[var(--border-hairline)] first:border-t-0"
     >
       <button

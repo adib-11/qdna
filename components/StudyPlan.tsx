@@ -1,8 +1,6 @@
+import { topicAnchor } from "@/components/TopicDossier";
 import { Card } from "@/components/ui/Card";
 import type { StudyPlan as Plan } from "@/lib/types";
-
-/** Id of a topic's row in the Questions section, so the plan can link to it. */
-export const topicAnchor = (rank: number) => `topic-${rank}`;
 
 const marks = (value: number | null) =>
   value === null ? "marks not recorded" : `≈${Number(value.toFixed(1))} marks`;
@@ -21,8 +19,14 @@ export function StudyPlan({
   questionCount: number;
   paperCount: number;
 }) {
-  if (plan.topics.length === 0) return null;
-  const n = plan.topics.length;
+  if (plan.topics.length === 0) {
+    return (
+      <p className="text-body-sm text-graphite">
+        No questions were extracted, so there is no study plan yet.
+      </p>
+    );
+  }
+  const count = plan.topics.length;
 
   return (
     <Card tone="marigold" className="max-w-[760px] p-[20px] sm:p-[36px]">
@@ -40,6 +44,7 @@ export function StudyPlan({
               {index + 1}
             </span>
             <span className="min-w-0 flex-1">
+              {/* The plan is a prefix of the ranking, so rank finds the row. */}
               <a
                 href={`#${topicAnchor(index + 1)}`}
                 className="block break-words text-body font-medium text-ink-black underline decoration-[rgba(0,0,0,0.3)] underline-offset-[3px] hover:decoration-ink-black"
@@ -60,7 +65,7 @@ export function StudyPlan({
       </ol>
 
       <p className="mt-[12px] text-body-sm font-medium">
-        These {n} topic{n === 1 ? "" : "s"}
+        These {count} topic{count === 1 ? "" : "s"}
         {plan.marksPerPaper === null
           ? ""
           : ` carry ${marks(plan.marksPerPaper)} a paper and`}{" "}
