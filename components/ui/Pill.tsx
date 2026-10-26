@@ -12,7 +12,7 @@ type PillTone =
 const TONE_CLASS: Record<PillTone, string> = {
   neutral: "bg-[rgba(0,0,0,0.06)] text-[rgba(0,0,0,0.6)]",
   marigold: "bg-marigold text-ink-black",
-  coral: "bg-coral text-pure-white",
+  coral: "bg-coral text-ink-black",
   "sky-tint": "bg-sky-tint text-notion-blue",
   "sky-wash": "bg-sky-wash text-ink-black",
   peach: "bg-peach text-ink-black",

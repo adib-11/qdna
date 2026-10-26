@@ -28,7 +28,11 @@ export function paretoCoverage(stats: TopicStat[]): ParetoPoint[] {
  * unreachable, and 0 for an empty corpus.
  */
 export function topicsToReach(stats: TopicStat[], targetPct: number): number {
-  const curve = paretoCoverage(stats);
+  return pointsToReach(paretoCoverage(stats), targetPct);
+}
+
+/** `topicsToReach`, read off a coverage curve that is already computed. */
+export function pointsToReach(curve: ParetoPoint[], targetPct: number): number {
   const index = curve.findIndex((point) => point.cumulativePct >= targetPct);
   return index === -1 ? curve.length : index + 1;
 }

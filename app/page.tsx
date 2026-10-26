@@ -5,7 +5,7 @@ import { HighlightPill, Pill } from "@/components/ui/Pill";
 
 export default function Home() {
   return (
-    <main className="page-shell py-[64px]">
+    <main id="main" tabIndex={-1} className="page-shell py-[64px] focus:outline-none">
       <section className="max-w-[900px]">
         <Pill tone="sky-tint">Evidence-weighted, never a forecast</Pill>
 
@@ -30,7 +30,14 @@ export default function Home() {
         <SavedCorpora />
       </section>
 
-      <section className="mt-[80px] grid gap-[24px] md:grid-cols-3">
+      <section
+        aria-labelledby="what-qdna-computes"
+        className="mt-[80px] grid gap-[24px] md:grid-cols-3"
+      >
+        {/* Names the cards' section, so they do not read as part of the one above. */}
+        <h2 id="what-qdna-computes" className="sr-only">
+          What qDNA computes
+        </h2>
         <Card tone="white">
           <CardTitle>Genome map</CardTitle>
           <CardBody className="mt-[8px]">

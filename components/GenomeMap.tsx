@@ -1,5 +1,10 @@
 import { paperOrder } from "@/lib/analysis/papers";
+import { mixOver, readableInk } from "@/lib/contrast";
 import type { Question, TopicStat } from "@/lib/types";
+
+/** `--color-notion-blue` over the card's white, as hex so contrast can be computed. */
+const CELL_BLUE = "#0066c4";
+const CELL_GROUND = "#ffffff";
 
 /** A single hit is faint but must still be visible against the canvas. */
 const MIN_ALPHA = 0.14;
@@ -100,20 +105,16 @@ export function GenomeMap({
                 </th>
                 {papers.map((paper) => {
                   const count = cellCount(stat.topic, paper.label);
+                  // An explicit shade, so the ink can be picked against it.
+                  const shade = count === 0 ? null : mixOver(CELL_BLUE, alphaFor(count, max), CELL_GROUND);
                   return (
                     <td key={paper.label} className="p-[2px]">
                       <div
                         title={`${stat.topic} · ${paper.label} · ${count} question${count === 1 ? "" : "s"}`}
                         className="flex h-[28px] items-center justify-center rounded-[var(--radius-md)] tabular-nums"
                         style={{
-                          backgroundColor:
-                            count === 0
-                              ? "var(--color-paper-warmth)"
-                              : `color-mix(in srgb, var(--color-notion-blue) ${(alphaFor(count, max) * 100).toFixed(1)}%, transparent)`,
-                          color:
-                            alphaFor(count, max) > 0.55
-                              ? "var(--color-pure-white)"
-                              : "rgba(0,0,0,0.6)",
+                          backgroundColor: shade ?? "var(--color-paper-warmth)",
+                          color: shade ? readableInk(shade) : undefined,
                         }}
                       >
                         {count === 0 ? "" : count}

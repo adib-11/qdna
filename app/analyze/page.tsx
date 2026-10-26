@@ -72,7 +72,7 @@ export default function AnalyzePage() {
 
   if (!corpus || !outcome || !result) {
     return (
-      <main className="page-shell py-[64px]">
+      <main id="main" tabIndex={-1} className="page-shell py-[64px] focus:outline-none">
         <h1 className="text-heading-sm font-bold">Nothing to analyze yet</h1>
         <p className="mt-[16px] text-body text-graphite">
           Upload a few past papers first.
@@ -136,7 +136,7 @@ export default function AnalyzePage() {
         </ul>
       </nav>
 
-      <main className="page-shell section-stack py-[32px] sm:py-[64px]">
+      <main id="main" tabIndex={-1} className="page-shell section-stack py-[32px] sm:py-[64px] focus:outline-none">
         <section id="study-plan" className={SCROLL_CLEARANCE}>
           {/* Course names are long and often one unbreakable word, so the
               display size steps down before it can push the page sideways. */}
