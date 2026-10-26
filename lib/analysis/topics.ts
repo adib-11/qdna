@@ -111,3 +111,46 @@ export function ungroupedLabels(
     ...new Set(questions.map((q) => q.topic.trim()).filter((l) => l && !grouped.has(l))),
   ];
 }
+
+/**
+ * A re-run of topic grouping may name a topic differently, and a topic
+ * override refers to topics by name. So each topic an override refers to that
+ * the `next` grouping no longer has lends its name to the new topic holding
+ * most of its labels, and the student's merges and renames keep applying.
+ * `previous` is the grouping the overrides were made over, if any.
+ */
+export function keepOverriddenTopics(
+  questions: Question[],
+  previous: TopicGrouping | undefined,
+  next: TopicGrouping,
+  overrides: TopicOverride[],
+): TopicGrouping {
+  const referenced = new Set(overrides.flatMap((o) => o.from));
+  const regrouped = new Map(Object.entries(next));
+  const newTopics = new Set(regrouped.values());
+
+  // Each label's topic before the re-run, as the student saw it.
+  const before = new Map<string, string>();
+  const resolved = resolveTopics(questions, { grouping: previous });
+  questions.forEach((q, i) => before.set(q.topic.trim(), resolved[i].topic));
+
+  const kept = new Map<string, string>();
+  for (const name of referenced) {
+    if (newTopics.has(name)) continue;
+    const votes = new Map<string, number>();
+    for (const [label, topic] of before) {
+      const now = regrouped.get(label);
+      if (topic !== name || now === undefined) continue;
+      // A new topic another override names, or one already renamed, keeps its name.
+      if (referenced.has(now) || kept.has(now)) continue;
+      votes.set(now, (votes.get(now) ?? 0) + 1);
+    }
+    const winner = [...votes].sort((a, b) => b[1] - a[1])[0]?.[0];
+    if (winner !== undefined) kept.set(winner, name);
+  }
+
+  if (kept.size === 0) return next;
+  return Object.fromEntries(
+    [...regrouped].map(([label, topic]) => [label, kept.get(topic) ?? topic]),
+  );
+}

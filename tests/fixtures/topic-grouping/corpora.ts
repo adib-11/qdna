@@ -29,14 +29,31 @@ export const GROUND_TRUTH_COURSES: GroundTruthCourse[] = fs
   .sort()
   .map((file) => readJson(path.join(GROUND_TRUTH_DIR, file)));
 
+/**
+ * What a corpus must show for topic grouping to ship, by the owner's call:
+ * holdout coverage and pair F1 both rise on the bundled single-course
+ * corpora; pair F1 rises on each single-paper ground-truth set, where holdout
+ * coverage cannot be measured (there is no second paper to hold out); and the
+ * mixed-course semester corpus, which no ground truth matches, is excluded.
+ */
+export type GroupingGate = "coverage and pair F1" | "pair F1" | "excluded";
+
+export const GATE_LABEL: Record<GroupingGate, string> = {
+  "coverage and pair F1": "holdout coverage and pair F1 must rise",
+  "pair F1": "pair F1 must rise (coverage not measurable: one paper)",
+  excluded: "excluded from gate (no ground truth)",
+};
+
 export interface GroupingCorpus {
   name: string;
   questions: Question[];
+  gate: GroupingGate;
 }
 
-const bundled = (name: string): GroupingCorpus => ({
+const bundled = (name: string, gate: GroupingGate): GroupingCorpus => ({
   name: `data/${name}.json`,
   questions: readJson(path.join(ROOT, "data", `${name}.json`)),
+  gate,
 });
 
 /** The questions on one ground-truth paper, from an extraction that holds it. */
@@ -46,6 +63,7 @@ function groundTruthPaper(slug: string, from: Question[]): GroupingCorpus {
   return {
     name: `ground truth: ${slug}`,
     questions: from.filter((q) => labels.has(q.paper.label)),
+    gate: "pair F1",
   };
 }
 
@@ -53,11 +71,11 @@ const extraction = (slug: string): Question[] =>
   readJson(path.join(HERE, "extractions", `${slug}.json`));
 
 export function groupingCorpora(): GroupingCorpus[] {
-  const cad = bundled("cad");
+  const cad = bundled("cad", "coverage and pair F1");
   return [
-    bundled("swe"),
+    bundled("swe", "coverage and pair F1"),
     cad,
-    bundled("semester"),
+    bundled("semester", "excluded"),
     // The 2024 CAD paper's only extraction is the one in the bundled corpus.
     groundTruthPaper("computer-architecture", cad.questions),
     ...["microprocessors", "basic-mechanical", "electrical-machines", "software-engineering", "communication"].map(

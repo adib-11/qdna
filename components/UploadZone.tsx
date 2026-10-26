@@ -109,10 +109,13 @@ export function UploadZone() {
     const saved = saveSession(run.outcome);
     const apiKey = ownKeyStore().get();
     if (saved && apiKey) {
+      const controller = new AbortController();
+      cancelRef.current = controller;
       setPhase("grouping");
-      // A failed grouping is not a failed extraction: the analysis offers
-      // "Group topics" as a pending action until one succeeds.
-      await groupSavedCorpus(saved.id, apiKey).catch(() => {});
+      // A failed or skipped grouping is not a failed extraction: the analysis
+      // offers "Group topics" as a pending action until one succeeds.
+      await groupSavedCorpus(saved.id, apiKey, controller.signal).catch(() => {});
+      cancelRef.current = null;
     }
     router.push("/analyze");
   }
@@ -138,6 +141,7 @@ export function UploadZone() {
   }
 
   const working = phase === "working";
+  const grouping = phase === "grouping";
   const kept = stopped?.outcome;
 
   return (
@@ -151,7 +155,7 @@ export function UploadZone() {
         onDrop={(e) => {
           e.preventDefault();
           setDragging(false);
-          if (!working) addFiles(e.dataTransfer.files);
+          if (!working && !grouping) addFiles(e.dataTransfer.files);
         }}
         className={`rounded-[var(--radius-xl)] border border-dashed bg-pure-white p-[36px] text-center transition-colors ${
           dragging ? "border-notion-blue bg-sky-tint" : "border-[rgba(0,0,0,0.2)]"
@@ -182,7 +186,7 @@ export function UploadZone() {
           <Button
             variant="ghost"
             onClick={() => inputRef.current?.click()}
-            disabled={working}
+            disabled={working || grouping}
           >
             Choose files
           </Button>
@@ -190,9 +194,16 @@ export function UploadZone() {
             <Button variant="outlined" onClick={() => cancelRef.current?.abort()}>
               Cancel extraction
             </Button>
+          ) : grouping ? (
+            <>
+              <Button disabled>Grouping topics…</Button>
+              <Button variant="outlined" onClick={() => cancelRef.current?.abort()}>
+                Skip topic grouping
+              </Button>
+            </>
           ) : (
-            <Button onClick={analyze} disabled={files.length === 0 || phase === "grouping"}>
-              {phase === "grouping" ? "Grouping topics…" : "Analyze papers"}
+            <Button onClick={analyze} disabled={files.length === 0}>
+              Analyze papers
             </Button>
           )}
         </div>

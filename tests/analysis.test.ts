@@ -11,7 +11,7 @@ import { clusterLineages, similarity } from "@/lib/analysis/lineage";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { corpusCourses } from "@/lib/analysis/papers";
-import { canonicalizeTopics } from "@/lib/analysis/topics";
+import { canonicalizeTopics, keepOverriddenTopics } from "@/lib/analysis/topics";
 import { paretoCoverage, topicsToReach } from "@/lib/analysis/pareto";
 import { topicFrequency } from "@/lib/analysis/frequency";
 import type { Question } from "@/lib/types";
@@ -641,5 +641,42 @@ describe("analyze with topic grouping and topic overrides", () => {
 
     expect(coverage()).toBe(0);
     expect(coverage({ grouping })).toBe(100);
+  });
+
+  describe("a re-run of topic grouping", () => {
+    const regrouped = {
+      ...grouping,
+      "Requirements Gathering": "Requirements Analysis",
+      "Requirements Elicitation": "Requirements Analysis",
+      "Data Flow Diagrams": "Structured Analysis",
+      "Data Flow Diagram": "Structured Analysis",
+    };
+
+    it("keeps an override applying when the new grouping names its topic differently", () => {
+      const overrides = [{ from: ["Requirements"], to: "Requirements Engineering" }];
+
+      const kept = keepOverriddenTopics(corpus, grouping, regrouped, overrides);
+      const result = analyze(corpus, { grouping: kept, overrides });
+
+      expect(topicOf(result, "c")).toBe("Requirements Engineering");
+      expect(topicOf(result, "d")).toBe("Requirements Engineering");
+    });
+
+    it("keeps an override made on a topic lexical folding named, before any grouping", () => {
+      const overrides = [{ from: ["Data Flow Diagram"], to: "DFDs" }];
+
+      const kept = keepOverriddenTopics(corpus, undefined, regrouped, overrides);
+      const result = analyze(corpus, { grouping: kept, overrides });
+
+      expect(topicOf(result, "e")).toBe("DFDs");
+      expect(topicOf(result, "f")).toBe("DFDs");
+    });
+
+    it("leaves the new grouping's names alone where no override refers to them", () => {
+      const overrides = [{ from: ["SDLC & Process Models"], to: "Process" }];
+
+      expect(keepOverriddenTopics(corpus, grouping, regrouped, overrides)).toEqual(regrouped);
+      expect(keepOverriddenTopics(corpus, grouping, regrouped, [])).toEqual(regrouped);
+    });
   });
 });

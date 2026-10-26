@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
+import { keepOverriddenTopics } from "@/lib/analysis/topics";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { groupTopics } from "@/lib/gemini/groupTopics";
@@ -57,15 +58,32 @@ export function useSavedCorpora(): SavedCorpus[] {
 
 /**
  * Run topic grouping over a saved corpus, on the student's own key, and save
- * the grouping with it. Throws the model's error; until a grouping is saved,
+ * the grouping with it, keeping the topic names the student's overrides refer
+ * to. Throws the model's error, or on `signal`; until a grouping is saved,
  * the analysis view offers "Group topics" as a pending action.
  */
-export async function groupSavedCorpus(id: string, apiKey: string): Promise<void> {
+export async function groupSavedCorpus(
+  id: string,
+  apiKey: string,
+  signal?: AbortSignal,
+): Promise<void> {
   const corpus = browserCorpusStore()?.get(id);
   if (!corpus) return;
-  const topicGrouping = await groupTopics(
+  const regrouped = await groupTopics(
     browserModelClient(apiKey),
     corpus.outcome.questions,
+    signal,
+  );
+  // A skip that lands as the answer arrives still means skip.
+  signal?.throwIfAborted();
+  // Read again: the student may have changed an override while the model worked.
+  const latest = browserCorpusStore()?.get(id);
+  if (!latest) return;
+  const topicGrouping = keepOverriddenTopics(
+    latest.outcome.questions,
+    latest.topicGrouping,
+    regrouped,
+    latest.topicOverrides ?? [],
   );
   browserCorpusStore()?.saveTopics(id, { topicGrouping });
   corpusChanged();

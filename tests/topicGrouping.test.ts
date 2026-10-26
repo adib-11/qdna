@@ -116,7 +116,9 @@ describe("pending topic grouping", () => {
 /**
  * The offline half of the proof: the live model's saved groupings, measured
  * against the bundled corpora and the ground truth, as `scripts/group-topics.mjs`
- * reports them.
+ * reports them. The gate is the owner's: holdout coverage and pair F1 rise on
+ * the two single-course bundled corpora, pair F1 rises on the six single-paper
+ * ground-truth sets, and the mixed-course semester corpus is excluded.
  */
 describe("the saved topic groupings", () => {
   const measured = groupingCorpora().map((corpus) => {
@@ -124,29 +126,52 @@ describe("the saved topic groupings", () => {
     if (!grouping) throw new Error(`No saved grouping for ${corpus.name}`);
     return {
       name: corpus.name,
+      gate: corpus.gate,
       before: measureGrouping(corpus.questions, {}, GROUND_TRUTH_COURSES),
       after: measureGrouping(corpus.questions, { grouping }, GROUND_TRUTH_COURSES),
     };
   });
+  const gated = (gate: string) => measured.filter((m) => m.gate === gate);
+  const GROUND_TRUTH_SETS = [
+    "computer-architecture",
+    "microprocessors",
+    "basic-mechanical",
+    "electrical-machines",
+    "software-engineering",
+    "communication",
+  ].map((slug) => `ground truth: ${slug}`);
 
-  it("raise agreement with the ground-truth grouping (pair F1) on every corpus it can be measured on", () => {
-    const scored = measured.filter((m) => m.before.pairF1 !== null);
+  it("gate exactly the corpora the owner named", () => {
+    expect(gated("coverage and pair F1").map((m) => m.name)).toEqual([
+      "data/swe.json",
+      "data/cad.json",
+    ]);
+    expect(gated("pair F1").map((m) => m.name).sort()).toEqual([...GROUND_TRUTH_SETS].sort());
+    expect(gated("excluded").map((m) => m.name)).toEqual(["data/semester.json"]);
+    expect(measured).toHaveLength(9);
+  });
 
-    expect(scored.map((m) => m.name)).toHaveLength(8);
-    for (const { name, before, after } of scored) {
+  it("raise holdout coverage and pair F1 on data/swe.json and data/cad.json", () => {
+    for (const { name, before, after } of gated("coverage and pair F1")) {
+      expect(after.holdoutCoverage, name).toBeGreaterThan(before.holdoutCoverage!);
       expect(after.pairF1, name).toBeGreaterThan(before.pairF1!);
     }
   });
 
-  it("never lower holdout coverage, and raise it on the single-course bundled corpora", () => {
-    for (const { name, before, after } of measured) {
-      if (before.holdoutCoverage === null) continue;
-      expect(after.holdoutCoverage, name).toBeGreaterThanOrEqual(before.holdoutCoverage);
+  it("raise pair F1 on the six single-paper ground-truth sets, where coverage is not measurable", () => {
+    for (const { name, before, after } of gated("pair F1")) {
+      // One paper leaves nothing to hold out.
+      expect(before.holdoutCoverage, name).toBeNull();
+      expect(after.holdoutCoverage, name).toBeNull();
+      expect(after.pairF1, name).toBeGreaterThan(before.pairF1!);
     }
-    for (const name of ["data/swe.json", "data/cad.json"]) {
-      const { before, after } = measured.find((m) => m.name === name)!;
-      expect(after.holdoutCoverage, name).toBeGreaterThan(before.holdoutCoverage!);
-    }
+  });
+
+  it("leave data/semester.json out of the gate, as no ground truth matches it", () => {
+    const [semester] = gated("excluded");
+
+    expect(semester.before.pairF1).toBeNull();
+    expect(semester.after.pairF1).toBeNull();
   });
 
   it("fold the bundled Software Engineering corpus's 57 topics to a syllabus-sized set", () => {

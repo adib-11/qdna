@@ -17,6 +17,7 @@ import { extractStatus } from "@/lib/gemini/generate";
 import { groupTopics } from "@/lib/gemini/groupTopics";
 import { measureGrouping } from "@/lib/eval/score";
 import {
+  GATE_LABEL,
   GROUND_TRUTH_COURSES,
   groupingCorpora,
   savedGrouping,
@@ -48,9 +49,9 @@ const pct = (n) => (n === null ? "n/a" : `${n.toFixed(1)}%`);
 const num = (n) => (n === null ? "n/a" : n.toFixed(3));
 
 console.log(
-  "| Corpus | Questions | Topics before → after | Holdout coverage before → after | Pair F1 before → after | Rand index before → after |",
+  "| Corpus | Questions | Topics before → after | Holdout coverage before → after | Pair F1 before → after | Rand index before → after | Gate |",
 );
-console.log("|---|---|---|---|---|---|");
+console.log("|---|---|---|---|---|---|---|");
 for (const corpus of corpora) {
   const before = measureGrouping(corpus.questions, {}, GROUND_TRUTH_COURSES);
   const after = measureGrouping(
@@ -59,7 +60,7 @@ for (const corpus of corpora) {
     GROUND_TRUTH_COURSES,
   );
   console.log(
-    `| ${corpus.name} | ${corpus.questions.length} | ${before.topics} → ${after.topics} | ${pct(before.holdoutCoverage)} → ${pct(after.holdoutCoverage)} | ${num(before.pairF1)} → ${num(after.pairF1)} | ${num(before.randIndex)} → ${num(after.randIndex)} |`,
+    `| ${corpus.name} | ${corpus.questions.length} | ${before.topics} → ${after.topics} | ${pct(before.holdoutCoverage)} → ${pct(after.holdoutCoverage)} | ${num(before.pairF1)} → ${num(after.pairF1)} | ${num(before.randIndex)} → ${num(after.randIndex)} | ${GATE_LABEL[corpus.gate]} |`,
   );
 }
 
