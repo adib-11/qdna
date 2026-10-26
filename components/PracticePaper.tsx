@@ -77,7 +77,10 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
     .filter((section) => section.questions.length > 0);
 
   return (
-    <div className="rounded-[var(--radius-xl)] bg-midnight-ink p-[var(--card-padding)] text-pure-white">
+    // Printed only once a paper has been written: an unused prompt is noise on paper.
+    <div
+      className={`rounded-[var(--radius-xl)] bg-midnight-ink p-[var(--card-padding)] text-pure-white ${paper ? "" : "print:hidden"}`}
+    >
       <div className="flex flex-wrap items-start justify-between gap-[16px]">
         <div className="min-w-0">
           <Pill tone="marigold">Revision aid · never a forecast</Pill>
@@ -94,6 +97,7 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
 
         <Button
           variant="primary"
+          className="print:hidden"
           onClick={generate}
           disabled={state.status === "loading"}
         >

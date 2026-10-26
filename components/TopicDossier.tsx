@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { TutorPanel } from "@/components/TutorPanel";
 import { Pill } from "@/components/ui/Pill";
 import type { Question, TopicStat } from "@/lib/types";
 
+/** Id of a topic's row, by rank, so the study plan can link to it. */
+export const topicAnchor = (rank: number) => `topic-${rank}`;
+
 /**
- * The evidence table (REQ-009). Every number shown anywhere else in the results
- * view can be audited here: each topic expands to the individual questions that
- * produced its count, each tagged with the paper it came from.
+ * The questions behind every count (REQ-009), topics in study plan order. Each
+ * topic expands to the individual questions that produced its count, each
+ * tagged with its paper, number and marks, and each with a hint.
  *
  * The top-ranked topic starts open so the pattern is visible without a click.
  */
@@ -28,23 +31,49 @@ function TopicRow({
   defaultOpen: boolean;
   onAskTutor: (question: Question) => void;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const id = topicAnchor(rank);
+  // Rows mount only after the corpus is read from browser storage, so the
+  // URL is always there to check.
+  const [open, setOpen] = useState(
+    () => defaultOpen || window.location.hash === `#${id}`,
+  );
   const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
 
+  // A link to this topic opens it. Clicks are heard directly, since clicking
+  // a link to the hash already in the URL fires no hashchange.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if ((event.target as Element).closest?.(`a[href="#${id}"]`)) setOpen(true);
+    };
+    const onHashChange = () => {
+      if (window.location.hash === `#${id}`) setOpen(true);
+    };
+    document.addEventListener("click", onClick);
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("hashchange", onHashChange);
+    };
+  }, [id]);
+
   return (
-    <div className="border-t border-[var(--border-hairline)] first:border-t-0">
+    <div
+      id={id}
+      // Clears the sticky section nav, as the page's sections do.
+      className="scroll-mt-[64px] border-t border-[var(--border-hairline)] first:border-t-0"
+    >
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        className="flex w-full items-center gap-[16px] px-[var(--card-padding)] py-[16px] text-left hover:bg-[rgba(0,0,0,0.02)]"
+        className="flex w-full items-center gap-[12px] px-[var(--card-padding)] py-[16px] text-left hover:bg-[rgba(0,0,0,0.02)]"
       >
-        <span className="w-[24px] shrink-0 text-caption tabular-nums text-[rgba(0,0,0,0.4)]">
+        <span className="w-[24px] shrink-0 text-caption tabular-nums text-[rgba(0,0,0,0.6)]">
           {rank}
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-body font-medium text-[rgba(0,0,0,0.95)]">
+          <span className="block break-words text-body font-medium text-[rgba(0,0,0,0.95)]">
             {stat.topic}
           </span>
           <span className="mt-[4px] block text-caption text-graphite">
@@ -59,78 +88,47 @@ function TopicRow({
 
         <span
           aria-hidden
-          className="shrink-0 text-caption text-[rgba(0,0,0,0.4)]"
+          className="shrink-0 text-caption text-[rgba(0,0,0,0.6)] print:hidden"
         >
-          {open ? "Hide" : "Show"} evidence
+          {open ? "Hide" : "Show"}
         </span>
       </button>
 
-      {open && (
-        <div className="overflow-x-auto px-[var(--card-padding)] pb-[24px]">
-          <table className="w-full min-w-[560px] border-collapse text-left">
-            <thead>
-              <tr className="text-caption font-medium text-[rgba(0,0,0,0.6)]">
-                <th scope="col" className="py-[8px] pr-[16px] font-medium">
-                  Paper
-                </th>
-                <th scope="col" className="py-[8px] pr-[16px] font-medium">
-                  Q
-                </th>
-                <th scope="col" className="py-[8px] pr-[16px] font-medium">
-                  Marks
-                </th>
-                <th scope="col" className="py-[8px] pr-[16px] font-medium">
-                  Type
-                </th>
-                <th scope="col" className="py-[8px] pr-[16px] font-medium">
-                  Question
-                </th>
-                <th scope="col" className="py-[8px] font-medium">
-                  <span className="sr-only">Hint</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {stat.questions.map((question, index) => (
-                <tr
-                  key={`${question.id}-${index}`}
-                  className="border-t border-[var(--border-hairline)] align-top"
-                >
-                  <td className="py-[12px] pr-[16px]">
-                    <Pill tone="sky-tint">{question.paper.label}</Pill>
-                    {question.paper.section && (
-                      <span className="mt-[4px] block text-caption text-[rgba(0,0,0,0.4)]">
-                        Section {question.paper.section}
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-[12px] pr-[16px] text-body-sm tabular-nums text-graphite whitespace-nowrap">
-                    {question.qNo}
-                  </td>
-                  <td className="py-[12px] pr-[16px] text-body-sm tabular-nums text-graphite">
-                    {question.marks ?? "—"}
-                  </td>
-                  <td className="py-[12px] pr-[16px] text-caption text-graphite whitespace-nowrap">
-                    {question.isNumerical ? "Numerical" : "Theory"}
-                  </td>
-                  <td className="py-[12px] pr-[16px] text-body-sm break-words text-graphite">
-                    {question.text}
-                  </td>
-                  <td className="py-[12px]">
-                    <button
-                      type="button"
-                      onClick={() => onAskTutor(question)}
-                      className="whitespace-nowrap rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd]"
-                    >
-                      Hint
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Always rendered, so the print view carries every question. */}
+      <ol
+        className={`${open ? "" : "hidden"} px-[var(--card-padding)] pb-[16px] print:block`}
+      >
+        {stat.questions.map((question, index) => (
+          <li
+            key={`${question.id}-${index}`}
+            className="border-t border-[var(--border-hairline)] py-[12px]"
+          >
+            <div className="flex flex-wrap items-center gap-x-[8px] gap-y-[4px] text-caption text-graphite">
+              <Pill tone="sky-tint" wrap>
+                {question.paper.label}
+              </Pill>
+              {question.paper.section && (
+                <span>Section {question.paper.section}</span>
+              )}
+              <span className="tabular-nums">{question.qNo}</span>
+              <span className="tabular-nums">
+                {question.marks === null ? "marks not stated" : `${question.marks} marks`}
+              </span>
+              <span>{question.isNumerical ? "Numerical" : "Theory"}</span>
+            </div>
+            <p className="mt-[8px] break-words text-body-sm text-graphite">
+              {question.text}
+            </p>
+            <button
+              type="button"
+              onClick={() => onAskTutor(question)}
+              className="mt-[8px] rounded-[var(--radius-lg)] bg-sky-tint px-[12px] py-[4px] text-caption font-medium text-notion-blue hover:bg-[#d8ecfd] print:hidden"
+            >
+              Hint
+            </button>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -163,11 +161,11 @@ export function TopicDossier({
     <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
       <div className="p-[var(--card-padding)] pb-[16px]">
         <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
-          Topic dossier
+          Questions
         </h2>
         <p className="mt-[8px] text-body-sm text-graphite">
-          Every topic with the source questions behind its count. Expand a topic
-          to check the evidence yourself.
+          Every topic, in study plan order, with the questions behind its count.
+          Open a topic to practise; ask for a hint on any question.
         </p>
       </div>
 

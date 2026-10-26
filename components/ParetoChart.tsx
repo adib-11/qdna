@@ -43,9 +43,9 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
   return (
     <div className="rounded-[var(--radius-xl)] border border-[var(--border-hairline)] bg-pure-white">
       <div className="p-[var(--card-padding)] pb-[8px]">
-        <h2 className="text-heading-sm font-bold tracking-[-0.242px]">
+        <h3 className="text-heading-sm font-bold tracking-[-0.242px]">
           Pareto coverage
-        </h2>
+        </h3>
         <p className="mt-[8px] text-body-sm text-graphite">
           Topics ranked by how often they were asked, with cumulative coverage
           overlaid. The dashed line marks {PARETO_TARGET_PCT}% of every question
@@ -53,7 +53,12 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
         </p>
       </div>
 
-      <div className="overflow-x-auto px-[8px] pb-[var(--card-padding)]">
+      <div
+        role="region"
+        aria-label="Pareto chart, scrolls sideways"
+        tabIndex={0}
+        className="overflow-x-auto px-[8px] pb-[var(--card-padding)] print:hidden"
+      >
         <div
           style={{ minWidth: Math.max(560, data.length * PX_PER_TOPIC) }}
           className="h-[360px]"
@@ -142,6 +147,30 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* The chart is wider than a page, so print carries its numbers instead. */}
+      <table className="mx-[var(--card-padding)] mb-[var(--card-padding)] hidden text-caption print:table">
+        <thead>
+          <tr className="text-left">
+            <th scope="col" className="pr-[16px]">Rank</th>
+            <th scope="col" className="pr-[16px]">Topic</th>
+            <th scope="col" className="pr-[16px] text-right">Questions</th>
+            <th scope="col" className="text-right">Cumulative</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((point) => (
+            <tr key={point.topic}>
+              <td className="pr-[16px] tabular-nums">{point.rank}</td>
+              <td className="pr-[16px]">{point.topic}</td>
+              <td className="pr-[16px] text-right tabular-nums">{point.count}</td>
+              <td className="text-right tabular-nums">
+                {point.cumulativePct.toFixed(1)}%
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

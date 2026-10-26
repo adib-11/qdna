@@ -9,26 +9,55 @@ import {
   importCorpusFile,
 } from "@/lib/corpus/corpusFile";
 import { deliverFile, downloadFile } from "@/lib/corpus/deliver";
+import { studyPack } from "@/lib/corpus/studyPack";
 import { corpusCourses, corpusTitle } from "@/lib/analysis/papers";
-import type { Question } from "@/lib/types";
+import type { AnalysisResult, Question } from "@/lib/types";
 
-/** Export the corpus as a `.qdna.json` file: share sheet where supported, download otherwise. */
+/** A file name for the corpus, from its course: "software-engineering". */
+function corpusSlug(questions: Question[]): string {
+  return (
+    corpusTitle(corpusCourses(questions))
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "corpus"
+  );
+}
+
+/** Share sheet where supported, download otherwise. */
+async function deliver(content: string, name: string, type: string) {
+  await deliverFile(new File([content], name, { type }), navigator, downloadFile);
+}
+
+/** Export the corpus as a `.qdna.json` file. */
 export function ExportCorpusButton({ questions }: { questions: Question[] }) {
   async function exportCorpus() {
-    const slug =
-      corpusTitle(corpusCourses(questions))
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "") || "corpus";
-    const file = new File([exportCorpusFile(questions)], slug + CORPUS_FILE_EXTENSION, {
-      type: "application/json",
-    });
-    await deliverFile(file, navigator, downloadFile);
+    await deliver(
+      exportCorpusFile(questions),
+      corpusSlug(questions) + CORPUS_FILE_EXTENSION,
+      "application/json",
+    );
   }
 
   return (
     <Button variant="ghost" onClick={exportCorpus}>
       Export corpus file
+    </Button>
+  );
+}
+
+/** Export the study pack, a Markdown file to paste into a chatbot. */
+export function StudyPackButton({ result }: { result: AnalysisResult }) {
+  async function exportPack() {
+    await deliver(
+      studyPack(result),
+      `${corpusSlug(result.questions)}-study-pack.md`,
+      "text/markdown",
+    );
+  }
+
+  return (
+    <Button variant="ghost" onClick={exportPack}>
+      Study pack
     </Button>
   );
 }
