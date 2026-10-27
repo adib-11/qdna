@@ -35,10 +35,9 @@
 
 ## About qDNA
 
-<a href="docs/launch-video/qdna-launch.mp4">
-  <img src="docs/launch-video/poster.jpg" width="100%" alt="Watch the 80-second qDNA launch film">
-</a>
-<p align="center"><sub>▶ <a href="docs/launch-video/qdna-launch.mp4">Watch the launch film</a> (80 s, with sound) · <a href="docs/launch-video/storyboard.html">storyboard source</a> (open locally in a browser)</sub></p>
+https://github.com/user-attachments/assets/18342adf-197f-4f00-b134-076d0b630094
+
+<p align="center"><sub>Launch film, 80 s, with sound · <a href="docs/launch-video/qdna-launch.mp4">full-quality 1080p file</a> · <a href="docs/launch-video/storyboard.html">storyboard source</a> (open locally in a browser)</sub></p>
 
 **qDNA** turns the scanned past papers a student already has into a ranked,
 auditable answer to *"what do I study first?"*
