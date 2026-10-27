@@ -2,12 +2,10 @@ import { normalizeText } from "@/lib/analysis/normalize";
 import type { PaperRef, Question } from "@/lib/types";
 
 /**
- * Distinct courses in the corpus, most-asked first.
+ * Distinct course names in the corpus, most-asked first.
  *
- * A corpus is usually one course, but nothing stops a user dropping in a
- * semester's worth of papers at once — the bundled 2-1 sample is exactly that
- * — and the first question's course is then not the corpus's course. Spellings
- * are folded ("Electromagnetic Fields & Waves" and "…and Waves" are one
+ * One course prints its name several ways, and a mixed upload holds several
+ * courses until it is split. Spellings are folded ("Electromagnetic Fields & Waves" and "…and Waves" are one
  * course, and OCR will produce both), reporting the most common spelling.
  */
 export function corpusCourses(questions: Question[]): string[] {
@@ -47,18 +45,6 @@ export function corpusCourses(questions: Question[]): string[] {
         ),
     )
     .map((course) => course.name);
-}
-
-/**
- * What a corpus is, in a heading or a saved-corpora list. One course names
- * itself; a bundle of several says so rather than borrowing the first paper's
- * name.
- */
-export function corpusTitle(courses: string[]): string {
-  if (courses.length === 0) return "your corpus";
-  if (courses.length === 1) return courses[0];
-  if (courses.length === 2) return `${courses[0]} and ${courses[1]}`;
-  return `${courses.length} courses`;
 }
 
 /** True when every word of `inner` appears, in order, inside `outer`. */

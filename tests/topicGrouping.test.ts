@@ -50,7 +50,7 @@ describe("groupTopics", () => {
     question("5", "Fourier Series", "Mathematics"),
   ];
 
-  it("sends every distinct topic label once, under its course, in one request", async () => {
+  it("sends every distinct topic label once, as one course, in one request", async () => {
     const { client, requests } = replying({ topics: [] });
 
     await groupTopics(client, [...corpus, question("6", "SDLC")]);
@@ -58,7 +58,10 @@ describe("groupTopics", () => {
     expect(requests).toHaveLength(1);
     const prompt = promptOf(requests[0]);
     expect(prompt.match(/- SDLC$/gm)).toHaveLength(1);
-    expect(prompt).toMatch(/Course: Mathematics\n- Fourier Series/);
+    // Labels from every offering fold together, so the corpus is one course block.
+    expect(prompt.match(/^Course:/gm)).toHaveLength(1);
+    expect(prompt).toMatch(/- Data Flow Diagram\n- Fourier Series/);
+    expect(prompt).not.toMatch(/different courses/);
   });
 
   it("maps each label to the topic the model put it in", async () => {
@@ -117,8 +120,8 @@ describe("pending topic grouping", () => {
  * The offline half of the proof: the live model's saved groupings, measured
  * against the bundled corpora and the ground truth, as `scripts/group-topics.mjs`
  * reports them. The gate is the owner's: holdout coverage and pair F1 rise on
- * the two single-course bundled corpora, pair F1 rises on the six single-paper
- * ground-truth sets, and the mixed-course semester corpus is excluded.
+ * the two bundled corpora, and pair F1 rises on the six single-paper
+ * ground-truth sets.
  */
 describe("the saved topic groupings", () => {
   const measured = groupingCorpora().map((corpus) => {
@@ -147,8 +150,7 @@ describe("the saved topic groupings", () => {
       "data/cad.json",
     ]);
     expect(gated("pair F1").map((m) => m.name).sort()).toEqual([...GROUND_TRUTH_SETS].sort());
-    expect(gated("excluded").map((m) => m.name)).toEqual(["data/semester.json"]);
-    expect(measured).toHaveLength(9);
+    expect(measured).toHaveLength(8);
   });
 
   it("raise holdout coverage and pair F1 on data/swe.json and data/cad.json", () => {
@@ -165,13 +167,6 @@ describe("the saved topic groupings", () => {
       expect(after.holdoutCoverage, name).toBeNull();
       expect(after.pairF1, name).toBeGreaterThan(before.pairF1!);
     }
-  });
-
-  it("leave data/semester.json out of the gate, as no ground truth matches it", () => {
-    const [semester] = gated("excluded");
-
-    expect(semester.before.pairF1).toBeNull();
-    expect(semester.after.pairF1).toBeNull();
   });
 
   it("fold the bundled Software Engineering corpus's 57 topics to a syllabus-sized set", () => {

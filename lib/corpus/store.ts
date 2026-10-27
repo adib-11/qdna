@@ -37,10 +37,13 @@ export interface SavedCorpus {
   topicGrouping?: TopicGrouping;
   /** The student's topic overrides, in the order they were made. */
   topicOverrides?: TopicOverride[];
+  /** Groups of course codes the student said are one course. */
+  sameCourse?: string[][];
 }
 
 /** What a corpus keeps besides its questions. */
 type CorpusTopics = Pick<SavedCorpus, "topicGrouping" | "topicOverrides">;
+type CorpusExtras = CorpusTopics & Pick<SavedCorpus, "sameCourse">;
 
 export function createCorpusStore(
   storage: KeyValueStorage,
@@ -81,9 +84,9 @@ export function createCorpusStore(
   function save(
     outcome: ExtractionOutcome,
     id: string = crypto.randomUUID(),
-    topics: CorpusTopics = {},
+    extras: CorpusExtras = {},
   ): SavedCorpus {
-    return write({ id, savedAt: now(), outcome, ...topics }, true);
+    return write({ id, savedAt: now(), outcome, ...extras }, true);
   }
 
   return {
@@ -114,7 +117,41 @@ export function createCorpusStore(
       return save({ ...corpus.outcome, questions }, id, {
         topicGrouping: corpus.topicGrouping,
         topicOverrides,
+        sameCourse: corpus.sameCourse,
       });
+    },
+
+    /**
+     * Replace a corpus holding several courses with one corpus per course,
+     * each keeping its topic grouping and overrides, and open the first.
+     * `sameCourse` is the student's say on which codes are one course. When
+     * storage fills partway, nothing changes.
+     */
+    split(corpus: SavedCorpus, parts: Question[][], sameCourse = corpus.sameCourse): SavedCorpus[] {
+      const saved: SavedCorpus[] = [];
+      try {
+        for (const questions of parts) {
+          saved.push(
+            write(
+              {
+                id: crypto.randomUUID(),
+                savedAt: now(),
+                outcome: { ...corpus.outcome, questions },
+                topicGrouping: corpus.topicGrouping,
+                topicOverrides: corpus.topicOverrides,
+                sameCourse,
+              },
+              false,
+            ),
+          );
+        }
+      } catch (err) {
+        for (const part of saved) storage.removeItem(CORPUS_PREFIX + part.id);
+        throw err;
+      }
+      storage.removeItem(CORPUS_PREFIX + corpus.id);
+      storage.setItem(OPEN_KEY, saved[0].id);
+      return saved;
     },
 
     /**
@@ -160,7 +197,10 @@ function isSavedCorpus(value: unknown): value is SavedCorpus {
       (isRecord(value.topicGrouping) &&
         Object.values(value.topicGrouping).every((t) => typeof t === "string"))) &&
     (value.topicOverrides === undefined ||
-      (Array.isArray(value.topicOverrides) && value.topicOverrides.every(isTopicOverride)))
+      (Array.isArray(value.topicOverrides) && value.topicOverrides.every(isTopicOverride))) &&
+    (value.sameCourse === undefined ||
+      (Array.isArray(value.sameCourse) &&
+        value.sameCourse.every((g) => Array.isArray(g) && g.every((c) => typeof c === "string"))))
   );
 }
 

@@ -10,8 +10,9 @@ import {
 } from "@/lib/corpus/corpusFile";
 import { deliverFile, downloadFile } from "@/lib/corpus/deliver";
 import { studyPack } from "@/lib/corpus/studyPack";
-import { corpusCourses, corpusTitle } from "@/lib/analysis/papers";
+import { corpusTitle, needsSplit, splitCourses } from "@/lib/corpus/courses";
 import type { TopicOverride } from "@/lib/analysis/topics";
+import { browserCorpusStore } from "@/lib/corpus/store";
 import { groupSavedCorpus } from "@/lib/corpus/useCorpora";
 import { handleModelError, ownKeyStore } from "@/lib/key/ownKey";
 import type { AnalysisResult, Question } from "@/lib/types";
@@ -19,8 +20,8 @@ import type { AnalysisResult, Question } from "@/lib/types";
 /** A file name for the corpus, from its course: "software-engineering". */
 function corpusSlug(questions: Question[]): string {
   return (
-    corpusTitle(corpusCourses(questions))
-      .toLowerCase()
+    corpusTitle(questions)
+      .name.toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "") || "corpus"
   );
@@ -118,12 +119,15 @@ export function ImportCorpusButton({
     }
 
     // Grouping never asks for a key here: without one, the import keeps the
-    // raw topic labels and "Group topics" waits as a pending action.
+    // raw topic labels and "Group topics" waits as a pending action. A corpus
+    // holding several courses is grouped once it has been split.
     const apiKey = ownKeyStore().get();
-    if (!id || !apiKey) return;
+    const merged = id ? browserCorpusStore()?.get(id) : null;
+    if (!merged || !apiKey) return;
+    if (needsSplit(splitCourses(merged.outcome.questions, merged.sameCourse))) return;
     setMessage({ error: false, text: `${summary} Grouping topics…` });
     try {
-      await groupSavedCorpus(id, apiKey);
+      await groupSavedCorpus(merged.id, apiKey);
       setMessage({ error: false, text: `${summary} Topics grouped.` });
     } catch (err) {
       setMessage({

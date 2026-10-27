@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { BacktestPanel } from "@/components/BacktestPanel";
+import { CourseSplit } from "@/components/CourseSplit";
 import {
   ExportCorpusButton,
   ImportCorpusButton,
@@ -20,7 +21,8 @@ import { TopicEditor } from "@/components/TopicEditor";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
-import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
+import { paperOrder } from "@/lib/analysis/papers";
+import { corpusTitle, needsSplit, splitCourses } from "@/lib/corpus/courses";
 import { browserCorpusStore } from "@/lib/corpus/store";
 import { shortfallNote } from "@/lib/extract/runExtraction";
 import { corpusChanged, useOpenCorpus } from "@/lib/corpus/useCorpora";
@@ -68,7 +70,14 @@ export default function AnalyzePage() {
     [corpus],
   );
 
+  // A corpus holding several courses is split before anything is analyzed.
+  const split = useMemo(
+    () => (corpus ? needsSplit(splitCourses(corpus.outcome.questions, corpus.sameCourse)) : false),
+    [corpus],
+  );
+
   if (corpus === undefined) return null;
+  if (corpus && split) return <CourseSplit key={corpus.id} corpus={corpus} />;
 
   if (!corpus || !outcome || !result) {
     return (
@@ -91,7 +100,7 @@ export default function AnalyzePage() {
 
   const { progress, partial } = outcome;
   const papers = paperOrder(result.questions);
-  const courses = corpusCourses(result.questions);
+  const title = corpusTitle(result.questions);
   const crossDept = result.lineages.filter((l) => l.crossDepartment).length;
 
   return (
@@ -151,8 +160,11 @@ export default function AnalyzePage() {
           {/* Course names are long and often one unbreakable word, so the
               display size steps down before it can push the page sideways. */}
           <h1 className="max-w-[24ch] text-2xl sm:text-3xl md:text-section">
-            {corpusTitle(courses)}
+            {title.name}
           </h1>
+          {title.codes.length > 1 && (
+            <p className="mt-2 font-outlier text-sm">{title.codes.join(" · ")}</p>
+          )}
 
           {/* The corpus at a glance, one figure to a column. */}
           <p className="mt-6 grid max-w-[640px] grid-cols-2 border-t border-ink sm:grid-cols-4">
@@ -225,7 +237,7 @@ export default function AnalyzePage() {
             <p className="mt-3 text-ink-2">
               {result.lineages.length === 0
                 ? "No recurring question found in this corpus."
-                : `${result.lineages.length} recurring question${result.lineages.length === 1 ? "" : "s"} detected${crossDept > 0 ? `, ${crossDept} spanning more than one course code` : ""}.`}
+                : `${result.lineages.length} recurring question${result.lineages.length === 1 ? "" : "s"} detected${crossDept > 0 ? `, ${crossDept} asked in both departments` : ""}.`}
             </p>
           </div>
 
