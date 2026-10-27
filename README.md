@@ -118,21 +118,34 @@ shown, described as a count over that corpus rather than as recurrence.
 ## How it works
 
 ```mermaid
-flowchart TB
-    pdf["📄 PDF papers"] --> raster["pdf.js renders JPEG pages"]
-    raster --> blank["Blank-page filter"]
-    photos["📷 JPG · PNG · HEIC photos"] --> batch
-    blank --> batch["Batches of 2 pages"]
-    batch --> cache{"SHA-256 cache hit?"}
-    cache -- "no" --> extract["✨ Gemini vision<br/>structured JSON"]
-    extract -- "cache result" --> questions
-    cache -- "yes" --> questions["Questions<br/>number · marks · paper · topic"]
-    questions --> engine["⚙️ Deterministic analysis<br/>zero API calls"]
-    engine --> outputs["Study plan · Genome map · Pareto<br/>Lineage · Dossier · Backtest"]
-    engine --> shape["Measured paper shape<br/>+ ranked topics"]
-    outputs --> one["One question<br/>+ its recurrence"]
-    shape --> paper["✨ Gemini<br/>practice paper"]
-    one --> hint["✨ Gemini<br/>hint, never the answer"]
+flowchart LR
+    subgraph prep["1 · Prepare"]
+        direction TB
+        pdf["📄 PDF papers"] --> raster["pdf.js renders<br/>JPEG pages"]
+        raster --> blank["Blank-page filter"]
+        blank --> batch["Batches of 2 pages"]
+        photos["📷 JPG · PNG · HEIC"] --> batch
+    end
+
+    subgraph read["2 · Extract"]
+        direction TB
+        cache{"SHA-256<br/>cache hit?"} -- "no" --> extract["✨ Gemini vision<br/>structured JSON"]
+        extract --> questions["Questions<br/>marks · paper · topic"]
+        cache -- "yes" --> questions
+    end
+
+    subgraph count["3 · Analyse"]
+        direction TB
+        engine["⚙️ Deterministic engine<br/>zero API calls"] --> outputs["Study plan<br/>Genome map · Pareto<br/>Lineage · Backtest"]
+    end
+
+    subgraph make["4 · Practise"]
+        direction TB
+        shape["Paper shape<br/>+ ranked topics"] --> paper["✨ Gemini<br/>practice paper"]
+        one["One question<br/>+ its recurrence"] --> hint["✨ Gemini<br/>hint, not answer"]
+    end
+
+    prep ==> read ==> count ==> make
 
     classDef input fill:#ffffff,stroke:#111111,stroke-width:2px,color:#111111
     classDef step fill:#f4f3ef,stroke:#9a9a9a,color:#111111
@@ -144,6 +157,10 @@ flowchart TB
     class engine core
     class outputs result
     class extract,paper,hint model
+    style prep fill:#fbfaf7,stroke:#111111
+    style read fill:#fbfaf7,stroke:#111111
+    style count fill:#fbfaf7,stroke:#111111
+    style make fill:#fbfaf7,stroke:#111111
 ```
 
 Dashed blue nodes are the only model calls. Each goes from the student's
