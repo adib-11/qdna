@@ -176,7 +176,7 @@ export function UploadZone() {
           }}
         />
 
-        <h2 className="text-xl sm:text-2xl">
+        <h2 className="max-w-none text-lg tracking-[-0.02em]">
           Drop your exam paper PDFs or photos here
         </h2>
         <p className="mt-4 max-w-[60ch] text-ink-2">

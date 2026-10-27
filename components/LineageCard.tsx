@@ -1,117 +1,74 @@
 import { Fragment } from "react";
-import { Pill } from "@/components/ui/Pill";
-import { CrossDeptBadge } from "@/components/CrossDeptBadge";
-import { NEAR_IDENTICAL_THRESHOLD } from "@/lib/config";
+import { Marks, PaperLabel } from "@/components/Marks";
+import { lineageVariants } from "@/lib/analysis/lineage";
+import type { PaperInfo } from "@/lib/corpus/courses";
 import type { LineageCluster } from "@/lib/types";
 
-const NUMBER_SPLIT = /(\d+(?:\.\d+)?)/g;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /**
- * The numbers an examiner changed.
- *
- * A literal every member shares is part of the question; a literal only some
- * members carry is the parameter that was swapped to make the variant look new.
- * Only the latter is worth emphasising — highlighting the shared ones would
- * bury the signal in noise.
- *
- * Literals are read straight off the rendered text rather than through
- * `numericLiterals`, whose normalisation splits `3.5` into two tokens. That is
- * correct for scoring and wrong for highlighting, which has to line up with the
- * characters actually on screen.
+ * One lineage: the same question as it appeared across papers, oldest first,
+ * one variant to a row. The highlighter marks the numbers the examiner changed
+ * from the variant before, and the % match compares the same two, so a student
+ * can read both and judge whether 74% looks right.
  */
-function varyingLiterals(cluster: LineageCluster): Set<string> {
-  const perMember = cluster.members.map(
-    (question) => new Set(question.text.match(NUMBER_SPLIT) ?? []),
-  );
-  const all = new Set(perMember.flatMap((set) => [...set]));
-
-  const varying = new Set<string>();
-  for (const literal of all) {
-    if (!perMember.every((set) => set.has(literal))) varying.add(literal);
-  }
-  return varying;
-}
-
-function QuestionText({
-  text,
-  varying,
+export function LineageCard({
+  cluster,
+  papers,
 }: {
-  text: string;
-  varying: Set<string>;
+  cluster: LineageCluster;
+  papers: Map<string, PaperInfo>;
 }) {
-  const parts = text.split(NUMBER_SPLIT);
+  const variants = lineageVariants(cluster);
+  const paperCount = new Set(cluster.members.map((q) => q.paper.label)).size;
 
   return (
-    <p className="max-w-[65ch] break-words">
-      {parts.map((part, index) =>
-        varying.has(part) ? (
-          <mark
-            key={index}
-            className="rounded-sm bg-surface-3 px-1 font-semibold text-ink underline decoration-ink decoration-2 underline-offset-4"
-          >
-            {part}
-          </mark>
-        ) : (
-          <Fragment key={index}>{part}</Fragment>
-        ),
-      )}
-    </p>
-  );
-}
-
-/**
- * One lineage: the same question as it appeared across papers.
- *
- * Similarity is reported against the first member rather than as a single
- * cluster score, because that is the comparison a user can check by eye — they
- * can read the two questions and judge whether 74% looks right.
- */
-export function LineageCard({ cluster }: { cluster: LineageCluster }) {
-  const varying = varyingLiterals(cluster);
-  const papers = [...new Set(cluster.members.map((q) => q.paper.label))];
-
-  return (
-    <article className="min-w-0 border-t border-ink pt-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Pill wrap>
-          {cluster.topic}
-        </Pill>
-        <Pill tone="neutral">
-          {cluster.members.length} variants · {papers.length} paper
-          {papers.length === 1 ? "" : "s"}
-        </Pill>
-        {cluster.cohesion >= NEAR_IDENTICAL_THRESHOLD && (
-          <Pill tone="out">near-identical</Pill>
-        )}
-        <CrossDeptBadge courseCodes={cluster.courseCodes} />
+    <article className="border-t border-ink pt-5 pb-10">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+        <h3 className="text-lg tracking-[-0.02em]">{cluster.topic}</h3>
+        <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-2">
+          <span>
+            {plural(cluster.members.length, "variant")} in {plural(paperCount, "paper")}
+          </span>{" "}
+          {/* The least expected finding: the same question set into two
+              departments' papers, so a student can revise from a course they
+              were never enrolled in. */}
+          {cluster.crossDepartment && (
+            <span className="font-semibold text-ink" title={cluster.courseCodes.join(" · ")}>
+              asked in both departments
+            </span>
+          )}
+        </p>
       </div>
 
       <ol className="mt-4">
-        {cluster.members.map((question, index) => (
+        {variants.map(({ question, match, parts }, index) => (
           <li
             key={`${question.id}-${index}`}
-            className="border-t border-rule py-4"
+            className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1 border-t border-rule-2 py-4 [grid-template-areas:'y_m'_'t_t'] sm:grid-cols-[6rem_minmax(0,1fr)_9rem] sm:gap-x-6 sm:[grid-template-areas:'y_t_m']"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <Pill tone="neutral">{question.paper.label}</Pill>
-                <span className="font-outlier text-sm">{question.qNo}</span>
-                {question.marks !== null && (
-                  <span className="font-outlier text-sm text-ink-2">
-                    {question.marks} marks
-                  </span>
+            <span className="font-outlier font-semibold [grid-area:y]">
+              {question.paper.year ?? "undated"}
+            </span>
+            <div className="min-w-0 [grid-area:t]">
+              <p className="max-w-[70ch] text-[1.0625rem] break-words">
+                {parts.map((part, i) =>
+                  part.changed ? (
+                    <mark key={i}>{part.text}</mark>
+                  ) : (
+                    <Fragment key={i}>{part.text}</Fragment>
+                  ),
                 )}
-              </div>
-              <span className="font-outlier text-sm">
-                {index === 0
-                  ? "reference"
-                  : `${Math.round(cluster.pairwiseSimilarity[index] * 100)}% match`}
-              </span>
+              </p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
+                <PaperLabel question={question} papers={papers} />{" "}
+                <span className="font-outlier">Q{question.qNo}</span>{" "}
+                {match !== null && (
+                  <span className="text-xs text-accent">{Math.round(match * 100)}% match</span>
+                )}
+              </p>
             </div>
-
-            <div className="mt-2">
-              <QuestionText text={question.text} varying={varying} />
-            </div>
+            <Marks value={question.marks} className="text-right [grid-area:m] sm:text-lg" />
           </li>
         ))}
       </ol>

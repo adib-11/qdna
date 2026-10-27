@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { TutorPanel } from "@/components/TutorPanel";
+import { Marks, PaperLabel, TypeTag } from "@/components/Marks";
 import { Button } from "@/components/ui/Button";
-import { Pill } from "@/components/ui/Pill";
+import type { PaperInfo } from "@/lib/corpus/courses";
 import type { Question, TopicStat } from "@/lib/types";
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /** Id of a topic's row, by rank, so the study plan can link to it. */
 export const topicAnchor = (rank: number) => `topic-${rank}`;
@@ -13,23 +16,24 @@ export const topicAnchor = (rank: number) => `topic-${rank}`;
 /**
  * The questions behind every count (REQ-009), topics in study plan order. Each
  * topic expands to the individual questions that produced its count, each
- * tagged with its paper, number and marks, and each with a hint.
+ * set like an exam paper: the number in the left margin, the marks in red pen
+ * in the right, and under the text where it was asked, its type and a hint.
  *
  * The top-ranked topic starts open so the pattern is visible without a click.
  */
 function TopicRow({
   stat,
   rank,
-  totalQuestions,
   expectedMarks,
   defaultOpen,
+  papers,
   onAskTutor,
 }: {
   stat: TopicStat;
   rank: number;
-  totalQuestions: number;
   expectedMarks: number | null;
   defaultOpen: boolean;
+  papers: Map<string, PaperInfo>;
   onAskTutor: (question: Question) => void;
 }) {
   const id = topicAnchor(rank);
@@ -38,13 +42,12 @@ function TopicRow({
   const [open, setOpen] = useState(
     () => defaultOpen || window.location.hash === `#${id}`,
   );
-  const share = totalQuestions === 0 ? 0 : (stat.count / totalQuestions) * 100;
 
   // A link to this topic opens it. Clicks are heard directly, since clicking
   // a link to the hash already in the URL fires no hashchange.
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
-      if ((event.target as Element).closest?.(`a[href="#${id}"]`)) setOpen(true);
+      if ((event.target as Element).closest?.(`a[href$="#${id}"]`)) setOpen(true);
     };
     const onHashChange = () => {
       if (window.location.hash === `#${id}`) setOpen(true);
@@ -60,76 +63,58 @@ function TopicRow({
   return (
     <div
       id={id}
-      // Clears the sticky section nav, as the page's sections do.
+      // Clears the sticky results nav.
       className="scroll-mt-[64px] border-b border-rule"
     >
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        className="grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 py-4 text-left transition-[background-color] duration-(--dur-micro) ease-out hover:bg-surface-2 active:bg-surface-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
+        className="grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1 py-4 text-left transition-[background-color] duration-(--dur-micro) ease-out [grid-template-areas:'r_t_m'_'._f_f'] hover:bg-surface-2 active:bg-surface-3 sm:grid-cols-[4rem_minmax(0,4fr)_minmax(0,4fr)_9rem] sm:gap-x-6 sm:[grid-template-areas:'r_t_f_m']"
       >
-        <span className="font-outlier text-sm text-ink-2">{rank}</span>
-
-        <span className="min-w-0">
-          <span className="block break-words text-lg font-semibold">
-            {stat.topic}
-          </span>
-          <span className="mt-1 flex flex-wrap gap-x-4 text-sm text-ink-2 tabular-nums">
-            <span>
-              {stat.count} question{stat.count === 1 ? "" : "s"}
-            </span>{" "}
-            <span>{share.toFixed(1)}% of corpus</span>{" "}
-            <span>
-              {stat.papers.length} paper{stat.papers.length === 1 ? "" : "s"}
-            </span>{" "}
-            <span>
-              {expectedMarks !== null
-                ? `${expectedMarks.toFixed(1)} marks per paper`
-                : "marks not recorded"}
-            </span>
-          </span>
+        <span className="font-outlier text-sm text-muted [grid-area:r]">{rank}</span>
+        <span className="text-lg font-semibold break-words [grid-area:t]">{stat.topic}</span>
+        <span className="text-ink-2 [grid-area:f]">
+          <b className="mr-1 text-lg tracking-[-0.02em] text-ink">
+            Asked {plural(stat.count, "time")}
+          </b>{" "}
+          in {plural(stat.papers.length, "paper")}
         </span>
-
-        <span
-          aria-hidden
-          className="text-sm font-semibold underline decoration-rule underline-offset-4 print:hidden"
-        >
-          {open ? "Hide" : "Show"}
+        <span className="grid justify-items-end text-right [grid-area:m]">
+          <Marks
+            value={expectedMarks === null ? null : `≈${Number(expectedMarks.toFixed(1))}`}
+            className="text-lg"
+          />
+          {expectedMarks !== null && (
+            <span aria-hidden className="text-xs text-muted">a paper</span>
+          )}
         </span>
       </button>
 
       {/* Always rendered, so the print view carries every question. */}
-      <ol
-        className={`${open ? "" : "hidden"} pb-4 print:block sm:pl-[3.75rem]`}
-      >
+      <ol className={`${open ? "" : "hidden"} pb-4 print:block`}>
         {stat.questions.map((question, index) => (
           <li
             key={`${question.id}-${index}`}
-            className="border-t border-rule py-4"
+            className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-x-3 border-t border-rule-2 py-4 sm:grid-cols-[4rem_minmax(0,1fr)_9rem] sm:gap-x-6"
           >
-            {/* An exam paper's line: the number and its text, the marks pushed
-                to the right margin by `order`, so they are still read after the number. */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
-              <Pill wrap>{question.paper.label}</Pill>
-              {question.paper.section && (
-                <span>Section {question.paper.section}</span>
-              )}
-              <span className="font-outlier text-ink">{question.qNo}</span>
-              <span className="order-last ml-auto font-outlier whitespace-nowrap text-ink">
-                {question.marks === null ? "marks not stated" : `${question.marks} marks`}
-              </span>
-              <span>{question.isNumerical ? "Numerical" : "Theory"}</span>
+            <span className="font-outlier text-sm">{question.qNo}</span>
+            <div className="min-w-0">
+              <p className="max-w-[70ch] text-[1.0625rem] break-words">{question.text}</p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-2">
+                <PaperLabel question={question} papers={papers} />{" "}
+                <TypeTag numerical={question.isNumerical} />{" "}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onAskTutor(question)}
+                  className="min-h-8! bg-transparent! px-3! text-xs! print:hidden"
+                >
+                  Hint
+                </Button>
+              </p>
             </div>
-            <p className="mt-2 max-w-[65ch] break-words">{question.text}</p>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onAskTutor(question)}
-              className="mt-2 print:hidden"
-            >
-              Hint
-            </Button>
+            <Marks value={question.marks} className="text-right sm:text-lg" />
           </li>
         ))}
       </ol>
@@ -140,11 +125,11 @@ function TopicRow({
 export function TopicDossier({
   stats,
   expectedMarks,
-  totalQuestions,
+  papers,
 }: {
   stats: TopicStat[];
   expectedMarks: Record<string, number | null>;
-  totalQuestions: number;
+  papers: Map<string, PaperInfo>;
 }) {
   const requestKey = useRequestKey();
   const [asked, setAsked] = useState<{
@@ -163,21 +148,18 @@ export function TopicDossier({
 
   return (
     <div>
-      <div className="border-t border-ink pt-6 pb-10">
-        <h2 className="text-2xl sm:text-3xl">Questions</h2>
-        <p className="mt-3 max-w-[65ch] text-ink-2">
-          Every topic, in study plan order, with the questions behind its count.
-          Open a topic to practise; ask for a hint on any question.
-        </p>
-      </div>
+      <h2 className="text-2xl sm:text-3xl">Questions</h2>
+      <p className="mt-2 max-w-[65ch] text-ink-2">
+        Every topic in plan order, with the questions behind its count.
+      </p>
 
-      <div className="border-t border-ink">
+      <div className="mt-8 border-t border-ink">
         {stats.map((stat, index) => (
           <TopicRow
             key={stat.topic}
             stat={stat}
             rank={index + 1}
-            totalQuestions={totalQuestions}
+            papers={papers}
             expectedMarks={expectedMarks[stat.topic] ?? null}
             defaultOpen={index === 0}
             onAskTutor={(question) => void askTutor(question, stat)}

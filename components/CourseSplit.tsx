@@ -4,7 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { corpusCourses } from "@/lib/analysis/papers";
 import { ungroupedLabels } from "@/lib/analysis/topics";
-import { corpusTitle, splitCorpus, splitCourses, type Course } from "@/lib/corpus/courses";
+import {
+  corpusTitle,
+  describePapers,
+  splitCorpus,
+  splitCourses,
+  type Course,
+} from "@/lib/corpus/courses";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
 import { corpusChanged, groupSavedCorpus } from "@/lib/corpus/useCorpora";
 import { ownKeyStore } from "@/lib/key/ownKey";
@@ -34,6 +40,10 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
   const courseQuestions = (course: Course) => course.papers.flatMap((label) => byPaper.get(label)!);
   const names = split.courses.map((course) => corpusTitle(courseQuestions(course)).name);
   const label = (i: number) => `${names[i]} ${split.courses[i].codes.join(" · ")}`;
+  // Papers named by year and sitting, told apart within each offering.
+  const papers = describePapers(questions);
+  const paperName = (label: string) => papers.get(label)?.name ?? label;
+  const sameName = new Set(names).size < names.length;
 
   const indexOf = (key: string | undefined) => split.courses.findIndex((c) => courseKey(c) === key);
   const ready = split.unassigned.every((paper) => indexOf(assigned[paper]) >= 0);
@@ -92,8 +102,8 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
             <section key={key} className="border-t border-ink pt-4">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <h2 className="text-xl">{names[i]}</h2>
-                  <span className="font-outlier text-sm">{course.codes.join(" · ")}</span>
+                  <h2 className="text-lg tracking-[-0.02em]">{names[i]}</h2>
+                  <span className="font-outlier text-sm text-ink-2">{course.codes.join(" · ")}</span>
                 </div>
                 {split.courses.length > 1 && (
                   <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm">
@@ -113,7 +123,7 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
                     key={paper}
                     className="flex flex-wrap justify-between gap-x-3 gap-y-1 border-b border-rule py-2"
                   >
-                    <span>{paper}</span>
+                    <span>{paperName(paper)}</span>
                     <span className="text-sm text-ink-2 tabular-nums">
                       {plural(byPaper.get(paper)!.length, "question")}
                     </span>
@@ -127,6 +137,12 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
         {split.courses.length > 1 && (
           <div className="grid max-w-[48ch] gap-3 rounded-control border border-rule p-4 text-sm">
             <p>
+              {/* Teal is a match: two courses printed under one name. */}
+              {sameName && (
+                <>
+                  <span className="font-semibold text-accent">Same name</span>, different codes.{" "}
+                </>
+              )}
               A course taught in two departments prints a code for each. Tick
               both, then join them.
             </p>
@@ -143,7 +159,7 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
 
         {split.unassigned.length > 0 && (
           <section className="border-t border-ink pt-4">
-            <h2 className="text-xl">Unassigned: which course?</h2>
+            <h2 className="text-lg tracking-[-0.02em]">Unassigned: which course?</h2>
             <p className="mt-2 text-sm text-ink-2">No course code is printed on these papers.</p>
             <ul className="mt-3">
               {split.unassigned.map((paper) => {
@@ -154,13 +170,13 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
                     key={paper}
                     className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-rule py-2"
                   >
-                    <span>{paper}</span>
+                    <span>{paperName(paper)}</span>
                     <span className="text-sm text-ink-2">
                       {plural(paperQuestions.length, "question")}
                       {printed ? `, titled ${printed}` : ""}
                     </span>
                     <label className="w-full sm:w-auto">
-                      <span className="sr-only">Course for {paper}</span>
+                      <span className="sr-only">Course for {paperName(paper)}</span>
                       <select
                         value={indexOf(assigned[paper]) >= 0 ? assigned[paper] : ""}
                         onChange={(e) =>

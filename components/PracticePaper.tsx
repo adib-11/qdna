@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
+import { Marks, TypeTag } from "@/components/Marks";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Pill } from "@/components/ui/Pill";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { practicePaperTopics, writePracticePaper } from "@/lib/gemini/practicePaper";
@@ -18,8 +17,9 @@ type State =
   | { status: "error"; message: string };
 
 /**
- * A practice paper written from the corpus, set as the one sheet of white paper
- * inside an ink edge. It is a revision aid, and is never described as a forecast.
+ * A practice paper written from the corpus, set like the real papers: the
+ * number in the left margin, the marks in red pen in the right. It is a
+ * revision aid, and is never described as a forecast.
  *
  * The structure is not the model's invention: sections, question counts, and
  * mark denominations are measured from the uploaded papers and sent as a
@@ -79,23 +79,23 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
 
   return (
     // Printed only once a paper has been written: an unused prompt is noise on paper.
-    <Card tone="sheet" className={paper ? "" : "print:hidden"}>
+    <div className={paper ? "" : "print:hidden"}>
       <div
-        className={`flex flex-wrap items-start justify-between gap-4 ${paper ? "border-b-4 border-ink pb-6" : ""}`}
+        className={`flex flex-wrap items-start justify-between gap-6 border-t border-ink pt-6 ${paper ? "border-b-4 pb-6" : ""}`}
       >
         <div className="min-w-0">
           <h2 className="text-2xl sm:text-3xl">
             {paper?.title ?? "Write me a practice paper"}
           </h2>
-          <p className="mt-3 max-w-[62ch] text-ink-2">
+          <p className="mt-2 max-w-[65ch] text-ink-2">
             {paper
               ? (paper.instructions ??
                 "Generated from this corpus. Every question is annotated with the evidence that put it there.")
-              : `Built from the ${shape.paperCount} paper${shape.paperCount === 1 ? "" : "s"} you uploaded: ${shape.sections.length} section${shape.sections.length === 1 ? "" : "s"}, about ${shape.questionsPerPaper} questions${shape.marksPerPaper !== null ? `, ${shape.marksPerPaper} marks` : ""}. Weighted by what this examiner keeps asking — a revision aid, never a forecast of the next exam.`}
+              : `Built from the ${shape.paperCount} paper${shape.paperCount === 1 ? "" : "s"} you uploaded: ${shape.sections.length} section${shape.sections.length === 1 ? "" : "s"}, about ${shape.questionsPerPaper} questions${shape.marksPerPaper !== null ? `, ${shape.marksPerPaper} marks` : ""}. Weighted by what this examiner keeps asking.`}
           </p>
-          <Pill tone="on" className="mt-4">
-            Revision aid · never a forecast
-          </Pill>
+          <p className="mt-5 max-w-[40ch] border-t border-ink pt-3 text-sm font-semibold">
+            A revision aid, never a forecast
+          </p>
         </div>
 
         <Button
@@ -149,42 +149,29 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
                   return (
                     <li
                       key={`${question.qNo}-${index}`}
-                      className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] gap-x-3 border-b border-rule py-4 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
+                      className="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-x-3 border-b border-rule py-4 sm:grid-cols-[4rem_minmax(0,1fr)_9rem] sm:gap-x-6"
                     >
                       <span className="font-outlier text-sm">{question.qNo}</span>
-                      {/* The marks in the right margin, as the papers print them,
-                          and read straight after the number, as before. */}
-                      <span className="col-start-3 row-start-1 text-right font-outlier text-sm whitespace-nowrap">
-                        <span className="block">
-                          {question.marks !== null ? `${question.marks} marks` : ""}
-                        </span>{" "}
-                        <span className="block text-ink-2">
-                          {question.isNumerical ? "numerical" : "theory"}
-                        </span>
-                      </span>
-
-                      <div className="col-start-2 row-start-1 min-w-0">
-                        <p className="max-w-[65ch] break-words">{question.text}</p>
-
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <Pill wrap>{question.topic}</Pill>
+                      <div className="min-w-0">
+                        <p className="max-w-[70ch] break-words">{question.text}</p>
+                        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
+                          <span className="font-semibold text-ink">{question.topic}</span>{" "}
+                          <TypeTag numerical={question.isNumerical} />{" "}
                           {stat && (
-                            <Pill wrap>
+                            <span>
                               asked {stat.count}× across {stat.papers.length} paper
                               {stat.papers.length === 1 ? "" : "s"}
-                              {share !== null
-                                ? ` · ${share.toFixed(1)}% of corpus`
-                                : ""}
-                            </Pill>
+                              {share !== null ? ` · ${share.toFixed(1)}% of corpus` : ""}
+                            </span>
                           )}
-                        </div>
-
+                        </p>
                         {question.rationale && (
                           <p className="mt-2 max-w-[65ch] text-sm text-ink-2">
                             {question.rationale}
                           </p>
                         )}
                       </div>
+                      <Marks value={question.marks} className="text-right sm:text-lg" />
                     </li>
                   );
                 })}
@@ -201,6 +188,6 @@ export function PracticePaper({ result }: { result: AnalysisResult }) {
           forecast of the next paper.
         </p>
       )}
-    </Card>
+    </div>
   );
 }

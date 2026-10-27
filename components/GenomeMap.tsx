@@ -1,5 +1,6 @@
 import { paperOrder } from "@/lib/analysis/papers";
 import { mixOver, readableInk } from "@/lib/contrast";
+import type { PaperInfo } from "@/lib/corpus/courses";
 import type { Question, TopicStat } from "@/lib/types";
 
 /** `--color-ink` over `--color-surface` (app/tokens.css), as hex so contrast can be computed. Change both together. */
@@ -26,9 +27,11 @@ function alphaFor(count: number, max: number): number {
 export function GenomeMap({
   questions,
   stats,
+  names,
 }: {
   questions: Question[];
   stats: TopicStat[];
+  names: Map<string, PaperInfo>;
 }) {
   const papers = paperOrder(questions);
 
@@ -45,9 +48,9 @@ export function GenomeMap({
 
   return (
     <div>
-      <div className="pb-6">
-        <h3 className="text-xl sm:text-2xl">Genome map</h3>
-        <p className="mt-3 max-w-[65ch] text-ink-2">
+      <div className="pb-4">
+        <h3 className="text-lg tracking-[-0.02em]">Genome map</h3>
+        <p className="mt-2 max-w-[65ch] text-sm text-ink-2">
           {stats.length} topic{stats.length === 1 ? "" : "s"} across{" "}
           {papers.length} paper{papers.length === 1 ? "" : "s"}. Cell density is
           the number of questions that paper asked on that topic.
@@ -59,9 +62,9 @@ export function GenomeMap({
         role="region"
         aria-label="Genome map, scrolls sideways"
         tabIndex={0}
-        className="overflow-x-auto border-t border-ink print:overflow-visible"
+        className="overflow-x-auto print:overflow-visible"
       >
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-separate border-spacing-[3px] text-xs">
           <caption className="sr-only">
             Question counts by topic and paper
           </caption>
@@ -69,7 +72,7 @@ export function GenomeMap({
             <tr>
               <th
                 scope="col"
-                className="sticky left-0 z-10 bg-surface py-2 pr-4 text-left align-bottom font-semibold text-ink-2"
+                className="sticky left-0 z-10 bg-surface p-1 text-left align-bottom font-semibold text-ink-2"
               >
                 Topic
               </th>
@@ -77,39 +80,35 @@ export function GenomeMap({
                 <th
                   key={paper.label}
                   scope="col"
-                  className="min-w-[72px] px-1 py-2 align-bottom font-semibold text-ink-2 print:min-w-0"
+                  className="p-1 text-left align-bottom font-outlier font-normal whitespace-nowrap text-ink print:whitespace-normal"
                 >
-                  {/* Labels wrap, so a phone fits more than two papers across. */}
-                  <span className="block break-words">{paper.label}</span>
+                  <span className="block">{names.get(paper.label)?.name ?? paper.label}</span>
+                  {names.get(paper.label)?.code && (
+                    <span className="block text-ink-2">{names.get(paper.label)?.code}</span>
+                  )}
                 </th>
               ))}
-              <th
-                scope="col"
-                className="min-w-[48px] py-2 pl-4 align-bottom text-right font-semibold text-ink-2"
-              >
-                All
-              </th>
             </tr>
           </thead>
           <tbody>
             {stats.map((stat) => (
-              <tr key={stat.topic} className="border-t border-rule-2">
+              <tr key={stat.topic}>
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 max-w-[120px] bg-surface py-1 pr-2 text-left align-middle font-normal sm:max-w-[260px] sm:pr-4"
+                  title={stat.topic}
+                  className="sticky left-0 z-10 max-w-[14ch] truncate bg-surface p-1 text-left align-middle font-normal sm:max-w-[22ch]"
                 >
-                  {/* Wraps rather than truncates: a phone has no hover to show the rest. */}
-                  <span className="block break-words">{stat.topic}</span>
+                  {stat.topic}
                 </th>
                 {papers.map((paper) => {
                   const count = cellCount(stat.topic, paper.label);
                   // An explicit shade, so the ink can be picked against it.
                   const shade = count === 0 ? null : mixOver(CELL_INK, alphaFor(count, max), CELL_GROUND);
                   return (
-                    <td key={paper.label} className="p-0.5">
+                    <td key={paper.label} className="p-0">
                       <div
-                        title={`${stat.topic} · ${paper.label} · ${count} question${count === 1 ? "" : "s"}`}
-                        className="flex h-7 items-center justify-center rounded-sm font-outlier"
+                        title={`${stat.topic} · ${names.get(paper.label)?.name ?? paper.label} · ${count} question${count === 1 ? "" : "s"}`}
+                        className="flex h-[26px] min-w-12 items-center justify-center rounded-[3px] tabular-nums"
                         style={{
                           backgroundColor: shade ?? "var(--color-surface-2)",
                           color: shade ? readableInk(shade) : undefined,
@@ -120,9 +119,6 @@ export function GenomeMap({
                     </td>
                   );
                 })}
-                <td className="pl-4 text-right align-middle font-outlier">
-                  {stat.count}
-                </td>
               </tr>
             ))}
           </tbody>

@@ -104,9 +104,6 @@ export const VARIANT_THRESHOLD = 0.55;
  */
 export const TOPIC_MERGE_THRESHOLD = 0.65;
 
-/** Similarity at or above which two questions are effectively the same question. */
-export const NEAR_IDENTICAL_THRESHOLD = 0.85;
-
 /**
  * Split of the lexical similarity score between Jaccard and containment.
  *

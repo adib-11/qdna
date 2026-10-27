@@ -6,6 +6,7 @@ import {
   expect,
   expectNoAxeViolations,
   openSample,
+  openTab,
   rememberKey,
   test,
 } from "./fixtures";
@@ -62,14 +63,18 @@ test.describe("axe finds no violations", () => {
     gemini.releaseExtraction();
   });
 
-  test("results", async ({ page }) => {
-    await openSample(page);
-    await expectNoAxeViolations(page);
-  });
+  for (const tab of ["Plan", "Questions", "Lineages", "Practice", "How we know"]) {
+    test(`results, ${tab}`, async ({ page }) => {
+      await openSample(page);
+      await openTab(page, tab);
+      await expectNoAxeViolations(page);
+    });
+  }
 
   test("hint dialog open", async ({ page }) => {
     await rememberKey(page);
     await openSample(page);
+    await openTab(page, "Questions");
     await page.getByRole("button", { name: /^Hint/ }).first().click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText(STUB_HINT)).toBeVisible();
@@ -78,6 +83,7 @@ test.describe("axe finds no violations", () => {
 
   test("key prompt", async ({ page }) => {
     await openSample(page);
+    await openTab(page, "Questions");
     await page.getByRole("button", { name: /^Hint/ }).first().click();
     await expect(page.getByRole("dialog", { name: "Use your own Gemini key" })).toBeVisible();
     await expectNoAxeViolations(page);

@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { STUB_HINT, STUB_KEY, expect, openSample, test } from "./fixtures";
+import { STUB_HINT, STUB_KEY, expect, openSample, openTab, test } from "./fixtures";
 
 const keyPrompt = (page: Page) => page.getByRole("dialog", { name: "Use your own Gemini key" });
 const hintButton = (page: Page) => page.getByRole("button", { name: /^Hint/ }).first();
@@ -19,6 +19,7 @@ test("a sample and its analysis need no key and no model call", async ({ page, g
 
 test("a rejected key is explained, and nothing runs on it", async ({ page, gemini }) => {
   await openSample(page);
+  await openTab(page, "Questions");
   await hintButton(page).click();
   await pasteKey(page, "not-a-real-key");
 
@@ -34,6 +35,7 @@ test("an accepted key is held for this tab only, and can be forgotten", async ({
   gemini,
 }) => {
   await openSample(page);
+  await openTab(page, "Questions");
   await hintButton(page).click();
   await pasteKey(page, STUB_KEY);
 
@@ -52,6 +54,7 @@ test("an accepted key is held for this tab only, and can be forgotten", async ({
 
 test("a remembered key survives a reload", async ({ page, gemini }) => {
   await openSample(page);
+  await openTab(page, "Questions");
   await hintButton(page).click();
   await pasteKey(page, STUB_KEY, { remember: true });
   await expect(page.getByRole("dialog").getByText(STUB_HINT)).toBeVisible();

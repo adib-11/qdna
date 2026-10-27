@@ -21,6 +21,37 @@
   padding-inline: var(--gutter);
 }
 
+/* The highlighter: a stroke of ink on paper, not a pill. It means "study this"
+   or "this value changed", never decoration. */
+mark {
+  color: inherit;
+  background: linear-gradient(
+      100deg,
+      transparent 0.12em,
+      var(--color-highlight) 0.3em,
+      var(--color-highlight) calc(100% - 0.35em),
+      transparent calc(100% - 0.1em)
+    )
+    0 60% / 100% 78% no-repeat;
+  border-radius: 0.15em 0.4em 0.2em 0.5em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.22em;
+  margin: 0 -0.08em;
+}
+
+/* The plan's times-asked stroke: its length is the times asked. */
+.stroke {
+  background: linear-gradient(
+    98deg,
+    transparent 0.15em,
+    var(--color-highlight) 0.4em,
+    var(--color-highlight) calc(100% - 0.5em),
+    transparent 100%
+  );
+  border-radius: 0.2em 0.6em 0.3em 0.7em;
+}
+
 /* Print view: the browser's save-as-PDF should give clean pages. */
 @media print {
   @page {

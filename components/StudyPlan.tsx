@@ -1,23 +1,24 @@
+import Link from "next/link";
+import { Marks } from "@/components/Marks";
 import { topicAnchor } from "@/components/TopicDossier";
-import { Card } from "@/components/ui/Card";
 import type { StudyPlan as Plan } from "@/lib/types";
 
-const marks = (value: number | null) =>
-  value === null ? "marks not recorded" : `≈${Number(value.toFixed(1))} marks`;
+const round = (value: number) => `≈${Number(value.toFixed(1))}`;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /**
- * The answer, first: which topics to study, in order, and the marks each one
- * typically carries in a paper. Every number is counted from the corpus, and
- * the plan describes what was asked rather than forecasting what will be.
+ * The answer, first: which topics to study, in order. How often each was asked
+ * is the largest figure, on a highlighter stroke as long as the times asked;
+ * the marks it carries a paper are in red pen in the right margin. Every number
+ * is counted from the corpus, and the plan describes what was asked rather
+ * than forecasting what will be.
  */
 export function StudyPlan({
   plan,
   questionCount,
-  paperCount,
 }: {
   plan: Plan;
   questionCount: number;
-  paperCount: number;
 }) {
   if (plan.topics.length === 0) {
     return (
@@ -27,52 +28,67 @@ export function StudyPlan({
     );
   }
   const count = plan.topics.length;
+  const most = plan.topics[0].count;
 
-  // Set like an exam paper: the rank in the left margin, the marks in the right.
   return (
-    <Card className="max-w-[760px]">
-      <h2 className="text-xl sm:text-2xl">Study these first</h2>
+    <div>
+      <h2 className="text-2xl sm:text-3xl">Study these first</h2>
 
       <ol className="mt-6 border-t border-ink">
         {plan.topics.map((topic, index) => (
           <li
             key={topic.topic}
-            className="grid grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 border-b border-rule py-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto]"
+            className="grid grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-2 border-b border-rule py-4 [grid-template-areas:'r_t_m'_'._a_a'] sm:grid-cols-[4rem_minmax(0,4fr)_minmax(0,6fr)_9rem] sm:items-center sm:gap-x-6 sm:[grid-template-areas:'r_t_a_m']"
           >
-            <span className="font-outlier text-sm text-ink-2">{index + 1}</span>
-            <span className="min-w-0">
-              {/* The plan is a prefix of the ranking, so rank finds the row. */}
-              <a
-                href={`#${topicAnchor(index + 1)}`}
-                className="break-words text-lg font-semibold underline decoration-rule underline-offset-4 transition-[text-decoration-color] duration-(--dur-micro) ease-out hover:decoration-accent"
-              >
-                {topic.topic}
-              </a>
-              <span className="mt-1 block text-sm text-ink-2">
-                asked {topic.count} time{topic.count === 1 ? "" : "s"} in{" "}
-                {topic.paperCount} of {paperCount} paper
-                {paperCount === 1 ? "" : "s"}
+            <span className="font-outlier text-sm text-muted [grid-area:r]">{index + 1}</span>
+            {/* The plan is a prefix of the ranking, so rank finds the topic's row. */}
+            <Link
+              href={`?tab=questions#${topicAnchor(index + 1)}`}
+              className="text-lg font-semibold break-words underline decoration-rule underline-offset-[5px] transition-[text-decoration-color] duration-(--dur-micro) ease-out [grid-area:t] hover:decoration-accent"
+            >
+              {topic.topic}
+            </Link>
+            <span className="relative block py-2 [grid-area:a]">
+              <span
+                aria-hidden
+                className="stroke absolute top-1/2 -left-[0.2em] h-[1.55em] -translate-y-1/2"
+                style={{ width: `calc(${(topic.count / most) * 100}% + 0.2em)` }}
+              />
+              <span className="relative text-ink-2 sm:whitespace-nowrap">
+                <b className="mr-1 text-xl tracking-[-0.02em] text-ink">
+                  Asked {plural(topic.count, "time")}
+                </b>{" "}
+                in {plural(topic.paperCount, "paper")}
               </span>
             </span>
-            <span className="text-right font-outlier text-sm whitespace-nowrap">
-              {marks(topic.marksPerPaper)}
+            <span className="grid justify-items-end text-right [grid-area:m]">
+              <Marks
+                value={topic.marksPerPaper === null ? null : round(topic.marksPerPaper)}
+                className="text-lg"
+              />
+              {topic.marksPerPaper !== null && (
+                <span aria-hidden className="text-xs text-muted">marks a paper</span>
+              )}
             </span>
           </li>
         ))}
       </ol>
 
-      <p className="mt-6 max-w-[60ch] font-semibold">
-        These {count} topic{count === 1 ? "" : "s"}
-        {plan.marksPerPaper === null
-          ? ""
-          : ` carry ${marks(plan.marksPerPaper)} a paper and`}{" "}
-        cover {plan.coveragePct.toFixed(1)}% of the {questionCount} questions
-        asked.
+      <p className="mt-6 max-w-[62ch] font-semibold">
+        These {plural(count, "topic")}
+        {plan.marksPerPaper === null ? (
+          ""
+        ) : (
+          <>
+            {" "}carry <Marks value={round(plan.marksPerPaper)} bare /> marks a paper and
+          </>
+        )}{" "}
+        cover {plan.coveragePct.toFixed(1)}% of the {questionCount} questions asked.
       </p>
-      <p className="mt-2 max-w-[60ch] text-sm text-ink-2">
+      <p className="mt-2 max-w-[60ch] text-sm text-muted">
         Marks are the average per paper. This describes what these papers have
         already asked. It is not a forecast of the next one.
       </p>
-    </Card>
+    </div>
   );
 }
