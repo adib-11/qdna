@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { corpusTitle, needsSplit, splitCorpus, splitCourses } from "@/lib/corpus/courses";
+import {
+  corpusTitle,
+  needsSplit,
+  otherOffering,
+  splitCorpus,
+  splitCourses,
+} from "@/lib/corpus/courses";
 import type { Question } from "@/lib/types";
 
 /** `n` questions on one paper, printing `codes`. */
@@ -167,5 +173,25 @@ describe("corpusTitle", () => {
   it("falls back to the printed name when no code is printed", () => {
     expect(corpusTitle(paper("CT", [], "Optics"))).toEqual({ name: "Optics", codes: [] });
     expect(corpusTitle([])).toEqual({ name: "your corpus", codes: [] });
+  });
+});
+
+describe("otherOffering, for papers added to a corpus", () => {
+  const corpus = [...paper("2023", ["ECE 3119"]), ...paper("2024", ["ECE 3119", "EEE 3119"])];
+
+  it("names an added paper that shares no code with the corpus, and its codes", () => {
+    const added = [...paper("CSE 2024", ["CSE 3211"]), ...paper("2025", ["EEE 3119"])];
+
+    expect(otherOffering(corpus, added)).toEqual({ papers: ["CSE 2024"], codes: ["CSE 3211"] });
+  });
+
+  it("finds none once the student has said the codes are one course", () => {
+    const added = paper("CSE 2024", ["CSE 3211"]);
+
+    expect(otherOffering(corpus, added, [["CSE 3211", "ECE 3119"]]).papers).toEqual([]);
+  });
+
+  it("never counts a paper that prints no code as another offering", () => {
+    expect(otherOffering(corpus, paper("Undated", [])).papers).toEqual([]);
   });
 });

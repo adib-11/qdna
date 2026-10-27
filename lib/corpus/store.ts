@@ -94,6 +94,25 @@ export function createCorpusStore(
     return write({ id, savedAt: now(), outcome, ...extras }, true);
   }
 
+  /**
+   * Save the questions an import merged into `corpus`, and open the result.
+   * A sample's id is reserved for the pristine sample, which opening the
+   * sample again overwrites, so a merge into a sample becomes a new corpus.
+   */
+  function saveImport(
+    corpus: SavedCorpus,
+    questions: Question[],
+    topicOverrides = corpus.topicOverrides,
+    sameCourse = corpus.sameCourse,
+  ): SavedCorpus {
+    const id = corpus.id.startsWith(SAMPLE_PREFIX) ? undefined : corpus.id;
+    return save({ ...corpus.outcome, questions }, id, {
+      topicGrouping: corpus.topicGrouping,
+      topicOverrides,
+      sameCourse,
+    });
+  }
+
   return {
     /** Every saved corpus, most recently saved first. */
     list(): SavedCorpus[] {
@@ -108,23 +127,17 @@ export function createCorpusStore(
     /** One saved corpus, without opening it. Null when no such corpus exists. */
     get: read,
 
+    saveImport,
+
     /**
-     * Save the questions an import merged into `corpus`, and open the result.
-     * A sample's id is reserved for the pristine sample, which opening the
-     * sample again overwrites, so a merge into a sample becomes a new corpus.
+     * Remove one paper's questions from `corpus` and open the result. Topics
+     * only that paper asked leave the analysis with them.
      */
-    saveImport(
-      corpus: SavedCorpus,
-      questions: Question[],
-      topicOverrides = corpus.topicOverrides,
-      sameCourse = corpus.sameCourse,
-    ): SavedCorpus {
-      const id = corpus.id.startsWith(SAMPLE_PREFIX) ? undefined : corpus.id;
-      return save({ ...corpus.outcome, questions }, id, {
-        topicGrouping: corpus.topicGrouping,
-        topicOverrides,
-        sameCourse,
-      });
+    removePaper(corpus: SavedCorpus, label: string): SavedCorpus {
+      return saveImport(
+        corpus,
+        corpus.outcome.questions.filter((q) => q.paper.label !== label),
+      );
     },
 
     /**

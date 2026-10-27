@@ -4,7 +4,7 @@ import { analyze } from "@/lib/analysis";
 import { ungroupedLabels } from "@/lib/analysis/topics";
 import { measureGrouping } from "@/lib/eval/score";
 import type { ModelClient } from "@/lib/gemini/generate";
-import { groupTopics } from "@/lib/gemini/groupTopics";
+import { groupNewLabels, groupTopics } from "@/lib/gemini/groupTopics";
 import type { Question } from "@/lib/types";
 import {
   GROUND_TRUTH_COURSES,
@@ -103,6 +103,62 @@ describe("groupTopics", () => {
     const before = analyze(corpus).stats.length;
 
     expect(analyze(corpus, { grouping }).stats.length).toBeLessThan(before);
+  });
+});
+
+describe("groupNewLabels, for papers added to a grouped corpus", () => {
+  const existing = [
+    question("1", "SDLC"),
+    question("2", "SDLC Models"),
+    question("3", "Data Flow Diagrams"),
+  ];
+  const grouping = {
+    SDLC: "Process Models",
+    "SDLC Models": "Process Models",
+    "Data Flow Diagrams": "Structured Analysis",
+  };
+  const added = [question("4", "Waterfall"), question("5", "Use Cases"), question("6", "SDLC")];
+
+  it("sends the existing topic names and only the labels the corpus has never had", async () => {
+    const { client, requests } = replying({ topics: [] });
+
+    await groupNewLabels(client, existing, grouping, added);
+
+    expect(requests).toHaveLength(1);
+    const prompt = promptOf(requests[0]);
+    expect(prompt).toMatch(/- Process Models\n- Structured Analysis/);
+    expect(prompt).toMatch(/- Waterfall\n- Use Cases/);
+    expect(prompt).not.toMatch(/- SDLC$/m);
+  });
+
+  it("puts each new label in an existing topic or a new one, and never renames or regroups an existing topic", async () => {
+    const { client } = replying({
+      topics: [
+        // The model tries to rename an existing topic and move an existing label.
+        { topic: "process models", labels: ["Waterfall", "SDLC"] },
+        { topic: "Use Case Modelling", labels: ["Use Cases", "Data Flow Diagrams"] },
+      ],
+    });
+
+    const next = await groupNewLabels(client, existing, grouping, added);
+
+    expect(next).toEqual({
+      ...grouping,
+      Waterfall: "Process Models",
+      "Use Cases": "Use Case Modelling",
+    });
+    const topicsOf = (questions: Question[]) =>
+      analyze(questions, { grouping: next }).questions.map((q) => q.topic);
+    expect(topicsOf([...existing, ...added]).slice(0, existing.length)).toEqual(
+      analyze(existing, { grouping }).questions.map((q) => q.topic),
+    );
+  });
+
+  it("makes no request when every added label is already known", async () => {
+    const { client, requests } = replying({ topics: [] });
+
+    expect(await groupNewLabels(client, existing, grouping, [question("7", "SDLC")])).toEqual(grouping);
+    expect(requests).toHaveLength(0);
   });
 });
 

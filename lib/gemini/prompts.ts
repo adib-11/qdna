@@ -51,3 +51,12 @@ Rules:
 - Put every label in exactly one topic, copied exactly as given. Leave none out.
 - Put two labels together only when a student revising one would be revising the other.
 - Name each topic the way the course syllabus would, in two to six words.`;
+
+export const NEW_LABELS_GROUPING_PROMPT = `You are placing the topic labels of newly added exam papers into the topics a student's corpus already has.
+
+The existing topics are fixed: never rename, merge or split them. Each new label either names the same subject as an existing topic, or names a subject none of them covers.
+
+Rules:
+- Put every new label in exactly one topic, copied exactly as given. Leave none out.
+- Put a label in an existing topic only when a student revising that topic would be revising the label, and copy that topic's name exactly.
+- Otherwise make a new topic, named the way the course syllabus would, in two to six words. Several new labels may share one new topic.`;

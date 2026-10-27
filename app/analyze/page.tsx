@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { useAddPapers } from "@/components/AddPapers";
 import { BacktestPanel } from "@/components/BacktestPanel";
 import { CourseSplit } from "@/components/CourseSplit";
 import {
@@ -13,13 +14,13 @@ import { GenomeMap } from "@/components/GenomeMap";
 import { LineageCard } from "@/components/LineageCard";
 import { LowConfidenceNotice } from "@/components/LowConfidenceNotice";
 import { OwnKeyStatus } from "@/components/OwnKeyProvider";
+import { PaperList } from "@/components/PaperList";
 import { ParetoChart } from "@/components/ParetoChart";
 import { PracticePaper } from "@/components/PracticePaper";
 import { StudyPlan } from "@/components/StudyPlan";
 import { TopicDossier } from "@/components/TopicDossier";
 import { TopicEditor } from "@/components/TopicEditor";
 import { Button } from "@/components/ui/Button";
-import { Pill } from "@/components/ui/Pill";
 import { analyze } from "@/lib/analysis";
 import { paperOrder } from "@/lib/analysis/papers";
 import { corpusTitle, needsSplit, splitCourses } from "@/lib/corpus/courses";
@@ -45,6 +46,7 @@ export default function AnalyzePage() {
   // Undefined until browser storage can be read, after hydration.
   const corpus = useOpenCorpus();
   const outcome = corpus?.outcome ?? null;
+  const adding = useAddPapers(corpus);
 
   /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
   function saveMerged(
@@ -123,6 +125,7 @@ export default function AnalyzePage() {
             ← New analysis
           </Link>
           <div className="flex flex-wrap items-start gap-2">
+            {adding.button}
             <StudyPackButton result={result} />
             <Button variant="ghost" onClick={() => window.print()}>
               Print
@@ -161,6 +164,7 @@ export default function AnalyzePage() {
           ))}
         </ul>
       </nav>
+      {adding.strip}
 
       <main
         id="main"
@@ -218,13 +222,8 @@ export default function AnalyzePage() {
             />
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {papers.map((paper) => (
-              <Pill key={paper.label} tone="neutral">
-                {paper.label}
-                {paper.type === "CT" ? " · CT" : " · Final"}
-              </Pill>
-            ))}
+          <div className="mt-10 max-w-[720px]">
+            <PaperList corpus={corpus} papers={papers} />
           </div>
         </section>
 
