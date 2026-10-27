@@ -1,5 +1,10 @@
 import type { TopicGrouping, TopicOverride } from "@/lib/analysis/topics";
-import { isQuestion, isRecord, isTopicOverride } from "@/lib/corpus/corpusFile";
+import {
+  isOptionalSameCourse,
+  isQuestion,
+  isRecord,
+  isTopicOverride,
+} from "@/lib/corpus/corpusFile";
 import type { ExtractionOutcome, Question } from "@/lib/types";
 
 /**
@@ -112,12 +117,13 @@ export function createCorpusStore(
       corpus: SavedCorpus,
       questions: Question[],
       topicOverrides = corpus.topicOverrides,
+      sameCourse = corpus.sameCourse,
     ): SavedCorpus {
       const id = corpus.id.startsWith(SAMPLE_PREFIX) ? undefined : corpus.id;
       return save({ ...corpus.outcome, questions }, id, {
         topicGrouping: corpus.topicGrouping,
         topicOverrides,
-        sameCourse: corpus.sameCourse,
+        sameCourse,
       });
     },
 
@@ -198,9 +204,7 @@ function isSavedCorpus(value: unknown): value is SavedCorpus {
         Object.values(value.topicGrouping).every((t) => typeof t === "string"))) &&
     (value.topicOverrides === undefined ||
       (Array.isArray(value.topicOverrides) && value.topicOverrides.every(isTopicOverride))) &&
-    (value.sameCourse === undefined ||
-      (Array.isArray(value.sameCourse) &&
-        value.sameCourse.every((g) => Array.isArray(g) && g.every((c) => typeof c === "string"))))
+    isOptionalSameCourse(value.sameCourse)
   );
 }
 

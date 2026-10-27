@@ -47,11 +47,20 @@ export default function AnalyzePage() {
   const outcome = corpus?.outcome ?? null;
 
   /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
-  function saveMerged(questions: Question[], topicOverrides: TopicOverride[]) {
+  function saveMerged(
+    questions: Question[],
+    topicOverrides: TopicOverride[],
+    sameCourse: string[][],
+  ) {
     if (!corpus) return;
     // A merge into a sample is saved as a new corpus, so reopening the sample
     // can never overwrite it.
-    const saved = browserCorpusStore()?.saveImport(corpus, questions, topicOverrides);
+    const saved = browserCorpusStore()?.saveImport(
+      corpus,
+      questions,
+      topicOverrides,
+      sameCourse,
+    );
     corpusChanged();
     return saved?.id;
   }
@@ -71,13 +80,13 @@ export default function AnalyzePage() {
   );
 
   // A corpus holding several courses is split before anything is analyzed.
-  const split = useMemo(
+  const mustSplit = useMemo(
     () => (corpus ? needsSplit(splitCourses(corpus.outcome.questions, corpus.sameCourse)) : false),
     [corpus],
   );
 
   if (corpus === undefined) return null;
-  if (corpus && split) return <CourseSplit key={corpus.id} corpus={corpus} />;
+  if (corpus && mustSplit) return <CourseSplit key={corpus.id} corpus={corpus} />;
 
   if (!corpus || !outcome || !result) {
     return (
@@ -121,10 +130,12 @@ export default function AnalyzePage() {
             <ExportCorpusButton
               questions={outcome.questions}
               topicOverrides={corpus.topicOverrides ?? []}
+              sameCourse={corpus.sameCourse}
             />
             <ImportCorpusButton
               existing={outcome.questions}
               existingOverrides={corpus.topicOverrides}
+              existingSameCourse={corpus.sameCourse}
               onMerged={saveMerged}
             />
           </div>

@@ -36,13 +36,15 @@ async function deliver(content: string, name: string, type: string) {
 export function ExportCorpusButton({
   questions,
   topicOverrides,
+  sameCourse,
 }: {
   questions: Question[];
   topicOverrides: TopicOverride[];
+  sameCourse?: string[][];
 }) {
   async function exportCorpus() {
     await deliver(
-      exportCorpusFile(questions, topicOverrides),
+      exportCorpusFile(questions, topicOverrides, sameCourse),
       corpusSlug(questions) + CORPUS_FILE_EXTENSION,
       "application/json",
     );
@@ -82,11 +84,17 @@ export function StudyPackButton({ result }: { result: AnalysisResult }) {
 export function ImportCorpusButton({
   existing,
   existingOverrides = [],
+  existingSameCourse = [],
   onMerged,
 }: {
   existing: Question[];
   existingOverrides?: TopicOverride[];
-  onMerged: (questions: Question[], topicOverrides: TopicOverride[]) => string | undefined;
+  existingSameCourse?: string[][];
+  onMerged: (
+    questions: Question[],
+    topicOverrides: TopicOverride[],
+    sameCourse: string[][],
+  ) => string | undefined;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
@@ -100,7 +108,7 @@ export function ImportCorpusButton({
       setMessage({ error: true, text: "This file could not be read. Your corpus is unchanged." });
       return;
     }
-    const result = importCorpusFile(existing, text, existingOverrides);
+    const result = importCorpusFile(existing, text, existingOverrides, existingSameCourse);
     if (!result.ok) {
       setMessage({ error: true, text: `${result.error} Your corpus is unchanged.` });
       return;
@@ -108,7 +116,7 @@ export function ImportCorpusButton({
     const summary = describeImport(result.added, result.skipped);
     let id: string | undefined;
     try {
-      if (result.added.length > 0) id = onMerged(result.questions, result.topicOverrides);
+      if (result.added.length > 0) id = onMerged(result.questions, result.topicOverrides, result.sameCourse);
       setMessage({ error: false, text: summary });
     } catch (err) {
       setMessage({

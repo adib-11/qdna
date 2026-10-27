@@ -22,7 +22,7 @@ export interface CourseSplit {
 }
 
 /** "ECE 3119", "ECE3119" and "ece 3119" are one code. */
-const codeKey = (code: string) => code.toUpperCase().replace(/\s+/g, "");
+export const codeKey = (code: string) => code.toUpperCase().replace(/\s+/g, "");
 
 /**
  * The courses in `questions`. `sameCourse` lists groups of codes the student
@@ -140,8 +140,10 @@ export function splitCorpus(
 export function corpusTitle(questions: Question[]): { name: string; codes: string[] } {
   const { paperCodes, spelling } = readCodes(questions);
   const codes = rankCodes([...paperCodes.keys()], paperCodes, spelling);
-  const offering = codes[0]
-    ? questions.filter((q) => q.courseCodes.some((code) => codeKey(code) === codeKey(codes[0])))
+  // Whole papers, so a page that lost its header's code still counts.
+  const top = codes[0] && codeKey(codes[0]);
+  const offering = top
+    ? questions.filter((q) => paperCodes.get(q.paper.label)!.has(top))
     : questions;
   return { name: corpusCourses(offering)[0] ?? "your corpus", codes };
 }

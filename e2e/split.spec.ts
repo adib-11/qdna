@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { exportCorpusFile } from "../lib/corpus/corpusFile";
 import type { Question } from "../lib/types";
 import { expect, expectNoAxeViolations, openSample, test } from "./fixtures";
@@ -58,4 +59,12 @@ test("courses the student says are the same stay in one corpus", async ({ page }
   // Reloading keeps the student's say: the corpus is not split again.
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^Software Engineering/);
+
+  // And a classmate importing the corpus file gets it too.
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Export corpus file" }).click(),
+  ]);
+  const file = JSON.parse(await readFile(await download.path(), "utf8"));
+  expect(file.sameCourse).toEqual([["ECE 3117", "EEE 3117"]]);
 });

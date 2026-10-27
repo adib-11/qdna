@@ -6,6 +6,7 @@ import {
   VARIANT_THRESHOLD,
 } from "@/lib/config";
 import { numericLiterals, stem, stemSet } from "@/lib/analysis/normalize";
+import { codeKey } from "@/lib/corpus/courses";
 import type { LineageCluster, Question } from "@/lib/types";
 
 /**
@@ -137,7 +138,12 @@ export function clusterLineages(
     .filter((indices) => new Set(indices.map((i) => questions[i].paper.label)).size > 1)
     .map((indices) => {
       const cluster = indices.map((i) => questions[i]);
-      const courseCodes = [...new Set(cluster.flatMap((q) => q.courseCodes))];
+      // One code printed two ways is one offering, kept as first printed.
+      const byKey = new Map<string, string>();
+      for (const code of cluster.flatMap((q) => q.courseCodes)) {
+        if (!byKey.has(codeKey(code))) byKey.set(codeKey(code), code);
+      }
+      const courseCodes = [...byKey.values()];
 
       let total = 0;
       let pairs = 0;

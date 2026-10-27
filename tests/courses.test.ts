@@ -157,6 +157,13 @@ describe("corpusTitle", () => {
     });
   });
 
+  it("names the offering from its whole papers, even pages that lost the header's code", () => {
+    const [header, ...rest] = paper("A", ["ECE 3119"], "Computer Architecture", 3);
+    const title = corpusTitle([header, ...rest.map((q) => ({ ...q, courseCodes: [], course: "Pipelining" }))]);
+
+    expect(title.name).toBe("Pipelining");
+  });
+
   it("falls back to the printed name when no code is printed", () => {
     expect(corpusTitle(paper("CT", [], "Optics"))).toEqual({ name: "Optics", codes: [] });
     expect(corpusTitle([])).toEqual({ name: "your corpus", codes: [] });

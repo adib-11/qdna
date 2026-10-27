@@ -28,9 +28,14 @@ export function SavedCorpora() {
   }
 
   /** An import from here starts a new corpus. */
-  function saveImported(questions: Question[], topicOverrides: TopicOverride[]) {
+  function saveImported(
+    questions: Question[],
+    topicOverrides: TopicOverride[],
+    sameCourse: string[][],
+  ) {
     const saved = browserCorpusStore()?.save(sampleOutcome(questions), undefined, {
       topicOverrides,
+      sameCourse,
     });
     corpusChanged();
     return saved?.id;

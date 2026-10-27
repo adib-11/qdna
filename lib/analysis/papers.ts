@@ -5,8 +5,9 @@ import type { PaperRef, Question } from "@/lib/types";
  * Distinct course names in the corpus, most-asked first.
  *
  * One course prints its name several ways, and a mixed upload holds several
- * courses until it is split. Spellings are folded ("Electromagnetic Fields & Waves" and "…and Waves" are one
- * course, and OCR will produce both), reporting the most common spelling.
+ * courses until it is split. Spellings are folded ("Electromagnetic Fields &
+ * Waves" and "…and Waves" are one course, and OCR will produce both),
+ * reporting the most common spelling.
  */
 export function corpusCourses(questions: Question[]): string[] {
   const groups = new Map<string, Map<string, number>>();
