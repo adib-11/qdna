@@ -210,14 +210,17 @@ describe("clusterLineages", () => {
   });
 
   it("chains variants transitively under single linkage", () => {
+    const paper = (label: string) => ({ type: "CT" as const, label, section: null, year: null });
     const chain = [
-      question({ id: "a", text: "Find the total charge inside the spherical surface r = 10 mm" }),
+      question({ id: "a", paper: paper("CT1"), text: "Find the total charge inside the spherical surface r = 10 mm" }),
       question({
         id: "b",
+        paper: paper("CT2"),
         text: "Find the total charge inside the spherical surface at r = 10 mm given ρv = 0",
       }),
       question({
         id: "c",
+        paper: paper("CT3"),
         text: "Given ρv = 0 find the total charge inside the surface at r = 10 mm for the sphere",
       }),
     ];
@@ -225,6 +228,46 @@ describe("clusterLineages", () => {
     const clusters = clusterLineages(chain);
     expect(clusters).toHaveLength(1);
     expect(clusters[0].members).toHaveLength(3);
+  });
+
+  it("never joins two sub-parts of one paper, however alike", () => {
+    const paper = { type: "Final" as const, label: "2024 Final", section: null, year: 2024 };
+    expect(
+      clusterLineages([
+        question({ id: "a", paper, text: "Find the total charge inside the spherical surface r = 10 mm" }),
+        question({ id: "b", paper, text: "Find the total charge inside the spherical surface r = 20 mm" }),
+      ]),
+    ).toEqual([]);
+  });
+
+  it("keeps same-paper siblings when each matches a question from another paper", () => {
+    const final = { type: "Final" as const, label: "2024 Final", section: null, year: 2024 };
+    const clusters = clusterLineages([
+      question({ id: "a", paper: final, text: "Find the total charge inside the spherical surface r = 10 mm" }),
+      question({ id: "b", paper: final, text: "State and prove Poynting's theorem for an electromagnetic field" }),
+      question({ id: "c", text: "Find the total charge inside the spherical surface r = 10 mm" }),
+      question({ id: "d", text: "State and prove Poynting's theorem for an electromagnetic field" }),
+    ]);
+
+    // a–c and b–d each cross papers; a and b share a paper but never join.
+    expect(clusters).toHaveLength(2);
+    for (const cluster of clusters) {
+      expect(new Set(cluster.members.map((m) => m.paper.label)).size).toBe(2);
+    }
+
+    const bridged = clusterLineages([
+      question({ id: "a", paper: final, text: "Find the total charge inside the spherical surface r = 10 mm" }),
+      question({ id: "b", paper: final, text: "Find the total charge inside the spherical surface r = 20 mm" }),
+      question({ id: "c", text: "Find the total charge inside the spherical surface r = 10 mm or r = 20 mm" }),
+    ]);
+    expect(bridged).toHaveLength(1);
+    expect(bridged[0].members.map((m) => m.id)).toEqual(["a", "b", "c"]);
+  });
+
+  it("returns only lineages that span two or more papers", () => {
+    for (const cluster of clusterLineages(EMF_QUESTIONS)) {
+      expect(new Set(cluster.members.map((m) => m.paper.label)).size).toBeGreaterThan(1);
+    }
   });
 
   it("returns nothing when no pair clears the threshold", () => {

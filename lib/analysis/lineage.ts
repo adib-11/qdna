@@ -87,7 +87,10 @@ export function similarity(a: string, b: string): number {
  * adjacent versions being alike is enough to call the whole run one lineage,
  * even where the endpoints have diverged.
  *
- * Clusters of one are not lineages and are omitted.
+ * A lineage spans two or more papers, so only a pair from different papers can
+ * join. Two sub-parts of one paper share a lineage only when each matches a
+ * question elsewhere; their likeness to each other never joins them. A cluster
+ * that still covers one paper is not a lineage and is omitted.
  */
 export function clusterLineages(
   questions: Question[],
@@ -114,7 +117,8 @@ export function clusterLineages(
     for (let j = i + 1; j < questions.length; j++) {
       const s = score(fingerprints[i], fingerprints[j]);
       scores.set(`${i}:${j}`, s);
-      if (s >= threshold) union(i, j);
+      const crossPaper = questions[i].paper.label !== questions[j].paper.label;
+      if (crossPaper && s >= threshold) union(i, j);
     }
   }
 
@@ -130,7 +134,7 @@ export function clusterLineages(
   }
 
   return [...members.values()]
-    .filter((indices) => indices.length > 1)
+    .filter((indices) => new Set(indices.map((i) => questions[i].paper.label)).size > 1)
     .map((indices) => {
       const cluster = indices.map((i) => questions[i]);
       const courseCodes = [...new Set(cluster.flatMap((q) => q.courseCodes))];
