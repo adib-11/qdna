@@ -1,24 +1,120 @@
-# qDNA
+<!-- PROJECT LOGO -->
+<p align="center">
+  <a href="https://qdna.vercel.app">
+    <img src="docs/assets/banner.jpg" alt="qDNA: the question genome of your course" width="100%">
+  </a>
 
-**The question genome of your course.**
+  <h3 align="center">qDNA</h3>
 
-Live: **https://qdna.vercel.app**
-Repository: https://github.com/adib-11/qdna
+  <p align="center">
+    The question genome of your course. Evidence-weighted, never a forecast.
+    <br />
+    <a href="https://qdna.vercel.app"><strong>Try it live »</strong></a>
+    <br />
+    <br />
+    <a href="docs/launch-video/qdna-launch.mp4">Launch film</a>
+    &middot;
+    <a href="https://github.com/adib-11/qdna/issues">Issues</a>
+    &middot;
+    <a href="docs/adr">Architecture decisions</a>
+    &middot;
+    <a href="CONTEXT.md">Domain glossary</a>
+  </p>
+</p>
 
-[![Watch the qDNA launch film (80 s, with sound)](docs/launch-video/poster.jpg)](docs/launch-video/qdna-launch.mp4)
+<p align="center">
+  <a href="https://github.com/adib-11/qdna/actions/workflows/ci.yml"><img src="https://github.com/adib-11/qdna/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://qdna.vercel.app"><img src="https://img.shields.io/badge/demo-qdna.vercel.app-111111" alt="Live demo"></a>
+  <img src="https://img.shields.io/badge/Next.js-16-111111?logo=nextdotjs" alt="Next.js 16">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/WCAG_2.2-AA-2e7d32" alt="WCAG 2.2 AA">
+  <img src="https://img.shields.io/badge/Hackdays_%40_RUET_2026-winner-e8d44d" alt="Hackdays @ RUET 2026 winner">
+</p>
 
-▶ [Watch the launch film](docs/launch-video/qdna-launch.mp4) (80 s, with sound) ·
-[storyboard and production notes](docs/launch-video/storyboard.html)
+<!-- ABOUT THE PROJECT -->
 
-qDNA takes the scanned past papers a student already has, extracts every
-question into structured JSON with Gemini vision, and computes a deterministic
-*question genome* for the course: topic frequency, Pareto coverage, question
-lineage (near-duplicate clustering across papers and departments), and
-expected-marks ranking.
+## About qDNA
+
+<a href="docs/launch-video/qdna-launch.mp4">
+  <img src="docs/launch-video/poster.jpg" width="100%" alt="Watch the 80-second qDNA launch film">
+</a>
+<p align="center"><sub>▶ <a href="docs/launch-video/qdna-launch.mp4">Watch the launch film</a> (80 s, with sound) · <a href="docs/launch-video/storyboard.html">storyboard source</a> (open locally in a browser)</sub></p>
+
+**qDNA** turns the scanned past papers a student already has into a ranked,
+auditable answer to *"what do I study first?"*
+
+It extracts every question into structured JSON with Gemini vision, then
+computes a deterministic *question genome* for the course: topic frequency,
+Pareto coverage, question lineage (near-duplicate clustering across papers and
+departments), and expected-marks ranking.
 
 It is a prioritization tool, never a forecast. Every number it shows is
-counted from the corpus you uploaded, and every topic links back to the source
-questions that produced it.
+counted from the papers you supplied, and every topic links back to the source
+questions that produced it. The statistics are ours; Gemini is the sensor.
+
+### Why qDNA?
+
+- **Your key, your files.** Every model call goes from your browser straight to
+  Gemini on your own key. No file is uploaded to or stored on qDNA's server.
+- **Counted, not guessed.** Rankings are counts over a corpus that vision made
+  countable, not a model's opinion about what matters.
+- **Auditable end to end.** Every topic expands to the exact questions behind
+  its count, with paper, section and marks.
+- **Tested against the future.** A built-in backtest hides a paper, ranks from
+  the rest, then shows how the ranking did on the paper it never saw.
+
+## Features
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/study-plan.jpg" alt="Study plan"></td>
+    <td width="50%"><img src="docs/assets/how-we-know.jpg" alt="Genome map"></td>
+  </tr>
+  <tr>
+    <td><b>Study plan.</b> Topics ranked by how often they were asked and the marks they carry a paper.</td>
+    <td><b>Genome map.</b> Topics down, papers across, cell density by question count.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/assets/lineages.jpg" alt="Question lineages"></td>
+    <td width="50%"><img src="docs/assets/home.jpg" alt="Upload"></td>
+  </tr>
+  <tr>
+    <td><b>Lineages.</b> Each recurring question with all its variants, its source paper, a similarity score, and what changed highlighted.</td>
+    <td><b>Upload.</b> PDFs or JPG, PNG and HEIC photos, prepared in the browser. Two sample corpora open with no key.</td>
+  </tr>
+</table>
+
+- **Headline stat.** One computed sentence, e.g. *"7 topics out of 17 cover
+  74.5% of every question asked."*
+- **Pareto curve.** Topic bars with cumulative coverage and the 70% threshold.
+- **Topic dossier.** Every topic expands to the questions behind its count. Any
+  question opens a **hint**: the approach and the governing principle, never
+  the final answer.
+- **Backtest.** Hide a paper, rebuild the ranking from the rest, then reveal
+  it. On the bundled Software Engineering corpus, holding out the 2024 final:
+  the 21 topics ranked from the six earlier papers covered **37.5%** of it, and
+  **11 of its 24** questions were variants of a question asked before.
+- **Practice paper.** A paper written in the corpus's own shape. Sections,
+  question counts and mark denominations are measured from the uploads and
+  sent to the model as a constraint, so the structure is arithmetic and only
+  the wording is generated.
+- **Corpus files and study packs.** Save, export, import and print a corpus.
+  Add or remove papers later without starting over.
+
+Fewer than three papers and the view says so up front: the counts are still
+shown, described as a count over that corpus rather than as recurrence.
+
+### Built With
+
+- [Next.js](https://nextjs.org/) 16 (App Router), [React](https://react.dev/) 19, TypeScript
+- [Tailwind CSS](https://tailwindcss.com/) v4
+- [`pdfjs-dist`](https://github.com/mozilla/pdf.js) for client-side page rasterisation
+- [`@google/genai`](https://github.com/googleapis/js-genai) for structured vision extraction, called from the browser
+- [Recharts](https://recharts.org/) for the Pareto view
+- [Vitest](https://vitest.dev/), [Playwright](https://playwright.dev/) and [axe-core](https://github.com/dequelabs/axe-core) for tests
+- Deployed on [Vercel](https://vercel.com/)
+
+<!-- ARCHITECTURE -->
 
 ## How it works
 
@@ -37,112 +133,130 @@ PDF → canvas → JPEG pages, or JPG / PNG / HEIC photos as is
   one question + its recurrence         ── generateContent ──▶  hint, not solution
 ```
 
+### Privacy and keys
+
 Every model call goes from the student's browser straight to Gemini on the
-student's **own key** (ADR 0001). The key is asked for only when an action
-needs a model, checked with a models-list call, held in memory unless the
-student chooses to remember it, and sent only to Google. The bundled samples
-and all analysis need no key. qDNA's server routes (`/api/extract`,
-`/api/tutor`, `/api/practice-paper`) are kept for a possible paid tier but
-hold no key and answer 503.
+student's **own key** ([ADR 0001](docs/adr/0001-own-key-only.md)). The key is
+asked for only when an action needs a model, checked with a models-list call,
+held in memory unless the student chooses to remember it, and sent only to
+Google. The bundled samples and all analysis need no key.
 
-Pages are prepared **in the browser** — no file is ever uploaded to or
-persisted on qDNA's server. Extraction results are cached by page-image
-content hash so re-analysis costs no API quota, a failed batch never discards
-the batches that succeeded, and a cancelled extraction keeps the pages that
-finished.
+qDNA's server routes (`/api/extract`, `/api/tutor`, `/api/practice-paper`) are
+kept for a possible paid tier but hold no key and answer 503.
 
-The statistics are ours; Gemini is the sensor. Rankings are counts over a
-corpus that vision made countable, not a model's opinion about what matters.
+Pages are prepared **in the browser**. Extraction results are cached by
+page-image content hash, so re-analysis costs no API quota. A failed batch
+never discards the batches that succeeded, and a cancelled extraction keeps
+the pages that finished.
 
-### What you get back
+### Working within the free tier
 
-- **Headline stat** — one computed sentence, e.g. *"7 topics out of 17 cover
-  74.5% of every question asked."*
-- **Genome map** — topics down, papers across, cell density by question count.
-- **Pareto curve** — topic bars with cumulative coverage and the 70% threshold.
-- **Lineage cards** — each recurring question with all its variants, the source
-  paper of each, the similarity score, and the numbers that changed highlighted.
-  Clusters spanning two offerings of the course are badged *asked in both departments*.
-- **Topic dossier** — every topic expands to the questions behind its count, so
-  nothing above it is unauditable. Any question there opens a **hint** — the
-  approach and the governing principle, never the final answer.
-- **Backtest** — hide a paper, rebuild the ranking from the rest, then reveal
-  it. The ranking is allowed to name exactly as many topics as the headline
-  stat tells you to study, and coverage is counted in questions, not labels.
-  On the bundled Software Engineering corpus, holding out the 2024 final: the
-  21 topics ranked from the six earlier papers covered **37.5%** of it, and 11
-  of its 24 questions were variants of a question asked before.
-- **Practice paper** — a paper written in the corpus's own shape: the sections,
-  question counts, and mark denominations are measured from the uploads and
-  sent to the model as a constraint, so the structure is arithmetic and only
-  the wording is generated. Each question carries the recurrence evidence that
-  put it there, looked up locally by topic.
-
-Two corpora ship in `data/`, extracted with the same pipeline from real RUET
-papers, so the tool can be tried without an upload, without an API key, and
-without a network call. They were produced by `scripts/extract-corpus.mjs`,
-which rasterises with `pdftoppm` and then uses the same prompt, schema, batch
-size, and model chain as the browser path.
-
-Fewer than three papers and the view says so up front: the counts are still
-shown, described as a count over that corpus rather than as recurrence.
-
-### What the free tier actually allows
-
-Measured, not assumed. The free tier meters requests-per-day **per model**, at
-20/day for `gemini-flash-latest` — not enough for one 35-page paper on its own.
+Measured, not assumed. The free tier meters requests per day **per model**, at
+20/day for `gemini-flash-latest`: not enough for one 35-page paper on its own.
 Three things follow, and all three are in the code:
 
-- Requests carry 2 pages. Fewer pages per request would run out of daily quota
-  before the paper ends; more than two stops returning inside the function
-  window, because verbatim transcription of a dense page is 25–47s of output.
-- Extraction walks a chain of flash models. A `429` moves to the next model,
-  which has its own daily budget, so quota is pooled rather than capped at 20.
-- Results are cached by page-image SHA-256, so the same pages are never paid
-  for twice.
+- **2 pages per request.** Fewer would run out of daily quota before the paper
+  ends; more stops returning inside the function window, because verbatim
+  transcription of a dense page is 25–47 s of output.
+- **A chain of flash models.** A `429` moves to the next model, which has its
+  own daily budget, so quota is pooled rather than capped at 20.
+- **A content cache.** Results are cached by page-image SHA-256, so the same
+  pages are never paid for twice.
 
-## Stack
+### Sample corpora
 
-- Next.js (App Router) + TypeScript + Tailwind CSS v4
-- `pdfjs-dist` for client-side page rasterisation
-- `@google/genai` for structured vision extraction, called from the browser on the student's own key
-- `recharts` for the Pareto view
-- Vitest for the pure analysis functions
-- Playwright and axe-core for end-to-end and WCAG 2.2 AA checks, run in GitHub Actions
-- Deployed on Vercel
+Two corpora ship in [`data/`](data), extracted with the same pipeline from
+real RUET papers, so the tool can be tried without an upload, an API key, or a
+network call. They were produced by
+[`scripts/extract-corpus.mjs`](scripts/extract-corpus.mjs), which rasterises
+with `pdftoppm` and then uses the same prompt, schema, batch size, and model
+chain as the browser path.
 
-## Local development
+<!-- GETTING STARTED -->
 
-```bash
-npm install
-npm run dev
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20.9 or later (CI uses Node 24)
+- npm
+- A Gemini API key, only to extract new papers. The samples and all analysis
+  run without one.
+
+### Setup
+
+1. Clone the repo
+
+   ```sh
+   git clone https://github.com/adib-11/qdna.git
+   cd qdna
+   ```
+
+2. Install packages
+
+   ```sh
+   npm install
+   ```
+
+3. Start the dev server
+
+   ```sh
+   npm run dev
+   ```
+
+4. Open http://localhost:3000 and pick a sample corpus, or drop in your own
+   papers and paste your Gemini key when asked.
+
+The app needs no server-side key. `GEMINI_API_KEY` in `.env.local` (see
+[`.env.example`](.env.example)) is read only by the offline
+`scripts/extract-corpus.mjs` and is never committed.
+
+### Testing
+
+```sh
+npm run lint
+npm run typecheck
+npm test                       # Vitest: analysis, extraction, corpus files
+npm run build                  # Playwright runs against the production build
+npm run test:e2e:install       # once: Playwright's Chromium
+npm run test:e2e               # Playwright + axe, Gemini stubbed at the network level
 ```
 
-Tests:
+[CI](.github/workflows/ci.yml) runs lint, Vitest, the build, typechecking and
+the Playwright suite on every push and pull request. The suite runs axe on
+every app state and allows zero WCAG 2.2 AA violations. Gemini is stubbed at
+the network level, so CI needs no secret and never calls a model.
 
-```bash
-npm test                  # Vitest: analysis, extraction, corpus files
-npm run build             # Playwright runs against the production build
-npx playwright install chromium
-npm run test:e2e          # Playwright + axe, Gemini stubbed at the network level
+## Project structure
+
+```
+app/            Next.js routes: / (upload), /analyze (results), /api/* (503 stubs)
+components/     UI: study plan, genome map, lineage cards, practice paper, tutor
+lib/analysis/   Deterministic engine: frequency, Pareto, lineage, backtest, expected marks
+lib/extract/    Extraction run: uploads, sessions, batch orchestration
+lib/pdf/        Client-side rasterisation, blank-page filter, batching
+lib/gemini/     Prompts, schema, extraction, hints, practice paper, topic grouping
+lib/cache/      Page-image SHA-256 result cache
+lib/corpus/     Corpus store, corpus files, add/remove papers, study packs
+data/           Bundled sample corpora (Software Engineering, Computer Architecture)
+docs/adr/       Architecture decision records
+docs/launch-video/  Launch film, storyboard, audio and render pipeline
+e2e/            Playwright + axe specs
+tests/          Vitest specs
 ```
 
-CI (`.github/workflows/ci.yml`) runs lint, Vitest, the build, typechecking and
-the Playwright suite on every push and pull request. The Playwright suite runs
-axe on every app state and allows zero violations.
+## Contributing
 
-The app needs no server-side key: paste your own Gemini key when an action
-asks for one. `GEMINI_API_KEY` in `.env.local` is read only by the offline
-`scripts/extract-corpus.mjs`; it is never committed.
+1. Read [`CONTEXT.md`](CONTEXT.md) for the domain language (course, offering,
+   corpus, paper, lineage) and the [ADRs](docs/adr) for decisions already made.
+2. Open an [issue](https://github.com/adib-11/qdna/issues) describing the change.
+3. Branch from `main`, keep lint, unit tests and the Playwright suite green,
+   and open a pull request.
 
-## Build status
+## Acknowledgements
 
-| Phase | Scope | State |
-|-------|-------|-------|
-| 1 | Repository, deploy pipeline, design system | ✅ shipped |
-| 2 | Client render → batch → extract → cache pipeline | ✅ shipped |
-| 3 | Deterministic analysis engine | ✅ shipped |
-| 4 | Results interface | ✅ shipped |
-| 5 | Grounded tutor and paper generation | ✅ shipped |
-| 6 | Sample corpora and backtest | ✅ shipped |
-| 7 | Documentation sync and submission | planned |
+- Built for Hackdays @ RUET 2026, where it won.
+- Sample papers are past exam papers from RUET (Rajshahi University of
+  Engineering & Technology).
+- Launch film voice by [Fish Audio](https://fish.audio); score and sound design
+  synthesised in [`build_audio.py`](docs/launch-video/audio/build_audio.py).
