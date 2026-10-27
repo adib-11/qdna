@@ -14,10 +14,10 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
  */
 export function LineageCard({
   cluster,
-  papers,
+  names,
 }: {
   cluster: LineageCluster;
-  papers: Map<string, PaperInfo>;
+  names: Map<string, PaperInfo>;
 }) {
   const variants = lineageVariants(cluster);
   const paperCount = new Set(cluster.members.map((q) => q.paper.label)).size;
@@ -25,7 +25,7 @@ export function LineageCard({
   return (
     <article className="border-t border-ink pt-5 pb-10">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <h3 className="text-lg tracking-[-0.02em]">{cluster.topic}</h3>
+        <h3 className="max-w-none text-lg tracking-[-0.02em]">{cluster.topic}</h3>
         <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-2">
           <span>
             {plural(cluster.members.length, "variant")} in {plural(paperCount, "paper")}
@@ -61,7 +61,7 @@ export function LineageCard({
                 )}
               </p>
               <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
-                <PaperLabel question={question} papers={papers} />{" "}
+                <PaperLabel question={question} names={names} />{" "}
                 <span className="font-outlier">Q{question.qNo}</span>{" "}
                 {match !== null && (
                   <span className="text-xs text-accent">{Math.round(match * 100)}% match</span>

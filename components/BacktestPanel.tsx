@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { backtest, defaultHeldOutPaper } from "@/lib/analysis/backtest";
 import { paperOrder } from "@/lib/analysis/papers";
-import type { PaperInfo } from "@/lib/corpus/courses";
+import { paperName, type PaperInfo } from "@/lib/corpus/courses";
 import type { AnalysisResult } from "@/lib/types";
 
 /**
@@ -46,7 +46,7 @@ export function BacktestPanel({
     );
   }
 
-  const name = (label: string) => names.get(label)?.name ?? label;
+  const name = (label: string) => paperName(names, label);
 
   // Questions on the hidden paper that an earlier paper had already asked, in
   // some other clothes — counted as questions, not as clusters.

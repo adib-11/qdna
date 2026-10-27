@@ -151,11 +151,15 @@ export function corpusTitle(questions: Question[]): { name: string; codes: strin
 export interface PaperInfo {
   /** Year and sitting, e.g. "2024 Final" or "CT2, undated". */
   name: string;
-  /** The codes the paper prints, or null when the corpus has one offering. */
+  /** The codes the paper prints ("no code" when none), or null when the corpus has one offering. */
   code: string | null;
   /** True when its questions sit in more than one section. */
   sectioned: boolean;
 }
+
+/** A paper's on-screen name, or its printed label when it has none. */
+export const paperName = (names: Map<string, PaperInfo>, label: string) =>
+  names.get(label)?.name ?? label;
 
 /** "Final", or the class test's number when the label prints one: "CT2" for "CT2 ECE 3121" or "2nd CT". */
 function sittingOf(paper: Question["paper"]): string {
@@ -184,7 +188,7 @@ export function describePapers(questions: Question[]): Map<string, PaperInfo> {
   const base = (p: Question["paper"]) =>
     p.year ? `${p.year} ${sittingOf(p)}` : `${sittingOf(p)}, undated`;
   const codeOf = (label: string) =>
-    multi ? [...paperCodes.get(label)!].map((key) => spelling.get(key)!).join(" · ") || null : null;
+    multi ? [...paperCodes.get(label)!].map((key) => spelling.get(key)!).join(" · ") || "no code" : null;
   const key = (p: Question["paper"]) => `${base(p)}|${codeOf(p.label)}`;
   const uses = new Map<string, number>();
   for (const p of refs.values()) uses.set(key(p), (uses.get(key(p)) ?? 0) + 1);

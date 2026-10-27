@@ -3,9 +3,10 @@
 import { useRouter } from "next/navigation";
 import { ImportCorpusButton } from "@/components/CorpusFileButtons";
 import { Button } from "@/components/ui/Button";
-import { analyze } from "@/lib/analysis";
+import { topicFrequency } from "@/lib/analysis/frequency";
 import { paperOrder } from "@/lib/analysis/papers";
-import { corpusTitle } from "@/lib/corpus/courses";
+import { resolveTopics } from "@/lib/analysis/topics";
+import { corpusTitle, needsSplit, splitCourses } from "@/lib/corpus/courses";
 import { browserCorpusStore } from "@/lib/corpus/store";
 import { corpusChanged, useSavedCorpora } from "@/lib/corpus/useCorpora";
 import { sampleOutcome } from "@/lib/samples";
@@ -59,10 +60,16 @@ export function SavedCorpora() {
             const { questions } = corpus.outcome;
             const paperCount = paperOrder(questions).length;
             const { name: title, codes } = corpusTitle(questions);
-            const first = analyze(questions, {
-              grouping: corpus.topicGrouping,
-              overrides: corpus.topicOverrides,
-            }).studyPlan.topics[0]?.topic;
+            // The plan is a prefix of the ranking, so its first topic is the
+            // most asked one. A corpus still holding several courses has none.
+            const first = needsSplit(splitCourses(questions, corpus.sameCourse))
+              ? undefined
+              : topicFrequency(
+                  resolveTopics(questions, {
+                    grouping: corpus.topicGrouping,
+                    overrides: corpus.topicOverrides,
+                  }),
+                )[0]?.topic;
             // Two corpora can share a title, so the labels also say which one.
             const which = `${title}, ${paperCount} paper${paperCount === 1 ? "" : "s"}, saved ${new Date(corpus.savedAt).toLocaleString()}`;
             return (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { TutorPanel } from "@/components/TutorPanel";
-import { Marks, PaperLabel, TypeTag } from "@/components/Marks";
+import { approx, Marks, PaperLabel, TypeTag } from "@/components/Marks";
 import { Button } from "@/components/ui/Button";
 import type { PaperInfo } from "@/lib/corpus/courses";
 import type { Question, TopicStat } from "@/lib/types";
@@ -26,14 +26,14 @@ function TopicRow({
   rank,
   expectedMarks,
   defaultOpen,
-  papers,
+  names,
   onAskTutor,
 }: {
   stat: TopicStat;
   rank: number;
   expectedMarks: number | null;
   defaultOpen: boolean;
-  papers: Map<string, PaperInfo>;
+  names: Map<string, PaperInfo>;
   onAskTutor: (question: Question) => void;
 }) {
   const id = topicAnchor(rank);
@@ -82,7 +82,7 @@ function TopicRow({
         </span>
         <span className="grid justify-items-end text-right [grid-area:m]">
           <Marks
-            value={expectedMarks === null ? null : `≈${Number(expectedMarks.toFixed(1))}`}
+            value={expectedMarks === null ? null : approx(expectedMarks)}
             className="text-lg"
           />
           {expectedMarks !== null && (
@@ -102,7 +102,7 @@ function TopicRow({
             <div className="min-w-0">
               <p className="max-w-[70ch] text-[1.0625rem] break-words">{question.text}</p>
               <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-2">
-                <PaperLabel question={question} papers={papers} />{" "}
+                <PaperLabel question={question} names={names} />{" "}
                 <TypeTag numerical={question.isNumerical} />{" "}
                 <Button
                   type="button"
@@ -125,11 +125,11 @@ function TopicRow({
 export function TopicDossier({
   stats,
   expectedMarks,
-  papers,
+  names,
 }: {
   stats: TopicStat[];
   expectedMarks: Record<string, number | null>;
-  papers: Map<string, PaperInfo>;
+  names: Map<string, PaperInfo>;
 }) {
   const requestKey = useRequestKey();
   const [asked, setAsked] = useState<{
@@ -159,7 +159,7 @@ export function TopicDossier({
             key={stat.topic}
             stat={stat}
             rank={index + 1}
-            papers={papers}
+            names={names}
             expectedMarks={expectedMarks[stat.topic] ?? null}
             defaultOpen={index === 0}
             onAskTutor={(question) => void askTutor(question, stat)}
@@ -171,6 +171,7 @@ export function TopicDossier({
         <TutorPanel
           question={asked.question}
           stat={asked.stat}
+          names={names}
           apiKey={asked.apiKey}
           onClose={() => setAsked(null)}
         />

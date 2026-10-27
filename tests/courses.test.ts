@@ -222,6 +222,15 @@ describe("describePapers", () => {
     expect(two.get("2024 EEE 2107")).toMatchObject({ name: "2024 Final", code: "EEE 2107" });
   });
 
+  it("says a paper prints no code when the other offerings do", () => {
+    const papers = describePapers([
+      sitting("2024 ECE 3121", "Final", 2024, ["ECE 3121"]),
+      sitting("2024 EEE 2107", "Final", 2024, ["EEE 2107"]),
+      sitting("Final Exam", "Final", null, []),
+    ]);
+    expect(papers.get("Final Exam")?.code).toBe("no code");
+  });
+
   it("marks a paper sectioned only when its questions sit in more than one section", () => {
     const papers = describePapers([
       sitting("CAD 2024", "Final", 2024, ["ECE 3119"], "A"),

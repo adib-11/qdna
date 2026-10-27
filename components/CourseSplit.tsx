@@ -7,6 +7,7 @@ import { ungroupedLabels } from "@/lib/analysis/topics";
 import {
   corpusTitle,
   describePapers,
+  paperName,
   splitCorpus,
   splitCourses,
   type Course,
@@ -42,7 +43,6 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
   const label = (i: number) => `${names[i]} ${split.courses[i].codes.join(" · ")}`;
   // Papers named by year and sitting, told apart within each offering.
   const papers = describePapers(questions);
-  const paperName = (label: string) => papers.get(label)?.name ?? label;
   const sameName = new Set(names).size < names.length;
 
   const indexOf = (key: string | undefined) => split.courses.findIndex((c) => courseKey(c) === key);
@@ -123,7 +123,7 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
                     key={paper}
                     className="flex flex-wrap justify-between gap-x-3 gap-y-1 border-b border-rule py-2"
                   >
-                    <span>{paperName(paper)}</span>
+                    <span>{paperName(papers, paper)}</span>
                     <span className="text-sm text-ink-2 tabular-nums">
                       {plural(byPaper.get(paper)!.length, "question")}
                     </span>
@@ -170,13 +170,13 @@ export function CourseSplit({ corpus }: { corpus: SavedCorpus }) {
                     key={paper}
                     className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-rule py-2"
                   >
-                    <span>{paperName(paper)}</span>
+                    <span>{paperName(papers, paper)}</span>
                     <span className="text-sm text-ink-2">
                       {plural(paperQuestions.length, "question")}
                       {printed ? `, titled ${printed}` : ""}
                     </span>
                     <label className="w-full sm:w-auto">
-                      <span className="sr-only">Course for {paperName(paper)}</span>
+                      <span className="sr-only">Course for {paperName(papers, paper)}</span>
                       <select
                         value={indexOf(assigned[paper]) >= 0 ? assigned[paper] : ""}
                         onChange={(e) =>

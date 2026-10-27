@@ -1,5 +1,8 @@
-import type { PaperInfo } from "@/lib/corpus/courses";
+import { paperName, type PaperInfo } from "@/lib/corpus/courses";
 import type { Question } from "@/lib/types";
+
+/** A per-paper average, as the marks columns print it: "≈2.4". */
+export const approx = (value: number) => `≈${Number(value.toFixed(1))}`;
 
 /**
  * The red pen: marks in the right margin, as an examiner writes them. Red
@@ -47,11 +50,11 @@ export function TypeTag({ numerical }: { numerical: boolean }) {
  * corpus has more than one offering, and its section when the paper has more
  * than one.
  */
-export function PaperLabel({ question, papers }: { question: Question; papers: Map<string, PaperInfo> }) {
-  const paper = papers.get(question.paper.label);
+export function PaperLabel({ question, names }: { question: Question; names: Map<string, PaperInfo> }) {
+  const paper = names.get(question.paper.label);
   return (
     <>
-      <span className="font-semibold text-ink">{paper?.name ?? question.paper.label}</span>{" "}
+      <span className="font-semibold text-ink">{paperName(names, question.paper.label)}</span>{" "}
       {paper?.code && <span className="font-outlier text-xs text-ink-2">{paper.code}</span>}{" "}
       {paper?.sectioned && question.paper.section && (
         <span className="text-muted">

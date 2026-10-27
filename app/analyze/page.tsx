@@ -52,12 +52,11 @@ export default function AnalyzePage() {
 function Results() {
   const asked = useSearchParams().get("tab");
   const tab: Tab = TABS.find(([id]) => id === asked)?.[0] ?? "plan";
-  const navRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   /** A tab opened from further down the page starts at its top, under the tabs. */
   function toTabs() {
-    const nav = navRef.current;
-    const header = nav?.previousElementSibling as HTMLElement | null;
+    const header = headerRef.current;
     if (!header) return;
     const top = header.offsetTop + header.offsetHeight;
     if (window.scrollY > top) window.scrollTo({ top });
@@ -138,7 +137,7 @@ function Results() {
 
   return (
     <>
-      <header className="page-shell border-t-4 border-ink">
+      <header ref={headerRef} className="page-shell border-t-4 border-ink">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 print:hidden">
           <Link
             href="/"
@@ -210,7 +209,6 @@ function Results() {
       {/* One route, one tab open at a time, kept in ?tab= so a reload, a link
           and back and forward all land on it. Print shows every tab. */}
       <nav
-        ref={navRef}
         aria-label="Results"
         className="sticky top-0 z-20 border-y border-ink bg-surface print:hidden"
       >
@@ -240,7 +238,7 @@ function Results() {
           <TopicDossier
             stats={result.stats}
             expectedMarks={result.expectedMarks}
-            papers={names}
+            names={names}
           />
           <div className="mt-16 print:hidden">
             <TopicEditor corpus={corpus} topics={result.stats.map((stat) => stat.topic)} />
@@ -264,7 +262,7 @@ function Results() {
             <ol className="mt-8">
               {result.lineages.map((cluster, index) => (
                 <li key={`${cluster.id}-${index}`}>
-                  <LineageCard cluster={cluster} papers={names} />
+                  <LineageCard cluster={cluster} names={names} />
                 </li>
               ))}
             </ol>

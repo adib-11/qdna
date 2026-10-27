@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
-import { Pill } from "@/components/ui/Pill";
+import { Marks, PaperLabel } from "@/components/Marks";
+import type { PaperInfo } from "@/lib/corpus/courses";
 import { browserModelClient } from "@/lib/gemini/browserClient";
 import { writeHint } from "@/lib/gemini/hint";
 import { handleModelError } from "@/lib/key/ownKey";
@@ -27,11 +28,13 @@ interface TutorState {
 export function TutorPanel({
   question,
   stat,
+  names,
   apiKey,
   onClose,
 }: {
   question: Question;
   stat?: TopicStat;
+  names: Map<string, PaperInfo>;
   /** The student's own key; the hint is asked for from this browser. */
   apiKey: string;
   onClose: () => void;
@@ -100,16 +103,12 @@ export function TutorPanel({
       </div>
 
       <div className="border-t border-ink p-6">
-        <div className="flex flex-wrap gap-2">
-          <Pill tone="neutral">{question.paper.label}</Pill>
-          <Pill tone="neutral">{question.qNo}</Pill>
-          {question.marks !== null && (
-            <Pill tone="neutral">{question.marks} marks</Pill>
-          )}
-          <Pill tone="on" wrap>
-            {stat?.topic ?? question.topic}
-          </Pill>
-        </div>
+        <p className="font-semibold break-words">{stat?.topic ?? question.topic}</p>
+        <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-2">
+          <PaperLabel question={question} names={names} />{" "}
+          <span className="font-outlier">Q{question.qNo}</span>{" "}
+          {question.marks !== null && <Marks value={question.marks} />}
+        </p>
         <p className="mt-4 break-words text-ink-2">
           {question.text}
         </p>

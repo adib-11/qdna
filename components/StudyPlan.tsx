@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Marks } from "@/components/Marks";
+import { approx, Marks } from "@/components/Marks";
 import { topicAnchor } from "@/components/TopicDossier";
 import type { StudyPlan as Plan } from "@/lib/types";
 
-const round = (value: number) => `≈${Number(value.toFixed(1))}`;
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /**
@@ -63,7 +62,7 @@ export function StudyPlan({
             </span>
             <span className="grid justify-items-end text-right [grid-area:m]">
               <Marks
-                value={topic.marksPerPaper === null ? null : round(topic.marksPerPaper)}
+                value={topic.marksPerPaper === null ? null : approx(topic.marksPerPaper)}
                 className="text-lg"
               />
               {topic.marksPerPaper !== null && (
@@ -80,7 +79,7 @@ export function StudyPlan({
           ""
         ) : (
           <>
-            {" "}carry <Marks value={round(plan.marksPerPaper)} bare /> marks a paper and
+            {" "}carry <Marks value={approx(plan.marksPerPaper)} bare /> marks a paper and
           </>
         )}{" "}
         cover {plan.coveragePct.toFixed(1)}% of the {questionCount} questions asked.

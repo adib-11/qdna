@@ -1,6 +1,6 @@
 import { paperOrder } from "@/lib/analysis/papers";
 import { mixOver, readableInk } from "@/lib/contrast";
-import type { PaperInfo } from "@/lib/corpus/courses";
+import { paperName, type PaperInfo } from "@/lib/corpus/courses";
 import type { Question, TopicStat } from "@/lib/types";
 
 /** `--color-ink` over `--color-surface` (app/tokens.css), as hex so contrast can be computed. Change both together. */
@@ -82,7 +82,7 @@ export function GenomeMap({
                   scope="col"
                   className="p-1 text-left align-bottom font-outlier font-normal whitespace-nowrap text-ink print:whitespace-normal"
                 >
-                  <span className="block">{names.get(paper.label)?.name ?? paper.label}</span>
+                  <span className="block">{paperName(names, paper.label)}</span>
                   {names.get(paper.label)?.code && (
                     <span className="block text-ink-2">{names.get(paper.label)?.code}</span>
                   )}
@@ -107,7 +107,7 @@ export function GenomeMap({
                   return (
                     <td key={paper.label} className="p-0">
                       <div
-                        title={`${stat.topic} · ${names.get(paper.label)?.name ?? paper.label} · ${count} question${count === 1 ? "" : "s"}`}
+                        title={`${stat.topic} · ${paperName(names, paper.label)} · ${count} question${count === 1 ? "" : "s"}`}
                         className="flex h-[26px] min-w-12 items-center justify-center rounded-[3px] tabular-nums"
                         style={{
                           backgroundColor: shade ?? "var(--color-surface-2)",
