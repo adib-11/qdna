@@ -88,7 +88,7 @@ export function similarity(a: string, b: string): number {
  * even where the endpoints have diverged.
  *
  * A lineage spans two or more papers, so only a pair from different papers can
- * join. Two sub-parts of one paper share a lineage only when each matches a
+ * join. Two questions on one paper share a lineage only when each matches a
  * question elsewhere; their likeness to each other never joins them. A cluster
  * that still covers one paper is not a lineage and is omitted.
  */
