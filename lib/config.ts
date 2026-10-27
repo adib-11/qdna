@@ -27,6 +27,55 @@ export const MAX_CONCURRENT = 2;
 export const MIN_REQUEST_INTERVAL_MS = 2500;
 
 /**
+ * The extraction eval's spacing between requests. The free tier allows Flash
+ * about 5 requests a minute, so one every 12s stays under it; a paid key can
+ * override it with EVAL_MIN_INTERVAL_MS.
+ */
+export const EVAL_MIN_INTERVAL_MS = 12_000;
+
+/**
+ * Pages per request the eval sends live. Every ground-truth paper is 1-2
+ * pages and batches never cross papers, so 4 and 8 would send the very same
+ * requests; the results table reports the 2-page numbers for all three.
+ */
+export const EVAL_LIVE_BATCH_PAGES = 2;
+export const EVAL_REPORTED_BATCH_SIZES = [2, 4, 8];
+
+/**
+ * Requests per day one model allows on a free key, as measured for
+ * gemini-flash-latest. The eval's papers-per-day figure divides it by
+ * requests per paper.
+ */
+export const FREE_TIER_REQUESTS_PER_DAY = 20;
+
+/**
+ * Requests per quota day the eval allows itself per model, stopping before
+ * each. gemini-flash-latest's is the measured free-tier quota; the others are not published
+ * for the free tier, so they get a conservative guess. EVAL_DAILY_CAPS
+ * ("model=n,model=n") overrides them.
+ */
+export const EVAL_DAILY_CAPS: Record<string, number> = {
+  "gemini-flash-latest": FREE_TIER_REQUESTS_PER_DAY,
+  "gemini-3.5-flash-lite": 15,
+};
+/** The cap for any other model. */
+export const EVAL_DEFAULT_DAILY_CAP = 15;
+
+/** Free-tier daily quotas reset at midnight Pacific time. */
+export const QUOTA_TIME_ZONE = "America/Los_Angeles";
+
+/**
+ * A measurement refused with 429 or 503 is retried after this, doubling, up
+ * to EVAL_MEASUREMENT_RETRIES times. A minute outlasts a requests-per-minute
+ * window, so a 429 that survives it is the daily quota.
+ */
+export const EVAL_BACKOFF_BASE_MS = 60_000;
+export const EVAL_MEASUREMENT_RETRIES = 2;
+
+/** Consecutive 429s after which a model counts as spent for the quota day. */
+export const EVAL_SPENT_AFTER_429S = 4;
+
+/**
  * Retry attempts per batch on 429 / 5xx / timeout before the batch is recorded
  * failed. Each attempt can burn the full request timeout, so this trades a
  * lower chance of recovery for bounded worst-case wall time.
@@ -82,6 +131,12 @@ export const MAX_BATCH_BYTES = 3_500_000;
  * message rather than sent to fail. Photos are never downscaled to fit.
  */
 export const GEMINI_INLINE_LIMIT_BYTES = 20_000_000;
+
+/**
+ * Non-whitespace characters at or above which a PDF page counts as having a
+ * text layer. Image-only scans yield none, or a stray header of a few dozen.
+ */
+export const TEXT_LAYER_MIN_CHARS = 200;
 
 /** Proportion of non-white pixels below which a page is treated as blank. */
 export const LOW_INK_THRESHOLD = 0.02;
@@ -150,6 +205,13 @@ export const PRACTICE_PAPER_EXAMPLE_CHARS = 400;
 export const PARETO_TARGET_PCT = 70;
 
 export const EXTRACTION_MODEL = "gemini-flash-latest";
+
+/**
+ * The extraction setup the app uses: a name from EXTRACTION_SETUPS in
+ * lib/gemini/extract.ts. The eval rewrites the two lines below once it ends.
+ */
+// Pending: the extraction eval (docs/extraction-eval.md) is still in progress.
+export const EXTRACTION_SETUP = "Flash (gemini-flash-latest)";
 export const REASONING_MODEL = "gemini-flash-latest";
 
 /**

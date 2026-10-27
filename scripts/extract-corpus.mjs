@@ -20,6 +20,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { popplerTool } from "./poppler.mjs";
 
 import {
   BATCH_PAGES,
@@ -43,15 +44,18 @@ const BUDGET_MS = 60_000;
 const MAX_ATTEMPT_MS = 45_000;
 
 const [pdfPath, outPath, hint] = process.argv.slice(2);
-if (!pdfPath || !outPath) {
-  console.error('usage: extract-corpus.mjs <pdf> <out.json> ["course hint"]');
-  process.exit(2);
-}
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+// The eval runner imports `rasterise` from here; only a direct run extracts.
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  if (!pdfPath || !outPath) {
+    console.error('usage: extract-corpus.mjs <pdf> <out.json> ["course hint"]');
+    process.exit(2);
+  }
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
 
 async function main() {
   const apiKey = readApiKey();
@@ -109,34 +113,40 @@ async function main() {
  * JPEG: the browser path reads pixels out of the canvas it already has, and
  * the honest equivalent here is to read pixels too. A small PGM is trivial to
  * parse and costs a few milliseconds a page.
+ *
+ * `page` renders that one-based page alone, and `dir` keeps the renders
+ * there instead of in a temporary directory that is removed after.
  */
-function rasterise(file) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "qdna-"));
+export function rasterise(file, { page, dir } = {}) {
+  const outDir = dir ?? fs.mkdtempSync(path.join(os.tmpdir(), "qdna-"));
+  fs.mkdirSync(outDir, { recursive: true });
+  const range = page ? ["-f", String(page), "-l", String(page)] : [];
 
-  execFileSync("pdftoppm", [
+  execFileSync(popplerTool("pdftoppm"), [
+    ...range,
     "-jpeg",
     "-jpegopt", `quality=${Math.round(JPEG_QUALITY * 100)}`,
     "-scale-to-x", String(TARGET_PAGE_WIDTH_PX),
     "-scale-to-y", "-1",
     file,
-    path.join(dir, "page"),
+    path.join(outDir, "page"),
   ]);
-  execFileSync("pdftoppm", ["-gray", "-r", "20", file, path.join(dir, "ink")]);
+  execFileSync(popplerTool("pdftoppm"), [...range, "-gray", "-r", "20", file, path.join(outDir, "ink")]);
 
-  const jpegs = fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).sort();
-  const grays = fs.readdirSync(dir).filter((f) => f.endsWith(".pgm")).sort();
+  const jpegs = fs.readdirSync(outDir).filter((f) => f.endsWith(".jpg")).sort();
+  const grays = fs.readdirSync(outDir).filter((f) => f.endsWith(".pgm")).sort();
 
   const pages = [];
   for (const [index, name] of jpegs.entries()) {
-    if (grays[index] && inkRatio(path.join(dir, grays[index])) < LOW_INK_THRESHOLD) {
+    if (grays[index] && inkRatio(path.join(outDir, grays[index])) < LOW_INK_THRESHOLD) {
       console.log(`  page ${index + 1}: blank, skipped`);
       continue;
     }
-    const base64 = fs.readFileSync(path.join(dir, name)).toString("base64");
-    pages.push({ pageIndex: index, base64, bytes: base64.length });
+    const base64 = fs.readFileSync(path.join(outDir, name)).toString("base64");
+    pages.push({ pageIndex: index, base64, bytes: base64.length, mimeType: "image/jpeg" });
   }
 
-  fs.rmSync(dir, { recursive: true, force: true });
+  if (!dir) fs.rmSync(outDir, { recursive: true, force: true });
   return pages;
 }
 
