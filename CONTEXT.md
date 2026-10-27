@@ -4,9 +4,17 @@ qDNA turns a student's past exam papers into a ranked, auditable answer to "what
 
 ## Corpus
 
+**Course**:
+The subject a student is studying. The same course can be taught in more than one department, under different codes and slightly different names.
+_Avoid_: Subject, class
+
+**Offering**:
+One department's version of a course, identified by the course code(s) printed on its papers.
+_Avoid_: Department course, section
+
 **Corpus**:
-The set of papers one student analyses together, usually from one course.
-_Avoid_: Upload, dataset, session
+The set of papers one student analyses together: past papers of exactly one course, from one or more offerings, usually from several years. Papers from two offerings join one corpus only when they share a printed code or the student says they are the same course.
+_Avoid_: Upload, dataset, session, semester
 
 **Paper**:
 One sitting of an exam, a class test or a final, identified by its printed label.
@@ -37,7 +45,7 @@ _Avoid_: Manual edit, correction
 ## Evidence
 
 **Lineage**:
-A set of questions across papers that are the same question asked again, possibly with changed numbers or wording.
+A set of questions from two or more papers that are the same question asked again, possibly with changed numbers or wording. Similar sub-parts of one paper are not a lineage.
 _Avoid_: Cluster, duplicate group
 
 **Variant**:
