@@ -118,49 +118,37 @@ shown, described as a count over that corpus rather than as recurrence.
 ## How it works
 
 ```mermaid
-flowchart LR
-    subgraph browser["🖥️ Student's browser · own Gemini key"]
-        direction TB
-        pdf["📄 PDF papers"] --> raster["pdf.js → JPEG pages"]
-        raster --> blank["Blank-page filter"]
-        photos["📷 JPG · PNG · HEIC photos"] --> batch
-        blank --> batch["Batches of 2 pages"]
-        batch --> cache{"SHA-256<br/>cache hit?"}
-        cache -- yes --> questions["Structured questions<br/>number · marks · paper · topic"]
-        questions --> engine["⚙️ Deterministic analysis<br/>zero API calls"]
-        engine --> outputs["Study plan · Genome map<br/>Pareto · Lineage · Dossier · Backtest"]
-        engine --> shape["Measured paper shape<br/>+ ranked topics"]
-        outputs --> one["One question<br/>+ its recurrence"]
-    end
+flowchart TB
+    pdf["📄 PDF papers"] --> raster["pdf.js renders JPEG pages"]
+    raster --> blank["Blank-page filter"]
+    photos["📷 JPG · PNG · HEIC photos"] --> batch
+    blank --> batch["Batches of 2 pages"]
+    batch --> cache{"SHA-256 cache hit?"}
+    cache -- "no" --> extract["✨ Gemini vision<br/>structured JSON"]
+    extract -- "cache result" --> questions
+    cache -- "yes" --> questions["Questions<br/>number · marks · paper · topic"]
+    questions --> engine["⚙️ Deterministic analysis<br/>zero API calls"]
+    engine --> outputs["Study plan · Genome map · Pareto<br/>Lineage · Dossier · Backtest"]
+    engine --> shape["Measured paper shape<br/>+ ranked topics"]
+    outputs --> one["One question<br/>+ its recurrence"]
+    shape --> paper["✨ Gemini<br/>practice paper"]
+    one --> hint["✨ Gemini<br/>hint, never the answer"]
 
-    subgraph google["✨ Gemini"]
-        direction TB
-        extract["Vision extraction<br/>structured JSON"]
-        paper["Practice paper<br/>in the corpus's shape"]
-        hint["Hint<br/>never the answer"]
-    end
-
-    cache -- no --> extract
-    extract -- "cached, then" --> questions
-    shape --> paper
-    one --> hint
-
-    classDef input fill:#ffffff,stroke:#111111,stroke-width:1.5px,color:#111111
-    classDef step fill:#f4f3ef,stroke:#8a8a8a,color:#111111
-    classDef core fill:#111111,stroke:#111111,color:#ffffff,font-weight:bold
-    classDef result fill:#f2dd4b,stroke:#111111,color:#111111,font-weight:bold
-    classDef model fill:#e8f0fe,stroke:#4a6fd1,color:#111111
+    classDef input fill:#ffffff,stroke:#111111,stroke-width:2px,color:#111111
+    classDef step fill:#f4f3ef,stroke:#9a9a9a,color:#111111
+    classDef core fill:#111111,stroke:#111111,color:#ffffff
+    classDef result fill:#f2dd4b,stroke:#111111,stroke-width:2px,color:#111111
+    classDef model fill:#e8f0fe,stroke:#4a6fd1,stroke-width:2px,stroke-dasharray:5 3,color:#111111
     class pdf,photos input
     class raster,blank,batch,cache,questions,shape,one step
     class engine core
     class outputs result
     class extract,paper,hint model
-    style browser fill:#fbfaf7,stroke:#111111,stroke-width:2px
-    style google fill:#f6f8fe,stroke:#4a6fd1,stroke-width:2px,stroke-dasharray:6 4
 ```
 
-Every arrow into Gemini leaves from the browser on the student's own key.
-Everything else, including all of the analysis, runs locally with no API call.
+Dashed blue nodes are the only model calls. Each goes from the student's
+browser straight to Gemini on the student's own key. Everything else,
+including all of the analysis, runs locally with no API call.
 
 ### Privacy and keys
 
