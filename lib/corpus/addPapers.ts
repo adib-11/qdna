@@ -15,7 +15,7 @@ function ordinal(n: number): string {
 
 /**
  * What adding papers changed, in one line: the papers added, the questions
- * they brought, how many topics are new, and the topic whose rank moved most.
+ * they brought, how many topics are new, and the topic whose rank rose most.
  * Papers skipped as already present are named after it.
  */
 export function describeAdded(
@@ -33,11 +33,11 @@ export function describeAdded(
       newTopics === 0 ? "no new topics" : plural(newTopics, "new topic"),
     ];
 
+    // The biggest rise: a topic pushed down by new ones is not news.
     let move: { topic: string; from: number; to: number } | null = null;
     for (const [i, { topic }] of after.stats.entries()) {
       const from = rankBefore.get(topic);
-      if (from === undefined || from === i + 1) continue;
-      if (!move || Math.abs(from - (i + 1)) > Math.abs(move.from - move.to)) {
+      if (from !== undefined && from - (i + 1) > (move ? move.from - move.to : 0)) {
         move = { topic, from, to: i + 1 };
       }
     }

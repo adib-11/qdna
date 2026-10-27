@@ -7,7 +7,7 @@ import {
 } from "@/lib/config";
 import { similarity } from "@/lib/analysis/lineage";
 import { normalizeText } from "@/lib/analysis/normalize";
-import { resolveTopics, ungroupedLabels, type TopicGrouping } from "@/lib/analysis/topics";
+import { pinTopics, ungroupedLabels, type TopicGrouping } from "@/lib/analysis/topics";
 import { corpusTitle } from "@/lib/corpus/courses";
 import { generateWithFallback, type ModelClient } from "@/lib/gemini/generate";
 import { NEW_LABELS_GROUPING_PROMPT, TOPIC_GROUPING_PROMPT } from "@/lib/gemini/prompts";
@@ -34,22 +34,24 @@ export async function groupTopics(
 /**
  * Incremental topic grouping, for papers added to a corpus: the model sees the
  * corpus's existing topics and only the labels the corpus has never had, and
- * places each new label in an existing topic or a new one. The result is
- * `grouping` plus the new labels, so no existing topic is renamed or regrouped.
- * Topic overrides still apply on top, since they refer to these topic names.
+ * places each new label in an existing topic or a new one. The result pins
+ * every existing label to its current topic and adds the new labels, so no
+ * existing topic is renamed or regrouped. Topic overrides still apply on top,
+ * since they refer to these topic names.
  */
 export async function groupNewLabels(
   client: ModelClient,
   existing: Question[],
-  grouping: TopicGrouping = {},
+  current: TopicGrouping | undefined,
   added: Question[],
   signal?: AbortSignal,
 ): Promise<TopicGrouping> {
-  const known = new Set(existing.map((q) => q.topic.trim()));
-  const labels = ungroupedLabels(added, grouping).filter((label) => !known.has(label));
+  const pinned = pinTopics(existing, current);
+  const grouping = { ...current, ...pinned };
+  const labels = ungroupedLabels(added, grouping);
   if (labels.length === 0) return grouping;
 
-  const topics = [...new Set(resolveTopics(existing, { grouping }).map((q) => q.topic))];
+  const topics = [...new Set(Object.values(pinned))];
   const raw = await requestGrouping(
     client,
     [

@@ -47,6 +47,17 @@ describe("describeAdded", () => {
     );
   });
 
+  it("never reports a topic that only fell, pushed down by a new one", () => {
+    const after = analyze([
+      ...before.questions,
+      ...paper("2023 Final", ["Buses", "Buses", "Buses", "Buses"]),
+    ]);
+
+    expect(describeAdded(before, after, ["2023 Final"], [])).toBe(
+      "Added 2023 Final: 4 questions, 1 new topic.",
+    );
+  });
+
   it("says when every paper was skipped", () => {
     expect(describeAdded(before, before, [], ["2021 Final", "2022 Final"])).toBe(
       "2021 Final and 2022 Final are already in this corpus, skipped.",

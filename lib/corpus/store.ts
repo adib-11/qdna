@@ -95,7 +95,8 @@ export function createCorpusStore(
   }
 
   /**
-   * Save the questions an import merged into `corpus`, and open the result.
+   * Save `corpus` with new questions (papers imported, added or removed), and
+   * open the result.
    * A sample's id is reserved for the pristine sample, which opening the
    * sample again overwrites, so a merge into a sample becomes a new corpus.
    */

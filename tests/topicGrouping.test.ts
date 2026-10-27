@@ -154,6 +154,21 @@ describe("groupNewLabels, for papers added to a grouped corpus", () => {
     );
   });
 
+  it("keeps an ungrouped corpus's topics too, though added copies of a label would refold them", async () => {
+    const ungrouped = [
+      question("1", "Data Flow Diagrams"),
+      question("2", "Data Flow Diagrams"),
+      question("3", "Data Flow Diagram"),
+    ];
+    const copies = [question("4", "Data Flow Diagram"), question("5", "Data Flow Diagram")];
+    const { client } = replying({ topics: [] });
+
+    const next = await groupNewLabels(client, ungrouped, undefined, copies);
+
+    const topics = analyze([...ungrouped, ...copies], { grouping: next }).questions.map((q) => q.topic);
+    expect(new Set(topics)).toEqual(new Set(["Data Flow Diagrams"]));
+  });
+
   it("makes no request when every added label is already known", async () => {
     const { client, requests } = replying({ topics: [] });
 

@@ -4,6 +4,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { useRequestKey } from "@/components/OwnKeyProvider";
 import { Button } from "@/components/ui/Button";
 import { analyze } from "@/lib/analysis";
+import { pinTopics } from "@/lib/analysis/topics";
 import { describeAdded } from "@/lib/corpus/addPapers";
 import { mergePapers } from "@/lib/corpus/corpusFile";
 import { corpusCourses } from "@/lib/analysis/papers";
@@ -94,7 +95,8 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
       const { added, skipped } = mergePapers(corpus.outcome.questions, run.outcome.questions);
       const incoming = run.outcome.questions.filter((q) => added.includes(q.paper.label));
       if (added.length === 0) {
-        setNotice({ error: false, text: describeAdded(analyzed(corpus), analyzed(corpus), [], skipped) });
+        const unchanged = analyzed(corpus);
+        setNotice({ error: false, text: describeAdded(unchanged, unchanged, [], skipped) });
         return;
       }
       const other = otherOffering(corpus.outcome.questions, incoming, corpus.sameCourse);
@@ -126,7 +128,11 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
     const controller = new AbortController();
     cancelRef.current = controller;
     setState({ phase: "grouping" });
-    let topicGrouping = corpus.topicGrouping;
+    // Without a grouping, the existing labels are still pinned to their topics.
+    let topicGrouping = {
+      ...corpus.topicGrouping,
+      ...pinTopics(corpus.outcome.questions, corpus.topicGrouping),
+    };
     let groupingNote = "";
     try {
       topicGrouping = await groupNewLabels(
@@ -145,11 +151,12 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
     setState({ phase: "idle" });
 
     const store = browserCorpusStore();
-    // Read again: the student may have changed an override while the model worked.
+    // Read again: the student may have changed an override, or run "Group
+    // topics", while the model worked. Their grouping wins for existing labels.
     const latest = store?.get(corpus.id) ?? corpus;
     try {
       const saved = store?.saveImport(
-        { ...latest, topicGrouping },
+        { ...latest, topicGrouping: { ...topicGrouping, ...latest.topicGrouping } },
         [...latest.outcome.questions, ...incoming],
         latest.topicOverrides,
         sameCourse,
@@ -198,7 +205,7 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
     const rest = incoming.filter((q) => !theirs.has(q.paper.label));
     if (rest.length > 0) {
       await merge(rest, skipped, corpus.sameCourse, apiKey);
-      setNotice((n) => (n && !n.error ? { error: false, text: `${n.text} ${savedNote}` } : n));
+      setNotice((n) => n && { ...n, text: `${savedNote} ${n.text}` });
       return;
     }
     setState({ phase: "idle" });
