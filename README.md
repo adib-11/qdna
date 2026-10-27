@@ -287,10 +287,3 @@ tests/          Vitest specs
 3. Branch from `main`, keep lint, unit tests and the Playwright suite green,
    and open a pull request.
 
-## Acknowledgements
-
-- Built for Hackdays @ RUET 2026, where it won.
-- Sample papers are past exam papers from RUET (Rajshahi University of
-  Engineering & Technology).
-- Launch film voice by [Fish Audio](https://fish.audio); score and sound design
-  synthesised in [`build_audio.py`](docs/launch-video/audio/build_audio.py).
