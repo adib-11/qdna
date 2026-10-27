@@ -105,6 +105,27 @@ function rankCodes(
     .map(([key]) => spelling.get(key)!);
 }
 
+/**
+ * Papers added to a corpus from another offering: those printing codes that
+ * connect to none of the corpus's own, even through `sameCourse`, with every
+ * code they print. A paper printing no code is never another offering; when
+ * the corpus itself prints none there is nothing to compare, and the split
+ * screen sorts out whatever the merge holds.
+ */
+export function otherOffering(
+  corpus: Question[],
+  added: Question[],
+  sameCourse: string[][] = [],
+): Course {
+  const own = new Set(corpus.map((q) => q.paper.label));
+  const { courses } = splitCourses([...corpus, ...added], sameCourse);
+  if (!courses.some((course) => course.papers.some((label) => own.has(label)))) {
+    return { papers: [], codes: [] };
+  }
+  const others = courses.filter((course) => !course.papers.some((label) => own.has(label)));
+  return { papers: others.flatMap((c) => c.papers), codes: others.flatMap((c) => c.codes) };
+}
+
 /** True when the corpus holds more than one course, or a paper waits for the student to pick its course. */
 export function needsSplit(split: CourseSplit): boolean {
   return split.courses.length > 1 || split.unassigned.length > 0;

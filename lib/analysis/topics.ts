@@ -101,6 +101,16 @@ export function resolveTopics(
   });
 }
 
+/**
+ * `grouping` extended to every label in `questions`, each under the topic it
+ * resolves to now. Lexical folding counts labels, so adding questions could
+ * otherwise refold, and rename, topics the grouping never covered.
+ */
+export function pinTopics(questions: Question[], grouping: TopicGrouping = {}): TopicGrouping {
+  const resolved = resolveTopics(questions, { grouping });
+  return Object.fromEntries(questions.map((q, i) => [q.topic.trim(), resolved[i].topic]));
+}
+
 /** Topic labels the grouping has not seen yet. Grouping is pending while any remain. */
 export function ungroupedLabels(
   questions: Question[],

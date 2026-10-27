@@ -85,28 +85,29 @@ export function importCorpusFile(
   if (!parsed.ok) return parsed;
   const file = parsed.file;
 
-  const present = new Set(existing.map((q) => q.paper.label));
-  const questions = [...existing];
-  const added: string[] = [];
-  const skipped: string[] = [];
-
-  for (const paper of file.papers) {
-    if (present.has(paper.label)) {
-      skipped.push(paper.label);
-      continue;
-    }
-    present.add(paper.label);
-    added.push(paper.label);
-    questions.push(...paper.questions);
-  }
-
   return {
     ok: true,
-    questions,
-    added,
-    skipped,
+    ...mergePapers(existing, file.papers.flatMap((paper) => paper.questions)),
     topicOverrides: mergeOverrides(existingOverrides, file.topicOverrides),
     sameCourse: [...existingSameCourse, ...(file.sameCourse ?? [])],
+  };
+}
+
+/**
+ * Add `incoming` to `existing`, paper by paper. A paper already present (same
+ * label) keeps its existing copy, whether it comes from a corpus file or from
+ * extracting the paper again.
+ */
+export function mergePapers(
+  existing: Question[],
+  incoming: Question[],
+): { questions: Question[]; added: string[]; skipped: string[] } {
+  const present = new Set(existing.map((q) => q.paper.label));
+  const labels = [...new Set(incoming.map((q) => q.paper.label))];
+  return {
+    questions: [...existing, ...incoming.filter((q) => !present.has(q.paper.label))],
+    added: labels.filter((label) => !present.has(label)),
+    skipped: labels.filter((label) => present.has(label)),
   };
 }
 

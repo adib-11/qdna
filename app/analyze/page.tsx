@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAddPapers } from "@/components/AddPapers";
 import { BacktestPanel } from "@/components/BacktestPanel";
 import { CourseSplit } from "@/components/CourseSplit";
 import {
@@ -14,6 +15,7 @@ import { GenomeMap } from "@/components/GenomeMap";
 import { LineageCard } from "@/components/LineageCard";
 import { LowConfidenceNotice } from "@/components/LowConfidenceNotice";
 import { OwnKeyStatus } from "@/components/OwnKeyProvider";
+import { PaperList } from "@/components/PaperList";
 import { ParetoChart } from "@/components/ParetoChart";
 import { PracticePaper } from "@/components/PracticePaper";
 import { StudyPlan } from "@/components/StudyPlan";
@@ -52,6 +54,8 @@ export default function AnalyzePage() {
 function Results() {
   const asked = useSearchParams().get("tab");
   const tab: Tab = TABS.find(([id]) => id === asked)?.[0] ?? "plan";
+  const router = useRouter();
+  const [showPapers, setShowPapers] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
   /** A tab opened from further down the page starts at its top, under the tabs. */
@@ -65,6 +69,7 @@ function Results() {
   // Undefined until browser storage can be read, after hydration.
   const corpus = useOpenCorpus();
   const outcome = corpus?.outcome ?? null;
+  const adding = useAddPapers(corpus);
 
   /** An import merged new papers in: save them over this corpus. Throws when storage is full. */
   function saveMerged(
@@ -146,6 +151,7 @@ function Results() {
             ← New analysis
           </Link>
           <div className="flex flex-wrap items-start gap-2">
+            {adding.button}
             <StudyPackButton result={result} />
             <Button variant="ghost" onClick={() => window.print()}>
               Print
@@ -182,12 +188,34 @@ function Results() {
             [papers.length, papers.length === 1 ? "paper" : "papers"],
             [result.stats.length, "topics"],
             [result.lineages.length, result.lineages.length === 1 ? "lineage" : "lineages"],
-          ].map(([figure, label]) => (
-            <span key={label}>
-              <b className="mr-2 text-xl text-ink tabular-nums">{figure}</b>
-              {label}{" "}
-            </span>
-          ))}
+          ].map(([figure, label], index) => {
+            const text = (
+              <>
+                <b className="mr-2 text-xl text-ink tabular-nums">{figure}</b>
+                {label}
+              </>
+            );
+            // The papers figure opens the paper list on the Plan tab.
+            return index === 1 ? (
+              <button
+                key={label}
+                type="button"
+                aria-expanded={showPapers && tab === "plan"}
+                aria-controls={showPapers && tab === "plan" ? "papers" : undefined}
+                onClick={() => {
+                  if (tab !== "plan") {
+                    setShowPapers(true);
+                    router.push("?tab=plan", { scroll: false });
+                  } else setShowPapers(!showPapers);
+                }}
+                className="-my-1 inline-flex min-h-11 items-center underline decoration-rule underline-offset-4 transition-[text-decoration-color] duration-(--dur-micro) ease-out hover:decoration-accent print:no-underline"
+              >
+                {text}
+              </button>
+            ) : (
+              <span key={label}>{text} </span>
+            );
+          })}
         </p>
 
         {partial && (
@@ -228,9 +256,15 @@ function Results() {
           ))}
         </ul>
       </nav>
+      {adding.strip}
 
       <main id="main" tabIndex={-1} className="pb-(--section-gap) focus:outline-none print:space-y-8">
         <section id="plan" className={panel("plan")}>
+          {showPapers && (
+            <div id="papers" className="mb-10 border-b border-ink pb-6 print:hidden">
+              <PaperList corpus={corpus} papers={papers.map((p) => p.label)} names={names} />
+            </div>
+          )}
           <StudyPlan plan={result.studyPlan} questionCount={result.questionCount} />
         </section>
 

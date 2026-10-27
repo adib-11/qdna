@@ -29,7 +29,13 @@ const STUB_QUESTIONS = [
   isNumerical: q.qNo === "1(b)",
 }));
 
-export type GeminiCall = "verify-key" | "extract" | "hint" | "group-topics" | "practice-paper";
+export type GeminiCall =
+  | "verify-key"
+  | "extract"
+  | "hint"
+  | "group-topics"
+  | "group-new-labels"
+  | "practice-paper";
 
 export interface GeminiStub {
   /** Every call the app made, in order. */
@@ -55,6 +61,7 @@ function classify(body: string): GeminiCall {
   const text = parts.map((p) => p.text ?? "").join("\n");
   if (text.startsWith("You are helping a student")) return "hint";
   if (text.startsWith("You are grouping the topic labels")) return "group-topics";
+  if (text.startsWith("You are placing the topic labels")) return "group-new-labels";
   return "practice-paper";
 }
 
@@ -67,6 +74,14 @@ function answer(call: GeminiCall): string {
         topics: [
           { topic: "Coupling", labels: ["Coupling", "Coupling metrics"] },
           { topic: "Testing", labels: ["Testing"] },
+        ],
+      });
+    case "group-new-labels":
+      // "Testing" is an existing topic of the Software Engineering sample.
+      return JSON.stringify({
+        topics: [
+          { topic: "Coupling", labels: ["Coupling", "Coupling metrics"] },
+          { topic: "Software Testing", labels: ["Testing"] },
         ],
       });
     case "hint":

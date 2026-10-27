@@ -4,6 +4,7 @@ import {
   describeImport,
   exportCorpusFile,
   importCorpusFile,
+  mergePapers,
 } from "@/lib/corpus/corpusFile";
 import type { Question } from "@/lib/types";
 import { EMF_QUESTIONS } from "@/tests/fixtures/emf";
@@ -193,5 +194,19 @@ describe("same-course groups in a corpus file", () => {
     const file = { ...JSON.parse(exportCorpusFile(final)), sameCourse: ["ECE 3121"] };
 
     expect(importCorpusFile(ct3, JSON.stringify(file)).ok).toBe(false);
+  });
+});
+
+describe("adding extracted papers to a corpus", () => {
+  const ct2 = EMF_QUESTIONS.filter((q) => q.paper.label === "CT2 ECE 3121");
+  const ct3 = EMF_QUESTIONS.filter((q) => q.paper.label === "CT3");
+  const ct3Again = ct3.map((q) => ({ ...q, text: `${q.text} (extracted again)` }));
+
+  it("skips a paper already in the corpus, keeping the existing copy, as an import does", () => {
+    const result = mergePapers(ct3, [...ct3Again, ...ct2]);
+
+    expect(result.added).toEqual(["CT2 ECE 3121"]);
+    expect(result.skipped).toEqual(["CT3"]);
+    expect(byId(result.questions)).toEqual(byId([...ct3, ...ct2]));
   });
 });

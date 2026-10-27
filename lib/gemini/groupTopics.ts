@@ -7,10 +7,10 @@ import {
 } from "@/lib/config";
 import { similarity } from "@/lib/analysis/lineage";
 import { normalizeText } from "@/lib/analysis/normalize";
-import { ungroupedLabels, type TopicGrouping } from "@/lib/analysis/topics";
+import { pinTopics, ungroupedLabels, type TopicGrouping } from "@/lib/analysis/topics";
 import { corpusTitle } from "@/lib/corpus/courses";
 import { generateWithFallback, type ModelClient } from "@/lib/gemini/generate";
-import { TOPIC_GROUPING_PROMPT } from "@/lib/gemini/prompts";
+import { NEW_LABELS_GROUPING_PROMPT, TOPIC_GROUPING_PROMPT } from "@/lib/gemini/prompts";
 import { TOPIC_GROUPING_SCHEMA } from "@/lib/gemini/schema";
 import type { Question } from "@/lib/types";
 
@@ -23,8 +23,56 @@ export async function groupTopics(
   questions: Question[],
   signal?: AbortSignal,
 ): Promise<TopicGrouping> {
-  const raw = await generateWithFallback(client, {
-    parts: [{ text: `${TOPIC_GROUPING_PROMPT}\n\n${describeLabels(questions)}` }],
+  const raw = await requestGrouping(
+    client,
+    `${TOPIC_GROUPING_PROMPT}\n\n${describeLabels(questions)}`,
+    signal,
+  );
+  return parseGrouping(raw, ungroupedLabels(questions));
+}
+
+/**
+ * Incremental topic grouping, for papers added to a corpus: the model sees the
+ * corpus's existing topics and only the labels the corpus has never had, and
+ * places each new label in an existing topic or a new one. The result pins
+ * every existing label to its current topic and adds the new labels, so no
+ * existing topic is renamed or regrouped. Topic overrides still apply on top,
+ * since they refer to these topic names.
+ */
+export async function groupNewLabels(
+  client: ModelClient,
+  existing: Question[],
+  current: TopicGrouping | undefined,
+  added: Question[],
+  signal?: AbortSignal,
+): Promise<TopicGrouping> {
+  const pinned = pinTopics(existing, current);
+  const grouping = { ...current, ...pinned };
+  const labels = ungroupedLabels(added, grouping);
+  if (labels.length === 0) return grouping;
+
+  const topics = [...new Set(Object.values(pinned))];
+  const raw = await requestGrouping(
+    client,
+    [
+      NEW_LABELS_GROUPING_PROMPT,
+      `Course: ${corpusTitle(existing).name}`,
+      `Existing topics:\n${topics.map((t) => `- ${t}`).join("\n")}`,
+      `New labels:\n${labels.map((l) => `- ${l}`).join("\n")}`,
+    ].join("\n\n"),
+    signal,
+  );
+  // An existing topic the model respelled is still that topic.
+  const spelled = new Map(topics.map((topic) => [normalizeText(topic), topic]));
+  const placed = Object.entries(parseGrouping(raw, labels)).map(
+    ([label, topic]) => [label, spelled.get(normalizeText(topic)) ?? topic] as const,
+  );
+  return { ...grouping, ...Object.fromEntries(placed) };
+}
+
+function requestGrouping(client: ModelClient, text: string, signal?: AbortSignal) {
+  return generateWithFallback(client, {
+    parts: [{ text }],
     models: [REASONING_MODEL, ...MODEL_FALLBACKS],
     config: {
       responseMimeType: "application/json",
@@ -35,7 +83,6 @@ export async function groupTopics(
     maxAttemptMs: GROUPING_ATTEMPT_MS,
     signal,
   });
-  return parseGrouping(raw, ungroupedLabels(questions));
 }
 
 /**

@@ -4,6 +4,7 @@ import {
   sampleCorpusId,
   type KeyValueStorage,
 } from "@/lib/corpus/store";
+import { analyze } from "@/lib/analysis";
 import { sampleOutcome } from "@/lib/samples";
 import { EMF_QUESTIONS } from "@/tests/fixtures/emf";
 
@@ -133,6 +134,43 @@ describe("saved corpora", () => {
     };
 
     expect(() => createCorpusStore(storage).save(ct3)).toThrow(/storage is full/i);
+  });
+});
+
+describe("removing a paper from a saved corpus", () => {
+  const both = sampleOutcome([...ct3.questions, ...finals.questions]);
+
+  it("drops that paper's questions and saves over the corpus, keeping it open", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const corpus = store.save(both);
+
+    const kept = store.removePaper(corpus, "CT3");
+
+    expect(kept.id).toBe(corpus.id);
+    expect(store.current()?.outcome.questions).toEqual(finals.questions);
+  });
+
+  it("leaves a topic only that paper asked out of the analysis", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const corpus = store.save(both);
+    const onlyCt3 = analyze(both.questions).stats.find(
+      (stat) => stat.papers.length === 1 && stat.papers[0] === "CT3",
+    );
+    expect(onlyCt3).toBeDefined();
+
+    const kept = store.removePaper(corpus, "CT3");
+
+    expect(analyze(kept.outcome.questions).stats.map((s) => s.topic)).not.toContain(onlyCt3!.topic);
+  });
+
+  it("never changes the pristine sample, saving the rest as a new corpus", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const sample = store.save(both, sampleCorpusId("emf"));
+
+    const kept = store.removePaper(sample, "CT3");
+
+    expect(kept.id).not.toBe(sample.id);
+    expect(store.get(sample.id)?.outcome).toEqual(both);
   });
 });
 
