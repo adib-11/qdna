@@ -8,6 +8,7 @@ import {
 import { similarity } from "@/lib/analysis/lineage";
 import { normalizeText } from "@/lib/analysis/normalize";
 import { ungroupedLabels, type TopicGrouping } from "@/lib/analysis/topics";
+import { corpusTitle } from "@/lib/corpus/courses";
 import { generateWithFallback, type ModelClient } from "@/lib/gemini/generate";
 import { TOPIC_GROUPING_PROMPT } from "@/lib/gemini/prompts";
 import { TOPIC_GROUPING_SCHEMA } from "@/lib/gemini/schema";
@@ -37,18 +38,13 @@ export async function groupTopics(
   return parseGrouping(raw, ungroupedLabels(questions));
 }
 
-/** Labels listed under their course, so the model never folds across courses. */
+/**
+ * Every label as one course block: a corpus is one course, so topics fold
+ * across its offerings.
+ */
 function describeLabels(questions: Question[]): string {
-  const byCourse = new Map<string, Set<string>>();
-  for (const q of questions) {
-    const label = q.topic.trim();
-    if (!label) continue;
-    const course = q.course.trim() || "Unnamed course";
-    byCourse.set(course, (byCourse.get(course) ?? new Set()).add(label));
-  }
-  return [...byCourse]
-    .map(([course, labels]) => `Course: ${course}\n${[...labels].map((l) => `- ${l}`).join("\n")}`)
-    .join("\n\n");
+  const labels = ungroupedLabels(questions).map((label) => `- ${label}`);
+  return `Course: ${corpusTitle(questions).name}\n${labels.join("\n")}`;
 }
 
 /**

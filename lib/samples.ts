@@ -18,7 +18,7 @@ export interface Sample {
   load: () => Promise<Question[]>;
 }
 
-/** Dynamic imports so three corpora do not ride along in the landing bundle. */
+/** Dynamic imports so the corpora do not ride along in the landing bundle. */
 export const SAMPLES: Sample[] = [
   {
     id: "swe",
@@ -31,16 +31,6 @@ export const SAMPLES: Sample[] = [
     name: "Computer Architecture",
     blurb: "RUET ECE 3119 finals, several years of them",
     load: () => import("@/data/cad.json").then((m) => m.default as Question[]),
-  },
-  {
-    // Not a course corpus at all — one PDF carrying a whole semester's finals
-    // across five different courses. It is bundled precisely because it is
-    // messy: it shows the pipeline separating papers it was handed in a heap.
-    id: "semester",
-    name: "A whole semester",
-    blurb: "Five courses' 2024 finals, uploaded as one bundle",
-    load: () =>
-      import("@/data/semester.json").then((m) => m.default as Question[]),
   },
 ];
 

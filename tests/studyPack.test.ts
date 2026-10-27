@@ -14,6 +14,12 @@ describe("study pack", () => {
     );
   });
 
+  it("names the course, with every code when it spans offerings", () => {
+    expect(pack).toContain("# Study pack: Electromagnetic Fields and Waves (ECE 3121 · EEE 2107)");
+    const ece = EMF_QUESTIONS.filter((q) => q.courseCodes.includes("ECE 3121"));
+    expect(studyPack(analyze(ece))).toContain("# Study pack: Electromagnetic Fields and Waves\n");
+  });
+
   it("contains every question verbatim", () => {
     for (const q of result.questions) expect(pack).toContain(q.text);
   });

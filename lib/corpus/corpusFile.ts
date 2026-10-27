@@ -27,11 +27,14 @@ export interface CorpusFile {
   papers: FilePaper[];
   /** The student's topic overrides, in the order they were made. */
   topicOverrides: TopicOverride[];
+  /** Groups of course codes the student said are one course. Absent from older files. */
+  sameCourse?: string[][];
 }
 
 export function exportCorpusFile(
   questions: Question[],
   topicOverrides: TopicOverride[] = [],
+  sameCourse: string[][] = [],
 ): string {
   const papers = new Map<string, FilePaper>();
   for (const question of questions) {
@@ -46,6 +49,7 @@ export function exportCorpusFile(
     version: CORPUS_FILE_VERSION,
     papers: [...papers.values()],
     topicOverrides,
+    sameCourse,
   };
   return JSON.stringify(file, null, 2);
 }
@@ -61,6 +65,8 @@ export type ImportResult =
       skipped: string[];
       /** The importer's overrides, plus the imported ones that do not contradict them. */
       topicOverrides: TopicOverride[];
+      /** The importer's same-course groups, then the imported ones. */
+      sameCourse: string[][];
     }
   | { ok: false; error: string };
 
@@ -73,6 +79,7 @@ export function importCorpusFile(
   existing: Question[],
   text: string,
   existingOverrides: TopicOverride[] = [],
+  existingSameCourse: string[][] = [],
 ): ImportResult {
   const parsed = parseCorpusFile(text);
   if (!parsed.ok) return parsed;
@@ -99,6 +106,7 @@ export function importCorpusFile(
     added,
     skipped,
     topicOverrides: mergeOverrides(existingOverrides, file.topicOverrides),
+    sameCourse: [...existingSameCourse, ...(file.sameCourse ?? [])],
   };
 }
 
@@ -155,7 +163,11 @@ function parseCorpusFile(text: string): Parsed {
       error: `This corpus file is format version ${String(data.version)}, which this version of qDNA cannot read. It reads version ${CORPUS_FILE_VERSION}.`,
     };
   }
-  if (!Array.isArray(data.papers) || !isOptionalOverrides(data.topicOverrides)) {
+  if (
+    !Array.isArray(data.papers) ||
+    !isOptionalOverrides(data.topicOverrides) ||
+    !isOptionalSameCourse(data.sameCourse)
+  ) {
     return { ok: false, error: DAMAGED };
   }
   if (data.papers.length === 0) {
@@ -173,6 +185,7 @@ function parseCorpusFile(text: string): Parsed {
       version: CORPUS_FILE_VERSION,
       papers: data.papers,
       topicOverrides: data.topicOverrides ?? [],
+      sameCourse: data.sameCourse ?? [],
     },
   };
 }
@@ -186,6 +199,13 @@ function isOptionalOverrides(value: unknown): value is TopicOverride[] | undefin
 }
 
 const isString = (value: unknown): value is string => typeof value === "string";
+
+export function isOptionalSameCourse(value: unknown): value is string[][] | undefined {
+  return (
+    value === undefined ||
+    (Array.isArray(value) && value.every((group) => Array.isArray(group) && group.every(isString)))
+  );
+}
 
 export function isTopicOverride(value: unknown): value is TopicOverride {
   return (

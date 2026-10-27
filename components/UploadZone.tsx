@@ -13,6 +13,7 @@ import {
 } from "@/lib/extract/runExtraction";
 import { UPLOAD_ACCEPT, uploadKind } from "@/lib/extract/uploads";
 import { saveSession } from "@/lib/extract/session";
+import { needsSplit, splitCourses } from "@/lib/corpus/courses";
 import { sampleCorpusId } from "@/lib/corpus/store";
 import { groupSavedCorpus } from "@/lib/corpus/useCorpora";
 import { MIN_PAPERS_FOR_CONFIDENCE } from "@/lib/config";
@@ -108,12 +109,13 @@ export function UploadZone() {
   async function openOutcome(run: ExtractionRun) {
     const saved = saveSession(run.outcome);
     const apiKey = ownKeyStore().get();
-    if (saved && apiKey) {
+    if (saved && apiKey && !needsSplit(splitCourses(run.outcome.questions))) {
       const controller = new AbortController();
       cancelRef.current = controller;
       setPhase("grouping");
       // A failed or skipped grouping is not a failed extraction: the analysis
-      // offers "Group topics" as a pending action until one succeeds.
+      // offers "Group topics" as a pending action until one succeeds. Papers
+      // from several courses are grouped once the split screen has split them.
       await groupSavedCorpus(saved.id, apiKey, controller.signal).catch(() => {});
       cancelRef.current = null;
     }

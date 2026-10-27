@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { ImportCorpusButton } from "@/components/CorpusFileButtons";
 import { Button } from "@/components/ui/Button";
-import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
+import { paperOrder } from "@/lib/analysis/papers";
+import { corpusTitle } from "@/lib/corpus/courses";
 import { browserCorpusStore } from "@/lib/corpus/store";
 import { corpusChanged, useSavedCorpora } from "@/lib/corpus/useCorpora";
 import { sampleOutcome } from "@/lib/samples";
@@ -27,9 +28,14 @@ export function SavedCorpora() {
   }
 
   /** An import from here starts a new corpus. */
-  function saveImported(questions: Question[], topicOverrides: TopicOverride[]) {
+  function saveImported(
+    questions: Question[],
+    topicOverrides: TopicOverride[],
+    sameCourse: string[][],
+  ) {
     const saved = browserCorpusStore()?.save(sampleOutcome(questions), undefined, {
       topicOverrides,
+      sameCourse,
     });
     corpusChanged();
     return saved?.id;
@@ -51,7 +57,7 @@ export function SavedCorpora() {
           {corpora.map((corpus) => {
             const { questions } = corpus.outcome;
             const paperCount = paperOrder(questions).length;
-            const title = corpusTitle(corpusCourses(questions));
+            const { name: title, codes } = corpusTitle(questions);
             // Two corpora can share a title, so the labels also say which one.
             const which = `${title}, ${paperCount} paper${paperCount === 1 ? "" : "s"}, saved ${new Date(corpus.savedAt).toLocaleString()}`;
             return (
@@ -61,6 +67,9 @@ export function SavedCorpora() {
               >
                 <div className="min-w-0">
                   <p className="text-lg font-semibold break-words">{title}</p>
+                  {codes.length > 0 && (
+                    <p className="font-outlier text-sm">{codes.join(" · ")}</p>
+                  )}
                   <p className="mt-1 flex flex-wrap gap-x-4 text-sm text-ink-2 tabular-nums">
                     <span>
                       {paperCount} paper{paperCount === 1 ? "" : "s"}

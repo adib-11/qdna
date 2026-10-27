@@ -190,6 +190,16 @@ describe("clusterLineages", () => {
     expect(gauss?.courseCodes.sort()).toEqual(["ECE 3121", "EEE 2107"]);
   });
 
+  it("reads one code printed two ways as one offering, not two departments", () => {
+    const [first, second] = GAUSS_80_MICRO;
+    const clusters = clusterLineages([
+      { ...first, courseCodes: ["ECE 3121"] },
+      { ...second, courseCodes: ["ece3121"] },
+    ]);
+
+    expect(clusters[0].crossDepartment).toBe(false);
+  });
+
   it("does not report a question as its own lineage", () => {
     for (const cluster of clusterLineages(EMF_QUESTIONS)) {
       expect(cluster.members.length).toBeGreaterThan(1);

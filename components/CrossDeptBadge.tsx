@@ -1,7 +1,7 @@
 import { Pill } from "@/components/ui/Pill";
 
 /**
- * Shown only on a lineage whose members carry more than one course code.
+ * Shown only on a lineage that spans more than one offering of the course.
  *
  * Worth its own badge because it is the least expected finding the tool
  * produces: the same question set into two departments' papers, which means a
@@ -12,7 +12,7 @@ export function CrossDeptBadge({ courseCodes }: { courseCodes: string[] }) {
 
   return (
     <Pill tone="on" title={courseCodes.join(" · ")}>
-      appears across departments
+      asked in both departments
     </Pill>
   );
 }

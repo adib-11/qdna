@@ -184,3 +184,57 @@ describe("topic grouping and topic overrides in a saved corpus", () => {
     expect(store.current()).toBeNull();
   });
 });
+
+describe("splitting a saved corpus into one corpus per course", () => {
+  const grouping = { "Gauss's Law": "Gauss" };
+  const overrides = [{ from: ["Gauss"], to: "Gauss's Law & Flux" }];
+  const ece = EMF_QUESTIONS.filter((q) => q.courseCodes.includes("ECE 3121"));
+  const eee = EMF_QUESTIONS.filter((q) => q.courseCodes.includes("EEE 2107"));
+
+  it("replaces the mixed corpus with one per course and opens the first", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const mixed = store.save(sampleOutcome(EMF_QUESTIONS), undefined, {
+      topicGrouping: grouping,
+      topicOverrides: overrides,
+    });
+
+    const parts = store.split(mixed, [ece, eee]);
+
+    expect(store.get(mixed.id)).toBeNull();
+    expect(store.list()).toHaveLength(2);
+    expect(store.current()?.id).toBe(parts[0].id);
+    expect(parts.map((c) => c.outcome.questions)).toEqual([ece, eee]);
+    for (const part of parts) {
+      expect(part.topicGrouping).toEqual(grouping);
+      expect(part.topicOverrides).toEqual(overrides);
+    }
+  });
+
+  it("remembers the courses the student said are the same, through a later import", () => {
+    const store = createCorpusStore(memoryStorage(), tickingClock());
+    const mixed = store.save(sampleOutcome(EMF_QUESTIONS));
+    const sameCourse = [["ECE 3121", "EEE 2107"]];
+
+    const [one] = store.split(mixed, [EMF_QUESTIONS], sameCourse);
+    const merged = store.saveImport(one, EMF_QUESTIONS);
+
+    expect(store.get(one.id)?.sameCourse).toEqual(sameCourse);
+    expect(merged.sameCourse).toEqual(sameCourse);
+  });
+
+  it("keeps the mixed corpus when a course cannot be saved", () => {
+    const storage = memoryStorage();
+    const store = createCorpusStore(storage, tickingClock());
+    const mixed = store.save(sampleOutcome(EMF_QUESTIONS));
+    let writes = 0;
+    const setItem = storage.setItem;
+    storage.setItem = (k, v) => {
+      if (++writes > 1) throw new DOMException("full", "QuotaExceededError");
+      setItem(k, v);
+    };
+
+    expect(() => store.split(mixed, [ece, eee])).toThrow(/storage is full/i);
+    expect(store.list().map((c) => c.id)).toEqual([mixed.id]);
+    expect(store.current()?.id).toBe(mixed.id);
+  });
+});

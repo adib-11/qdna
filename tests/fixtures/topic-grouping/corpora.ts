@@ -31,17 +31,15 @@ export const GROUND_TRUTH_COURSES: GroundTruthCourse[] = fs
 
 /**
  * What a corpus must show for topic grouping to ship, by the owner's call:
- * holdout coverage and pair F1 both rise on the bundled single-course
- * corpora; pair F1 rises on each single-paper ground-truth set, where holdout
- * coverage cannot be measured (there is no second paper to hold out); and the
- * mixed-course semester corpus, which no ground truth matches, is excluded.
+ * holdout coverage and pair F1 both rise on the bundled corpora; pair F1
+ * rises on each single-paper ground-truth set, where holdout coverage cannot
+ * be measured (there is no second paper to hold out).
  */
-export type GroupingGate = "coverage and pair F1" | "pair F1" | "excluded";
+export type GroupingGate = "coverage and pair F1" | "pair F1";
 
 export const GATE_LABEL: Record<GroupingGate, string> = {
   "coverage and pair F1": "holdout coverage and pair F1 must rise",
   "pair F1": "pair F1 must rise (coverage not measurable: one paper)",
-  excluded: "excluded from gate (no ground truth)",
 };
 
 export interface GroupingCorpus {
@@ -75,7 +73,6 @@ export function groupingCorpora(): GroupingCorpus[] {
   return [
     bundled("swe", "coverage and pair F1"),
     cad,
-    bundled("semester", "excluded"),
     // The 2024 CAD paper's only extraction is the one in the bundled corpus.
     groundTruthPaper("computer-architecture", cad.questions),
     ...["microprocessors", "basic-mechanical", "electrical-machines", "software-engineering", "communication"].map(

@@ -168,3 +168,30 @@ describe("topic overrides in a corpus file", () => {
     }
   });
 });
+
+describe("same-course groups in a corpus file", () => {
+  const ct3 = EMF_QUESTIONS.filter((q) => q.paper.label === "CT3");
+  const final = EMF_QUESTIONS.filter((q) => q.paper.label === "2024 EEE 2107");
+  const joined = [["ECE 3121", "EEE 2107"]];
+
+  it("travel in the file and come back on import, added to the importer's own", () => {
+    const mine = [["ECE 3121", "ECE 3221"]];
+    const result = importCorpusFile(ct3, exportCorpusFile(final, [], joined), [], mine);
+
+    expect(result.ok && result.sameCourse).toEqual([...mine, ...joined]);
+  });
+
+  it("are optional, so a file from before them still imports", () => {
+    const file = JSON.parse(exportCorpusFile(final));
+    delete file.sameCourse;
+    const result = importCorpusFile(ct3, JSON.stringify(file));
+
+    expect(result.ok && result.sameCourse).toEqual([]);
+  });
+
+  it("reject a file whose groups are malformed", () => {
+    const file = { ...JSON.parse(exportCorpusFile(final)), sameCourse: ["ECE 3121"] };
+
+    expect(importCorpusFile(ct3, JSON.stringify(file)).ok).toBe(false);
+  });
+});

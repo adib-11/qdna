@@ -1,4 +1,5 @@
-import { corpusCourses, corpusTitle, paperOrder } from "@/lib/analysis/papers";
+import { paperOrder } from "@/lib/analysis/papers";
+import { corpusTitle } from "@/lib/corpus/courses";
 import type { AnalysisResult, Question } from "@/lib/types";
 
 /**
@@ -32,10 +33,11 @@ export function studyPack(result: AnalysisResult): string {
   const { studyPlan, stats, lineages, paperCount, questionCount } = result;
   const papers = paperOrder(result.questions).map((p) => p.label);
   const total = studyPlan.marksPerPaper;
+  const { name, codes } = corpusTitle(result.questions);
 
   const out = [
     TUTOR_INSTRUCTIONS,
-    `# Study pack: ${corpusTitle(corpusCourses(result.questions))}`,
+    `# Study pack: ${name}${codes.length > 1 ? ` (${codes.join(" · ")})` : ""}`,
     `${plural(questionCount, "question")} from ${plural(paperCount, "paper")}: ${papers.join("; ")}.`,
   ];
   if (result.lowConfidence) {

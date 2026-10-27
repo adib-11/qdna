@@ -50,5 +50,4 @@ A topic is roughly one syllabus unit: one chapter or lecture block of the course
 Rules:
 - Put every label in exactly one topic, copied exactly as given. Leave none out.
 - Put two labels together only when a student revising one would be revising the other.
-- Never put labels from different courses in one topic.
 - Name each topic the way the course syllabus would, in two to six words.`;

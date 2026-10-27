@@ -57,7 +57,7 @@ corpus that vision made countable, not a model's opinion about what matters.
 - **Pareto curve** — topic bars with cumulative coverage and the 70% threshold.
 - **Lineage cards** — each recurring question with all its variants, the source
   paper of each, the similarity score, and the numbers that changed highlighted.
-  Clusters spanning two course codes are badged *appears across departments*.
+  Clusters spanning two offerings of the course are badged *asked in both departments*.
 - **Topic dossier** — every topic expands to the questions behind its count, so
   nothing above it is unauditable. Any question there opens a **hint** — the
   approach and the governing principle, never the final answer.
@@ -73,7 +73,7 @@ corpus that vision made countable, not a model's opinion about what matters.
   the wording is generated. Each question carries the recurrence evidence that
   put it there, looked up locally by topic.
 
-Three corpora ship in `data/`, extracted with the same pipeline from real RUET
+Two corpora ship in `data/`, extracted with the same pipeline from real RUET
 papers, so the tool can be tried without an upload, without an API key, and
 without a network call. They were produced by `scripts/extract-corpus.mjs`,
 which rasterises with `pdftoppm` and then uses the same prompt, schema, batch
