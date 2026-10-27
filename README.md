@@ -2,8 +2,13 @@
 
 **The question genome of your course.**
 
-Live: **https://minihackathon-kappa.vercel.app**
+Live: **https://qdna.vercel.app**
 Repository: https://github.com/adib-11/qdna
+
+[![Watch the qDNA launch film (80 s, with sound)](docs/launch-video/poster.jpg)](docs/launch-video/qdna-launch.mp4)
+
+▶ [Watch the launch film](docs/launch-video/qdna-launch.mp4) (80 s, with sound) ·
+[storyboard and production notes](docs/launch-video/storyboard.html)
 
 qDNA takes the scanned past papers a student already has, extracts every
 question into structured JSON with Gemini vision, and computes a deterministic
