@@ -1,0 +1,1182 @@
+<title>qDNA Launch Film</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: production package. Slate, then a screening-room animatic, then the board, then the specs. */
+:root {
+  --bg: oklch(98.6% 0.003 100);
+  --bg-2: oklch(96% 0.004 100);
+  --fg: oklch(16% 0 0);
+  --fg-2: oklch(34% 0 0);
+  --muted: oklch(48% 0 0);
+  --rule: oklch(88% 0.004 100);
+  --rule-strong: oklch(16% 0 0);
+  --accent: oklch(50% 0.095 188);
+  --ok: oklch(50% 0.12 150);
+  --warn: oklch(62% 0.13 70);
+  --screen: oklch(14% 0.004 100);
+  --screen-2: oklch(20% 0.004 100);
+  --screen-fg: oklch(93% 0.004 100);
+  --screen-muted: oklch(66% 0.004 100);
+  --hl: oklch(92% 0.16 103);
+  --pen: oklch(50% 0.2 27);
+  --display: "Epilogue", ui-sans-serif, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: oklch(17% 0.004 100); --bg-2: oklch(21% 0.005 100); --fg: oklch(95% 0.004 100);
+    --fg-2: oklch(82% 0.004 100); --muted: oklch(68% 0.004 100); --rule: oklch(30% 0.004 100);
+    --rule-strong: oklch(92% 0.004 100); --accent: oklch(74% 0.1 188); --ok: oklch(74% 0.13 150);
+    --warn: oklch(80% 0.13 75); --screen: oklch(11% 0.004 100); --screen-2: oklch(19% 0.004 100);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: oklch(17% 0.004 100); --bg-2: oklch(21% 0.005 100); --fg: oklch(95% 0.004 100);
+  --fg-2: oklch(82% 0.004 100); --muted: oklch(68% 0.004 100); --rule: oklch(30% 0.004 100);
+  --rule-strong: oklch(92% 0.004 100); --accent: oklch(74% 0.1 188); --ok: oklch(74% 0.13 150);
+  --warn: oklch(80% 0.13 75); --screen: oklch(11% 0.004 100); --screen-2: oklch(19% 0.004 100);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--display); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 120px;
+}
+.wrap { max-width: 1320px; margin: 0 auto; }
+h1, h2, h3 { margin: 0; text-wrap: balance; letter-spacing: -0.03em; line-height: 1.04; }
+p { margin: 0; }
+.lab { font-family: var(--mono); font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--mono); }
+a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* slate */
+.slate { border-top: 8px solid var(--rule-strong); padding-top: 22px; display: grid; gap: 30px; }
+.slate-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; align-items: baseline; }
+.status { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border: 1px solid var(--rule-strong); letter-spacing: .06em; text-transform: uppercase; }
+.slate h1 { font-size: clamp(2.8rem, 6.4vw + .4rem, 6.4rem); font-weight: 800; letter-spacing: -0.05em; line-height: .95; max-width: 13ch; }
+.slate .lede { font-size: clamp(1.05rem, .4vw + 1rem, 1.3rem); color: var(--fg-2); max-width: 64ch; }
+.slate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); border-top: 1px solid var(--rule-strong); }
+.slate-grid div { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 2px; min-width: 0; }
+.slate-grid b { font-weight: 600; font-size: 15.5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+/* screening room */
+.room { margin-top: 56px; background: var(--screen); color: var(--screen-fg); padding: clamp(14px, 2.4vw, 32px); display: grid; gap: 14px; }
+.room-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; align-items: baseline; }
+.room-head .lab { color: var(--screen-muted); }
+.room-head h2 { font-size: clamp(1.2rem, 1vw + 1rem, 1.6rem); letter-spacing: -0.02em; }
+.vp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #fcfcfa; }
+.vp::after { content: ""; position: absolute; inset: 0; background-image: var(--grain, none); opacity: .09; mix-blend-mode: multiply; pointer-events: none; z-index: 5; }
+.vp .cap { position: absolute; left: 50%; bottom: 5.5%; transform: translateX(-50%); max-width: 78%; z-index: 6; background: rgb(10 10 10 / .82); color: #fafafa; font-family: var(--display); font-size: clamp(11px, 1.45vw, 21px); line-height: 1.35; padding: .35em .7em; text-align: center; pointer-events: none; }
+.vp .cap:empty { display: none; }
+.vp .tc-burn { position: absolute; right: 1.2%; top: 1.6%; z-index: 6; font-family: var(--mono); font-size: clamp(9px, .85vw, 13px); background: rgb(10 10 10 / .7); color: #fafafa; padding: 2px 6px; pointer-events: none; }
+.controls { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px 16px; align-items: center; }
+.btn { font: 600 14px var(--display); color: var(--screen-fg); background: transparent; border: 1px solid oklch(40% 0 0); padding: 8px 14px; cursor: pointer; min-height: 40px; }
+.btn:hover { border-color: var(--screen-fg); }
+.btn.primary { background: var(--screen-fg); color: var(--screen); border-color: var(--screen-fg); min-width: 92px; }
+.tc { font-family: var(--mono); font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.scrub { position: relative; height: 40px; cursor: pointer; touch-action: none; }
+.scrub .segs { position: absolute; inset: 8px 0; display: flex; gap: 2px; }
+.scrub .segs span { flex: var(--d) 1 0; background: var(--screen-2); position: relative; min-width: 0; }
+.scrub .segs span i { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font: 10.5px var(--mono); font-style: normal; color: var(--screen-muted); white-space: nowrap; overflow: hidden; max-width: calc(100% - 8px); }
+.scrub .fill { position: absolute; left: 0; top: 8px; bottom: 8px; background: color-mix(in oklch, var(--hl) 38%, transparent); pointer-events: none; }
+.scrub .head { position: absolute; top: 2px; bottom: 2px; width: 2px; background: var(--hl); pointer-events: none; }
+.toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+.toggles label { display: inline-flex; gap: 6px; align-items: center; font: 12px var(--mono); color: var(--screen-muted); cursor: pointer; }
+.now { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14px; color: var(--screen-muted); }
+.now b { color: var(--screen-fg); font-weight: 600; }
+@media (max-width: 700px) {
+  .controls { grid-template-columns: auto auto minmax(0, 1fr); }
+  .controls .scrub { grid-column: 1 / -1; grid-row: 2; }
+  .toggles { grid-column: 1 / -1; }
+}
+
+/* sections */
+section.block { margin-top: 104px; display: grid; gap: 26px; }
+.sec-head { display: grid; grid-template-columns: 5rem minmax(0, 1fr); gap: 12px; border-top: 1px solid var(--rule-strong); padding-top: 16px; align-items: baseline; }
+.sec-head .no { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.sec-head h2 { font-size: clamp(1.9rem, 2.2vw + 1rem, 3rem); font-weight: 800; letter-spacing: -0.04em; }
+.sec-body { display: grid; gap: 26px; padding-left: calc(5rem + 12px); min-width: 0; }
+@media (max-width: 700px) { .sec-head { grid-template-columns: 1fr; gap: 2px; } .sec-body { padding-left: 0; } }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 22px 44px; }
+.cols > * { min-width: 0; }
+.prose p { color: var(--fg-2); max-width: 64ch; }
+.prose p + p { margin-top: 10px; }
+.kv { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }
+.kv li { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.kv li > b { font-weight: 600; }
+.kv li > span { color: var(--fg-2); }
+@media (max-width: 560px) { .kv li { grid-template-columns: 1fr; gap: 2px; } }
+.prop { font-size: clamp(1.5rem, 1.6vw + 1rem, 2.3rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; max-width: 26ch; }
+.prop mark { background: linear-gradient(var(--hl), var(--hl)) no-repeat 0 88% / 100% 62%; color: inherit; padding: 0 .05em; }
+
+/* charts */
+.chartbox { overflow-x: auto; border: 1px solid var(--rule); background: var(--bg-2); }
+.chartbox svg { display: block; min-width: 760px; width: 100%; height: auto; }
+.chartbox text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.chartbox .lbl { fill: var(--fg); font-family: var(--display); font-size: 12px; font-weight: 600; }
+
+/* board */
+.scene { display: grid; gap: 18px; padding: 40px 0 44px; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+.scene-top { display: grid; grid-template-columns: 5rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.scene-top .n { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1; }
+.scene-top h3 { font-size: clamp(1.35rem, .9vw + 1rem, 1.85rem); font-weight: 700; }
+.scene-top .meta { font-family: var(--mono); font-size: 12.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.scene-top .act { grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+@media (max-width: 700px) { .scene-top { grid-template-columns: 3.4rem minmax(0, 1fr); } .scene-top .meta { grid-column: 2; text-align: left; } }
+.panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
+.panel { margin: 0; display: grid; gap: 7px; align-content: start; }
+.panel button { all: unset; cursor: pointer; display: block; position: relative; border: 1px solid var(--rule-strong); }
+.panel button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.panel button::before { content: attr(data-id); position: absolute; left: 0; top: 0; z-index: 7; font: 500 10.5px var(--mono); background: #121212; color: #fafafa; padding: 3px 7px; }
+.panel button::after { content: "▶ play from here"; position: absolute; right: 6px; bottom: 6px; z-index: 7; font: 10.5px var(--mono); background: #121212; color: #fafafa; padding: 3px 7px; opacity: 0; transition: opacity 120ms; }
+.panel button:hover::after, .panel button:focus-visible::after { opacity: 1; }
+.panel figcaption { font-size: 13.5px; color: var(--fg-2); line-height: 1.45; }
+.panel figcaption .mono { font-size: 11.5px; color: var(--muted); display: block; }
+.vo-line { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.012em; line-height: 1.4; max-width: 70ch; padding-left: 14px; border-left: 3px solid var(--hl); }
+.tablewrap { overflow-x: auto; border-top: 1px solid var(--rule-strong); }
+table.spec { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 920px; }
+table.spec th, table.spec td { text-align: left; vertical-align: top; padding: 9px 14px 9px 0; border-bottom: 1px solid var(--rule); }
+table.spec th { font: 400 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+table.spec td.tcc { font-family: var(--mono); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.spec td { color: var(--fg-2); }
+table.spec td:first-child { color: var(--fg); font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.pill { display: inline-block; font: 500 11px var(--mono); padding: 2px 8px; border: 1px solid currentColor; letter-spacing: .04em; white-space: nowrap; }
+.pill.ok { color: var(--ok); } .pill.warn { color: var(--warn); }
+
+/* motion system */
+.eases { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+.ease { border: 1px solid var(--rule); padding: 14px; display: grid; gap: 8px; background: var(--bg-2); }
+.ease svg { width: 100%; height: auto; display: block; }
+.ease svg .grid { stroke: var(--rule); } .ease svg .curve { stroke: var(--fg); } .ease svg .dot { fill: var(--accent); }
+.ease b { font-weight: 600; } .ease .mono { font-size: 12px; color: var(--muted); }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.sw { border: 1px solid var(--rule); display: grid; }
+.sw i { height: 70px; display: block; }
+.sw div { padding: 10px 12px; display: grid; gap: 2px; font-size: 14px; }
+.sw small { color: var(--muted); font-size: 12px; line-height: 1.4; }
+.sw .mono { font-size: 11px; color: var(--muted); }
+.typescale { border-top: 1px solid var(--rule); }
+.typescale div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 16px; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 10px 0; overflow: hidden; }
+.typescale span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signoff { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.signoff div { border: 1px solid var(--rule); padding: 14px; display: grid; gap: 26px; }
+.signoff .line { border-bottom: 1px solid var(--rule-strong); height: 22px; }
+
+/* ---------- the stage: 1920x1080, scaled to its viewport ---------- */
+.st { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #fcfcfa; color: #121212; font-family: var(--display); font-size: 32px; line-height: 1.2; -webkit-font-smoothing: antialiased; }
+.st div { position: absolute; }
+.st .L { inset: 0; overflow: hidden; }
+.st .mk { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.st .w { display: inline-block; will-change: transform; }
+.st .lm { display: block; overflow: hidden; padding-bottom: .06em; }
+.st .li { display: inline-block; }
+.st .hlx { background: linear-gradient(#f2e24e, #f2e24e) no-repeat 0 86% / 0% 64%; padding: 0 .06em; margin: 0 -.06em; }
+.st .mn { font-family: var(--mono); }
+.st .cur { display: inline-block; width: .55em; height: 1em; background: currentColor; vertical-align: -.12em; margin-left: .08em; }
+@media (prefers-reduced-motion: no-preference) { .st .cur { animation: blink 1s steps(1) infinite; } @keyframes blink { 50% { opacity: 0; } } }
+</style>
+
+<div class="wrap">
+
+<header class="slate">
+  <div class="slate-row">
+    <span class="lab">Production storyboard &amp; animatic · v2.0 · supersedes v1</span>
+    <span class="status">For approval</span>
+  </div>
+  <h1>qDNA Launch Film</h1>
+  <p class="lede">An 80-second motion-graphics launch film. It follows one real corpus, seven Software Engineering finals from RUET, from scanned pages to a ranked study plan. The animatic below is driven by the same figures the app computes, and every claim on screen is logged in the claims register.</p>
+  <div class="slate-grid">
+    <div><span class="lab">Client</span><b>qDNA</b></div>
+    <div><span class="lab">Deliverable</span><b>Launch film, master + cutdowns</b></div>
+    <div><span class="lab">Duration</span><b>00:01:20:00</b></div>
+    <div><span class="lab">Master format</span><b>1920 × 1080 · 30p · Rec.709</b></div>
+    <div><span class="lab">Audio</span><b>Stereo · 48 kHz · −14 LUFS</b></div>
+    <div><span class="lab">Scenes / shots</span><b id="shotCount">12 / —</b></div>
+    <div><span class="lab">Pipeline</span><b>Remotion (React)</b></div>
+    <div><span class="lab">Date</span><b>27 Oct 2026</b></div>
+  </div>
+</header>
+
+<section class="room" aria-labelledby="animatic-h">
+  <div class="room-head">
+    <h2 id="animatic-h">Animatic · rough timing, final layout</h2>
+    <span class="lab">Space play/pause · ← → one frame · Shift for one second</span>
+  </div>
+  <div class="vp" id="player" tabindex="0" aria-label="Animatic player. Press space to play or pause.">
+    <div class="tc-burn" id="burn">00:00:00:00</div>
+    <div class="cap" id="cap"></div>
+  </div>
+  <audio id="mix" preload="auto" src="audio/launch-mix.mp4"></audio>
+  <div class="controls">
+    <button class="btn primary" id="play" type="button">▶ Play</button>
+    <span class="tc" id="tc">00:00:00:00</span>
+    <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Timeline" aria-valuemin="0" aria-valuemax="80" aria-valuenow="0">
+      <div class="segs" id="segs"></div>
+      <div class="fill" id="fill"></div>
+      <div class="head" id="head"></div>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="optSound" checked> Sound</label>
+      <label><input type="checkbox" id="optCap" checked> VO captions</label>
+      <label><input type="checkbox" id="optSafe"> Safe areas</label>
+      <label><input type="checkbox" id="optLoop" checked> Loop</label>
+    </div>
+  </div>
+  <div class="now" id="now"></div>
+</section>
+
+<section class="block" aria-labelledby="brief-h">
+  <div class="sec-head"><span class="no">01</span><h2 id="brief-h">Creative brief</h2></div>
+  <div class="sec-body">
+    <p class="prop">Drop in the past papers you already have. Get a <mark>ranked, auditable</mark> answer to what to study first.</p>
+    <ul class="kv">
+      <li><b>Objective</b><span>Launch qDNA to students and to the people who recommend tools to them: course reps, seniors, teaching assistants. Drive visits to the live app and first runs on a bundled sample.</span></li>
+      <li><b>Audience</b><span>An engineering undergraduate three weeks before a final. Has a folder of scanned past papers, a group chat full of rumours about "important questions", and no time.</span></li>
+      <li><b>Insight</b><span>Students already believe questions repeat. Nobody has shown them how much, which ones, and on what evidence.</span></li>
+      <li><b>Reasons to believe</b><span>Real corpus, real numbers: 154 questions across 7 papers. 22 of 57 topics cover 70.8% of every question. Hiding the 2024 final, 11 of its 24 questions had been asked before in another form.</span></li>
+      <li><b>Tone</b><span>Calm, exact, a little dry. The senior who has seen every paper, not an announcer. Confidence comes from the numbers, never from adjectives.</span></li>
+      <li><b>Mandatories</b><span>Product name and URL. "Evidence-weighted, never a forecast." Own-key model: pages go from the browser to Gemini on the student's key, nothing is uploaded to qDNA's server. Samples work with no key.</span></li>
+      <li><b>Never say</b><span>"Predict", "guaranteed", "leaked", "AI tells you what's on the exam", "offline", "your files never leave your device" (pages do go to Gemini).</span></li>
+      <li><b>Success</b><span>Viewer can say in one sentence what qDNA does and why to trust it. Click-through to the live app; sample runs in the first 48 hours.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="arc-h">
+  <div class="sec-head"><span class="no">02</span><h2 id="arc-h">Narrative arc &amp; beat map</h2></div>
+  <div class="sec-body">
+    <div class="cols prose">
+      <div><p><b>Act 1, The pile (0–16 s).</b> Recognition. The viewer sees their own folder of papers, then the overwhelm of 154 questions on ink black. The title lands on clean paper: the first breath.</p></div>
+      <div><p><b>Act 2, The genome (16–51 s).</b> The machine at work, shown not told. Pages go in, a question is fully read, the genome builds year by year, the Pareto line crosses 70%, a question returns in new clothes.</p></div>
+      <div><p><b>Act 3, The answer (51–80 s).</b> Payoff, then proof. The study plan draws itself in highlighter. A hidden paper is revealed to test it. Practice and hints, then the end card.</p></div>
+    </div>
+    <div class="chartbox"><svg id="beatmap" viewBox="0 0 1200 250" role="img" aria-label="Beat map: intensity curve over 80 seconds with 32 music bars at 96 BPM and hit points"></svg></div>
+    <p class="lab">Music at 96 BPM · one bar = 2.5 s · 32 bars · ● hit points are cut or reveal frames that land on a downbeat</p>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="board-h">
+  <div class="sec-head"><span class="no">03</span><h2 id="board-h">Shot-by-shot storyboard</h2></div>
+  <div class="sec-body">
+    <p class="prose" style="color:var(--fg-2);max-width:72ch">Each panel is a live frame of the animatic at its timecode. Click a panel to play the film from there. Shot IDs follow <span class="mono">SC##-SH##</span>; timecode is SMPTE at 30 fps.</p>
+    <div id="board"></div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="motion-h">
+  <div class="sec-head"><span class="no">04</span><h2 id="motion-h">Motion &amp; design system</h2></div>
+  <div class="sec-body">
+    <div class="swatches">
+      <div class="sw"><i style="background:#fcfcfa;border-bottom:1px solid var(--rule)"></i><div><b>Exam paper</b><span class="mono">#FCFCFA</span><small>Ground of every scene except 02.</small></div></div>
+      <div class="sw"><i style="background:#121212"></i><div><b>Ink</b><span class="mono">#121212</span><small>Type, rules, the 12 px top bar.</small></div></div>
+      <div class="sw"><i style="background:#f2e24e"></i><div><b>Highlighter</b><span class="mono">#F2E24E</span><small>Study this. A changed word. Always drawn, never faded.</small></div></div>
+      <div class="sw"><i style="background:#c0182a"></i><div><b>Red pen</b><span class="mono">#C0182A</span><small>Marks only. Writes on as a stroke.</small></div></div>
+      <div class="sw"><i style="background:#00797a"></i><div><b>Teal</b><span class="mono">#00797A</span><small>The machine: data flow, match %, Gemini.</small></div></div>
+    </div>
+    <div class="eases" id="eases"></div>
+    <div class="cols">
+      <ul class="kv">
+        <li><b>Micro</b><span class="mono">4 f · 133 ms · ticks, presses</span></li>
+        <li><b>Short</b><span class="mono">7 f · 233 ms · tags, chips, flips</span></li>
+        <li><b>Long</b><span class="mono">13–24 f · 0.4–0.8 s · headlines, panels</span></li>
+        <li><b>Counters</b><span class="mono">36–48 f · power2.out, land and hold</span></li>
+        <li><b>Stagger</b><span class="mono">2 f words · 3 f rows · 1 f bars</span></li>
+        <li><b>Camera</b><span class="mono">linear push 100→104–106% per scene</span></li>
+      </ul>
+      <div class="typescale" aria-label="Type scale at 1080p">
+        <div><span class="lab">Wordmark 360</span><span style="font-weight:800;letter-spacing:-.06em;font-size:2.4rem;line-height:1">qDNA</span></div>
+        <div><span class="lab">Title 176</span><span style="font-weight:800;letter-spacing:-.045em;font-size:1.9rem">Every course has a question genome</span></div>
+        <div><span class="lab">Headline 84</span><span style="font-weight:800;letter-spacing:-.035em;font-size:1.4rem">22 of 57 topics cover 70.8%</span></div>
+        <div><span class="lab">Body 40–64</span><span style="font-size:1.1rem">Every question comes back with its marks.</span></div>
+        <div><span class="lab">Data 22–26</span><span class="mono" style="font-size:.95rem">Q.1(b) · SECTION-A · 2024 Final</span></div>
+      </div>
+    </div>
+    <ul class="kv">
+      <li><b>Highlighter</b><span>A background band at 64% of the line height, sitting low (86%), drawn left to right in 10–16 frames on power2.inOut. Its length always equals the value it marks.</span></li>
+      <li><b>Red pen</b><span>Clip reveal left to right, 12 frames. Only ever on marks.</span></li>
+      <li><b>Type entrances</b><span>Word or line masks, rising 105% on expo.out. Never fade-in alone, never letter-spacing tweens.</span></li>
+      <li><b>Cuts</b><span>Hard cuts on downbeats. One match-cut per act boundary. No dissolves, no whooshes, no 3D.</span></li>
+      <li><b>Texture</b><span>9% static paper grain, multiply. Locked, never boiling.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="sound-h">
+  <div class="sec-head"><span class="no">05</span><h2 id="sound-h">Sound design &amp; mix</h2></div>
+  <div class="sec-body">
+    <div class="cols">
+      <ul class="kv">
+        <li><b>Music</b><span>Original score, synthesised for this film, so no licence is needed. 96 BPM in F major, a plucked marimba motif over Fmaj7–Dm9–B♭maj7–Csus. A dissonant cluster swells under scene 02 and cuts dead on the title. Kick and bass enter at 04, a pad lifts at 06, the band is full at 09, drops to the motif alone for the backtest flip, a low hit lands on “11”, and an Fmaj9 rings out on the end card.</span></li>
+        <li><b>Voice</b><span>Fish Audio <span class="mono">s2.1-pro</span>, library voice “Energetic Male” (young, bright, ad read). Twelve lines, 63 s of speech, each placed on its scene and levelled to the same loudness. For broadcast, re-record with a human voice to the same timings.</span></li>
+        <li><b>No-VO cut</b><span>Same timing, VO lines burned in as captions, for muted autoplay feeds.</span></li>
+      </ul>
+      <ul class="kv">
+        <li><b>Paper</b><span>Sheet drops (01), rustle bed (02), card flip (10).</span></li>
+        <li><b>Marking tools</b><span>Felt-tip squeak on every highlighter stroke, nib scratch on every red mark.</span></li>
+        <li><b>Data</b><span>Soft ticks for counters and chips, pitched up by year in 06. A single bell on the 70% crossing.</span></li>
+        <li><b>Mix</b><span>Measured: −14.2 LUFS integrated, −1.2 dBTP (BS.1770, 4× oversampled). Music ducks 6 dB under the voice. Stems for voice, music and effects ship beside the mix in <span class="mono">audio/</span>; <span class="mono">build_audio.py</span> rebuilds all of it. Broadcast version at −23 LUFS (EBU R128) on request.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="claims-h">
+  <div class="sec-head"><span class="no">06</span><h2 id="claims-h">Claims register</h2></div>
+  <div class="sec-body">
+    <p class="prose" style="color:var(--fg-2);max-width:72ch">Every figure or product claim that appears on screen or in the voice-over, where it comes from, and its check status. Figures were read from the app running on the bundled <span class="mono">data/swe.json</span> corpus. Re-run before final render.</p>
+    <div class="tablewrap"><table class="spec" id="claims"></table></div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="deliv-h">
+  <div class="sec-head"><span class="no">07</span><h2 id="deliv-h">Deliverables</h2></div>
+  <div class="sec-body">
+    <div class="tablewrap"><table class="spec" id="deliv"></table></div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="prod-h">
+  <div class="sec-head"><span class="no">08</span><h2 id="prod-h">Production plan &amp; sign-off</h2></div>
+  <div class="sec-body">
+    <ul class="kv">
+      <li><b>Pipeline</b><span>Remotion compositions in a <span class="mono">video/</span> workspace beside the app. Scenes import the app's tokens and run <span class="mono">analyze()</span> on <span class="mono">data/swe.json</span>, so every number on screen is computed by product code, and a data change re-renders the film. Fonts are the app's own (Epilogue, IBM Plex Mono, both OFL).</span></li>
+      <li><b>Hand-off option</b><span>If a motion studio takes it in After Effects: this animatic as the timing reference, genome and Pareto data exported as CSV, the claims register as the lock list.</span></li>
+      <li><b>Assets</b><span>Scans of the seven SWE papers from <span class="mono">papers/</span> for scenes 01 and 04. One paper-grain plate. Licensed music bed. VO recording.</span></li>
+    </ul>
+    <div class="tablewrap"><table class="spec" id="sched"></table></div>
+    <div class="signoff">
+      <div><span class="lab">Product owner</span><span class="line"></span><span class="lab">Approve story &amp; claims</span></div>
+      <div><span class="lab">Creative lead</span><span class="line"></span><span class="lab">Approve board &amp; style</span></div>
+      <div><span class="lab">Engineering</span><span class="line"></span><span class="lab">Verify claims register</span></div>
+      <div><span class="lab">Motion lead</span><span class="line"></span><span class="lab">Approve timing</span></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(() => {
+const FPS = 30;
+const C = { paper: "#fcfcfa", p2: "#f4f4f0", p3: "#ebebe6", warm: "#f7f4ea", ink: "#121212", ink2: "#3a3a3a", soft: "#7c7c7c", hl: "#f2e24e", pen: "#c0182a", teal: "#00797a", tealSoft: "#d3eeec", theory: "#e6ecf7", theoryInk: "#3a4f7a" };
+const DISPLAY = '"Epilogue", ui-sans-serif, system-ui, sans-serif', MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
+
+/* ---------- helpers ---------- */
+const UNITLESS = new Set(["lineHeight", "fontWeight", "opacity", "zIndex"]);
+function E(parent, css = {}, html = "", cls = "") {
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  for (const k in css) d.style[k] = typeof css[k] === "number" && !UNITLESS.has(k) ? css[k] + "px" : css[k];
+  if (html) d.innerHTML = html;
+  parent.appendChild(d);
+  return d;
+}
+const words = (s) => s.split(" ").map((w) => `<span class="mk"><span class="w">${w}</span></span>`).join(" ");
+const tc = (t) => {
+  const f = Math.round(t * FPS), ff = f % FPS, s = Math.floor(f / FPS);
+  const p = (n) => String(n).padStart(2, "0");
+  return `00:${p(Math.floor(s / 60))}:${p(s % 60)}:${p(ff)}`;
+};
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+function count(tl, el, to, at, dur, fmt = (v) => Math.round(v)) {
+  const o = { v: 0 };
+  el.textContent = fmt(0);
+  tl.to(o, { v: to, duration: dur, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) }, at);
+}
+function type(tl, el, text, at, dur) {
+  const o = { n: 0 };
+  el.textContent = "";
+  tl.to(o, { n: text.length, duration: dur, ease: "none", onUpdate: () => (el.textContent = text.slice(0, Math.round(o.n))) }, at);
+}
+const rise = (tl, root, at, stagger = 0.06) =>
+  tl.from(root.querySelectorAll(".w"), { yPercent: 135, duration: 0.7, stagger, ease: "expo.out" }, at);
+const pen = (tl, el, at, dur = 0.4) =>
+  tl.fromTo(el, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: dur, ease: "power2.inOut" }, at);
+const hl = (tl, el, at, dur = 0.5) =>
+  tl.to(el, { backgroundSize: "100% 64%", duration: dur, ease: "power2.inOut" }, at);
+function topbar(L, tl, at = null) {
+  const b = E(L, { left: 0, top: 0, width: 1920, height: 12, background: C.ink, transformOrigin: "0 50%" });
+  if (at !== null) tl.fromTo(b, { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "expo.inOut" }, at);
+  return b;
+}
+function sheet(parent, x, y, w, label, rot = 0, blank = false) {
+  const h = Math.round(w * 1.414);
+  const s = E(parent, { left: x, top: y, width: w, height: h, background: C.warm, boxShadow: "0 14px 34px rgb(20 20 20 / .18), 0 1px 0 rgb(0 0 0 / .06)", border: "1px solid #ddd8c8", rotate: rot + "deg" });
+  if (!blank) {
+    E(s, { left: w * 0.1, top: h * 0.05, fontFamily: MONO, fontSize: Math.max(11, w * 0.06), color: C.ink2, whiteSpace: "nowrap" }, label);
+    E(s, { left: w * 0.1, top: h * 0.12, width: w * 0.8, height: 2, background: "rgb(0 0 0 / .35)" });
+    for (let k = 0; k < 9; k++) {
+      const ly = h * 0.18 + k * h * 0.082;
+      E(s, { left: w * 0.1, top: ly, width: w * (0.42 + rnd() * 0.36), height: Math.max(3, w * 0.018), background: "rgb(30 30 30 / .22)" });
+      if (k % 3 === 0) E(s, { left: w * 0.84, top: ly - w * 0.02, fontFamily: DISPLAY, fontWeight: 700, fontSize: Math.max(10, w * 0.055), color: C.pen }, String(2 + ((k * 7) % 5)));
+    }
+  }
+  return s;
+}
+
+/* ---------- real data (bundled SWE corpus, read from the running app) ---------- */
+const PAPERS = ["2018", "2020", "2021", "2022", "2023", "2024", "Undated"];
+const GENOME = [
+  ["SDLC Models", [2, 3, 0, 0, 0, 5, 0]], ["Software Testing", [3, 2, 1, 1, 2, 1, 0]], ["Process Models", [0, 0, 2, 2, 4, 0, 0]],
+  ["Software Quality", [0, 3, 2, 0, 1, 0, 0]], ["System Fundamentals", [0, 1, 3, 2, 0, 0, 0]], ["Feasibility Study", [1, 0, 0, 0, 0, 4, 0]],
+  ["Information Systems", [2, 0, 0, 1, 0, 2, 0]], ["SE Fundamentals", [4, 0, 0, 0, 1, 0, 0]], ["Project Management", [2, 1, 1, 0, 1, 0, 0]],
+  ["Feasibility Analysis", [0, 1, 1, 2, 1, 0, 0]], ["Software Requirements", [0, 0, 2, 3, 0, 0, 0]], ["Requirements Gathering", [1, 4, 0, 0, 0, 0, 0]],
+  ["Software Design", [0, 1, 0, 2, 0, 1, 0]], ["Cost Analysis", [0, 0, 1, 0, 1, 2, 0]], ["Data Flow Diagrams", [0, 1, 1, 1, 1, 0, 0]],
+  ["Requirement Elicitation", [0, 0, 0, 0, 4, 0, 0]], ["Decision Trees", [0, 1, 0, 1, 0, 1, 0]], ["System Theory", [1, 1, 0, 0, 0, 1, 0]],
+  ["System Engineering", [1, 0, 0, 0, 2, 0, 0]], ["Quality Assurance", [0, 0, 1, 1, 1, 0, 0]], ["Information Gathering", [0, 2, 0, 1, 0, 0, 0]],
+  ["Requirements Analysis", [0, 3, 0, 0, 0, 0, 0]], ["Prototyping", [1, 0, 0, 0, 0, 1, 0]], ["Software Estimation", [0, 0, 1, 0, 0, 1, 0]],
+];
+const PARETO = [10, 10, 8, 6, 6, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, ...Array(10).fill(2), ...Array(25).fill(1)];
+const PLAN = [
+  ["SDLC Models", 10, 3, "8"], ["Software Testing", 10, 6, "4.7"], ["Process Models", 8, 3, "3.9"], ["Software Quality", 6, 3, "3"],
+  ["System Fundamentals", 6, 3, "3.4"], ["Feasibility Study", 5, 2, "2.6"], ["Information Systems", 5, 3, "2.6"], ["Software Engineering Fundamentals", 5, 2, "2.7"],
+  ["Project Management", 5, 4, "4.1"], ["Feasibility Analysis", 5, 4, "2.1"], ["Software Requirements", 5, 2, "2"], ["Requirements Gathering", 5, 2, "7.4"],
+  ["Software Design", 4, 3, "1.9"], ["Cost Analysis", 4, 3, "0.9"], ["Data Flow Diagrams", 4, 4, "2"], ["Requirement Elicitation", 4, 1, "2"],
+  ["Decision Trees", 3, 3, "2"], ["System Theory", 3, 3, "1.3"], ["System Engineering", 3, 2, "1.1"], ["Quality Assurance", 3, 3, "1.3"],
+  ["Information Gathering", 3, 2, "3.4"], ["Requirements Analysis", 3, 1, "1.7"],
+];
+const HELD = [["SDLC Models", 1], ["Information Systems", 1], ["Software Design", 1], ["Software Testing", 1], ["Feasibility Study", 0], ["Cost Analysis", 0], ["System Design", 0], ["SDLC Requirements", 0], ["Configuration Management", 0], ["Decision Trees", 0], ["System Theory", 0], ["Prototyping", 0], ["Software Estimation", 0], ["SWOT Analysis", 0], ["Interviewing", 0]];
+
+/* ---------- scenes ---------- */
+const SCENES = [
+{ id: 1, title: "The pile", act: "Act 1 · The pile", dur: 5, intensity: 0.15,
+  vo: "You already have the past papers.",
+  kf: [[0.6, "An ink rule draws across empty paper."], [2.4, "Seven scanned finals drop into a crooked stack."], [4.6, "Stack settles, line lands."]],
+  hits: [1.7, 3.0],
+  shots: [
+    ["SH01", 0, 1.6, "Locked wide", "Ink rule draws from centre-left, then snaps up to become the 12 px top bar.", "Low room tone", "Silence", "—"],
+    ["SH02", 1.6, 5, "Locked, slow push 100→104%", "Seven real RUET finals (2018–2024, one undated) drop in, 3-frame stagger, settle crooked. Line rises in by word.", "Paper drop per sheet", "Single pluck on bar 1", "Hard cut on beat"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    const cam = E(L, { inset: 0 });
+    const rule = E(cam, { left: 96, top: 538, width: 1728, height: 4, background: C.ink, transformOrigin: "0 50%" });
+    tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.inOut" }, 0.15)
+      .to(rule, { top: 0, left: 0, width: 1920, height: 12, duration: 0.7, ease: "expo.inOut" }, 1.15);
+    const pos = [[270, 150, -9], [500, 112, 5], [730, 168, -3], [960, 104, 7], [1190, 160, -6], [1400, 120, 3], [1560, 200, -10]];
+    pos.forEach(([x, y, r], i) => {
+      const s = sheet(cam, x, y, 290, i === 6 ? "FINAL · UNDATED" : "FINAL · " + PAPERS[i], 0);
+      tl.fromTo(s, { y: -980, rotation: r - 18 }, { y: 0, rotation: r, duration: 0.75, ease: "expo.out" }, 1.7 + i * 0.11);
+    });
+    const cap = E(cam, { left: 96, top: 790, fontSize: 100, fontWeight: 800, letterSpacing: "-0.045em", lineHeight: 1 }, words("You already have the past papers."));
+    rise(tl, cap, 3.0);
+    tl.fromTo(cam, { scale: 1 }, { scale: 1.04, duration: 5, ease: "none" }, 0);
+  } },
+{ id: 2, title: "154 questions, no plan", act: "Act 1 · The pile", dur: 6, intensity: 0.45,
+  vo: "A hundred and fifty-four questions. No idea which ones matter.",
+  kf: [[0.8, "Question text peels off the papers onto ink black."], [2.4, "Counter lands on 154."], [4.6, "“Which ones matter?” takes the highlighter."]],
+  hits: [5, 7.5, 10],
+  shots: [
+    ["SH01", 0, 2.6, "Three-layer parallax drift", "Real question fragments in Plex Mono drift right-to-left in three depths. Counter ticks 0→154.", "Rustle bed, counter ticks", "Cluttered pad enters", "—"],
+    ["SH02", 2.6, 6, "Locked, fragments dim to 15%", "Line rises in; highlighter draws under “matter?”.", "Felt-tip squeak", "Pad swells, cuts dead", "Hard cut to paper on bar 5"],
+  ],
+  build(L, tl) {
+    L.style.background = C.ink;
+    const frags = ["Q.1(b) Agile vs waterfall model…", "Q7(a) key considerations in feasibility analysis…", "Q.6(a) explain the spiral model…", "Q3(c) draw a level-1 DFD…", "Q5(b) estimate effort using COCOMO…", "Q4(b) SWOT analysis of…", "Q.8 construct a decision table…", "Q2(a) black-box vs white-box testing…", "Q.3(a) define software quality…", "Q6(c) role of a system analyst…", "Q1(a) what is an information system?", "Q.5 requirements elicitation techniques…", "Q4(a) prototyping model with sketch…", "Q.2(c) break-even analysis…", "Q7(b) configuration management…", "Q3(b) cost–benefit analysis…", "Q.1(c) system theory and its parts…", "Q8(a) risk management in projects…", "Q2(b) quality assurance vs control…", "Q.4(a) data modeling with ERD…", "Q6(b) software maintenance types…", "Q.7(c) interviewing for requirements…", "Q5(a) verification and validation…", "Q1(b) process models compared…"];
+    const layers = [[24, 0.32, 260], [32, 0.55, 420], [42, 0.85, 640]].map(([fs, op, drift]) => {
+      const ly = E(L, { left: 0, top: 0, width: 2600, height: 1080 });
+      tl.fromTo(ly, { x: 0 }, { x: -drift, duration: 6, ease: "none" }, 0);
+      return { ly, fs, op };
+    });
+    frags.forEach((f, i) => {
+      const { ly, fs, op } = layers[i % 3];
+      const d = E(ly, { left: 60 + rnd() * 2100, top: 60 + rnd() * 520, fontFamily: MONO, fontSize: fs, color: "#f2f2ee", whiteSpace: "nowrap", opacity: 0, rotate: (rnd() * 6 - 3) + "deg" }, f);
+      tl.to(d, { opacity: op, duration: 0.5 }, 0.1 + i * 0.05);
+    });
+    tl.to(layers.map((l) => l.ly), { opacity: 0.18, duration: 0.8, ease: "power2.inOut" }, 2.3);
+    const num = E(L, { left: 88, top: 560, fontSize: 300, fontWeight: 800, letterSpacing: "-0.055em", lineHeight: 0.9, color: "#f7f7f3", fontVariantNumeric: "tabular-nums" }, "0");
+    tl.from(num, { opacity: 0, yPercent: 12, duration: 0.6, ease: "expo.out" }, 0.9);
+    count(tl, num, 154, 0.9, 1.5);
+    const line = E(L, { left: 96, top: 860, fontSize: 76, fontWeight: 700, letterSpacing: "-0.035em", color: "#f7f7f3" }, words("questions. Which ones") + ' <span class="mk"><span class="w hlx" style="color:#121212">matter?</span></span>');
+    rise(tl, line, 2.6);
+    hl(tl, line.querySelector(".hlx"), 3.6);
+  } },
+{ id: 3, title: "Title", act: "Act 1 · The pile", dur: 5, intensity: 0.3,
+  vo: "Every course has a question genome. qDNA reads it.",
+  kf: [[0.25, "Ink wipes up off the paper."], [1.3, "Headline rises line by line."], [3.6, "“genome” highlighted; strapline set."]],
+  hits: [11, 12.5],
+  shots: [
+    ["SH01", 0, 0.6, "Locked", "Ink wipes up and off, revealing paper. Top bar holds.", "Paper whip", "Music proper starts, bar 5", "—"],
+    ["SH02", 0.6, 5, "Slow push 100→105%", "The app's hero headline rises by line. Highlighter draws under “genome”. Wordmark and strapline settle.", "Felt-tip squeak", "Motif states", "Push into “genome”, match-cut to drop-zone border"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    const cam = E(L, { inset: 0 });
+    topbar(cam, tl);
+    const h = E(cam, { left: 96, top: 170, fontSize: 182, fontWeight: 800, letterSpacing: "-0.05em", lineHeight: 0.98 },
+      '<span class="lm"><span class="li">Every course has</span></span><span class="lm"><span class="li">a question</span></span><span class="lm"><span class="li"><span class="hlx">genome</span></span></span>');
+    tl.from(h.querySelectorAll(".li"), { yPercent: 106, duration: 0.85, stagger: 0.11, ease: "expo.out" }, 0.45);
+    hl(tl, h.querySelector(".hlx"), 1.55, 0.6);
+    const wm = E(cam, { right: 96, top: 64, fontSize: 64, fontWeight: 800, letterSpacing: "-0.05em" }, "qDNA");
+    tl.from(wm, { opacity: 0, y: -10, duration: 0.5, ease: "expo.out" }, 2.1);
+    const r = E(cam, { left: 96, top: 864, width: 540, height: 3, background: C.ink, transformOrigin: "0 50%" });
+    tl.from(r, { scaleX: 0, duration: 0.6, ease: "expo.inOut" }, 2.3);
+    const s = E(cam, { left: 96, top: 888, fontSize: 36, fontWeight: 600 }, words("Evidence-weighted, never a forecast"));
+    rise(tl, s, 2.5, 0.04);
+    const cover = E(L, { inset: 0, background: C.ink });
+    tl.fromTo(cover, { yPercent: 0 }, { yPercent: -100, duration: 0.6, ease: "expo.inOut" }, 0);
+    tl.fromTo(cam, { scale: 1 }, { scale: 1.05, duration: 5, ease: "none", transformOrigin: "30% 60%" }, 0);
+  } },
+{ id: 4, title: "Drop the papers in", act: "Act 2 · The genome", dur: 8, intensity: 0.5,
+  vo: "Drop in PDFs or phone photos. Pages go straight to Gemini, on your own key. Nothing is uploaded to our server.",
+  kf: [[1.5, "Files drop into the real upload zone."], [4.6, "Pages deal out; the blank one is skipped."], [7.4, "Pairs travel to Gemini, JSON comes back."]],
+  hits: [16, 18.75, 20],
+  shots: [
+    ["SH01", 0, 2.8, "Locked mid", "The app's upload zone. A PDF, a JPG and a HEIC photo drop in; border turns solid teal; Analyze is pressed.", "Three soft drops, button click", "Kick enters", "Zone collapses into browser panel"],
+    ["SH02", 2.8, 5.2, "Locked wide", "Browser panel: 12 page thumbnails deal in. Blank page dims, struck through, labelled skipped.", "Card-deal ticks", "Groove", "—"],
+    ["SH03", 5.2, 8, "Locked wide", "Pages travel in pairs to the teal Gemini ring; structured JSON types out beside it. Privacy line sets.", "Data shimmer", "Groove", "Match-cut: JSON record expands"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const zone = E(L, { left: 460, top: 190, width: 1000, height: 600, border: "4px dashed #9a9a94", borderRadius: 28, background: C.p2 });
+    E(zone, { left: 60, top: 56, fontSize: 46, fontWeight: 700, letterSpacing: "-0.025em" }, "Drop your exam paper PDFs or photos");
+    E(zone, { left: 60, top: 124, width: 820, fontSize: 26, color: C.ink2, lineHeight: 1.45 }, "PDFs, and JPG, PNG or HEIC photos of papers, prepared in your browser and sent straight to Gemini on your own key.");
+    const btn = E(zone, { left: 60, top: 480, padding: "18px 30px", background: C.ink, color: C.paper, borderRadius: 16, fontSize: 26, fontWeight: 600 }, "Analyze papers");
+    const files = [["PDF", "Previous SWE Questions.pdf", 640], ["JPG", "2024-final.jpg", 860], ["HEIC", "2023-final.heic", 1080]].map(([ext, name, x], i) => {
+      const f = E(L, { left: x, top: 410, width: 190, height: 236, background: "#fff", border: "2px solid " + C.ink, clipPath: "polygon(0 0, 78% 0, 100% 18%, 100% 100%, 0 100%)", rotate: (i - 1) * 4 + "deg" });
+      E(f, { left: 16, top: 150, padding: "4px 10px", background: C.ink, color: "#fff", fontFamily: MONO, fontSize: 20 }, ext);
+      E(f, { left: 16, top: 196, width: 160, fontFamily: MONO, fontSize: 14, color: C.ink2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, name);
+      for (let k = 0; k < 4; k++) E(f, { left: 16, top: 40 + k * 22, width: 90 + rnd() * 60, height: 6, background: "rgb(0 0 0 / .18)" });
+      tl.fromTo(f, { y: -820 }, { y: 0, duration: 0.7, ease: "expo.out" }, 0.45 + i * 0.18);
+      return f;
+    });
+    tl.set(zone, { borderStyle: "solid" }, 1.3).to(zone, { borderColor: C.teal, duration: 0.25 }, 1.3)
+      .to(btn, { scale: 0.93, duration: 0.1 }, 2.2).to(btn, { scale: 1, duration: 0.2 }, 2.3)
+      .to([zone, ...files], { opacity: 0, scale: 0.94, duration: 0.4, ease: "expo.in" }, 2.7);
+
+    const panel = E(L, { left: 96, top: 140, width: 700, height: 720, border: "3px solid " + C.ink, borderRadius: 20, background: C.paper });
+    E(panel, { left: 30, top: 24, fontFamily: MONO, fontSize: 20, color: C.soft, letterSpacing: "0.08em" }, "YOUR BROWSER");
+    tl.from(panel, { opacity: 0, scale: 0.96, duration: 0.5, ease: "expo.out" }, 2.95);
+    const thumbs = [];
+    for (let i = 0; i < 12; i++) {
+      const c = i % 4, r = Math.floor(i / 4);
+      const t = sheet(panel, 40 + c * 160, 76 + r * 210, 128, "p." + (i + 1), 0, i === 6);
+      thumbs.push(t);
+    }
+    tl.from(thumbs, { y: 50, opacity: 0, rotation: -7, stagger: 0.05, duration: 0.5, ease: "expo.out" }, 3.1);
+    const strike = E(panel, { left: 40 + 2 * 160 - 6, top: 76 + 210 + 90, width: 140, height: 4, background: C.ink, rotate: "-35deg", transformOrigin: "0 50%" });
+    const skip = E(panel, { left: 40 + 2 * 160, top: 76 + 210 + 186, fontFamily: MONO, fontSize: 17, color: C.ink2 }, "blank · skipped");
+    tl.to(thumbs[6], { opacity: 0.35, duration: 0.3 }, 4.0).from(strike, { scaleX: 0, duration: 0.3, ease: "power2.out" }, 4.05).from(skip, { opacity: 0, duration: 0.3 }, 4.15);
+    [[0, 1], [2, 3], [4, 5], [7, 8]].forEach(([a], k) => {
+      const c = a % 4, r = Math.floor(a / 4);
+      const box = E(panel, { left: 32 + c * 160, top: 68 + r * 210, width: 304, height: 197, border: "3px solid " + C.teal, borderRadius: 8, opacity: 0 });
+      tl.to(box, { opacity: 1, duration: 0.15 }, 4.4 + k * 0.42).to(box, { opacity: 0, duration: 0.3 }, 4.95 + k * 0.42);
+    });
+    E(L, { left: 830, top: 420, fontFamily: MONO, fontSize: 22, color: C.teal }, "2 pages at a time →");
+    E(L, { left: 860, top: 610, fontFamily: MONO, fontSize: 22, color: C.teal }, "← structured JSON");
+    tl.from(L.lastChild.previousSibling, { opacity: 0, duration: 0.3 }, 4.3).from(L.lastChild, { opacity: 0, duration: 0.3 }, 5.0);
+    for (let k = 0; k < 4; k++) {
+      const pk = E(L, { left: 830, top: 470, width: 70, height: 48 });
+      E(pk, { left: 0, top: 0, width: 32, height: 46, background: C.warm, border: "2px solid " + C.teal });
+      E(pk, { left: 36, top: 0, width: 32, height: 46, background: C.warm, border: "2px solid " + C.teal });
+      tl.fromTo(pk, { x: 0, opacity: 0 }, { x: 300, opacity: 1, duration: 0.55, ease: "power2.in" }, 4.45 + k * 0.42).to(pk, { opacity: 0, duration: 0.1 }, 5.0 + k * 0.42);
+      const back = E(L, { left: 1120, top: 552, fontFamily: MONO, fontSize: 30, fontWeight: 500, color: C.teal }, "{ }");
+      tl.fromTo(back, { x: 0, opacity: 0 }, { x: -260, opacity: 1, duration: 0.55, ease: "power2.out" }, 5.1 + k * 0.42).to(back, { opacity: 0, duration: 0.12 }, 5.65 + k * 0.42);
+    }
+    const ring = E(L, { left: 1160, top: 330, width: 300, height: 300, border: "4px solid " + C.teal, borderRadius: "50%" });
+    const ring2 = E(L, { left: 1140, top: 310, width: 340, height: 340, border: "2px dashed " + C.teal, borderRadius: "50%", opacity: 0.6 });
+    E(ring, { left: 0, right: 0, top: 120, textAlign: "center", fontFamily: MONO, fontSize: 34, color: C.teal }, "Gemini");
+    E(ring, { left: 0, right: 0, top: 168, textAlign: "center", fontFamily: MONO, fontSize: 16, color: C.soft }, "your key");
+    tl.from([ring, ring2], { opacity: 0, scale: 0.8, duration: 0.6, ease: "expo.out" }, 3.3).to(ring2, { rotation: 140, duration: 4.7, ease: "none" }, 3.3);
+    for (let k = 0; k < 4; k++) tl.fromTo(ring, { scale: 1 }, { scale: 1.05, duration: 0.12, yoyo: true, repeat: 1 }, 5.0 + k * 0.42);
+    const json = E(L, { left: 1500, top: 300, fontFamily: MONO, fontSize: 22, lineHeight: 1.65, whiteSpace: "pre", color: C.ink2 });
+    type(tl, json, '{\n  "number": "Q.1(b)",\n  "marks": 3,\n  "section": "A",\n  "type": "theory",\n  "topic": "SDLC Models"\n}', 5.1, 1.9);
+    const priv = E(L, { left: 96, top: 920, fontSize: 40, fontWeight: 600, letterSpacing: "-0.02em" }, words("Straight to Gemini on your own key. Nothing uploaded to our server."));
+    rise(tl, priv, 6.3, 0.03);
+  } },
+{ id: 5, title: "One question, fully read", act: "Act 2 · The genome", dur: 6, intensity: 0.45,
+  vo: "Every question comes back with its number, its marks, its paper, and its topic.",
+  kf: [[1.2, "The question text unmasks."], [3.2, "Red-pen marks, then tags snap on."], [4.4, "Provenance is kept for every question."]],
+  hits: [25, 27.5],
+  shots: [
+    ["SH01", 0, 2.0, "Locked close", "A real question from the 2024 final rises in by word. The red “3” writes on in the margin.", "Nib scratch", "Groove", "—"],
+    ["SH02", 2.0, 4.8, "Locked close", "Paper, section, type and topic tags snap on with teal callouts.", "Four ticks", "Groove", "—"],
+    ["SH03", 4.8, 6, "Tag move", "All but the topic tag fade; it shrinks and flies top-left.", "Soft slide", "Fill on bar 12", "Match-cut into genome cell"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const g = E(L, { inset: 0 });
+    const qn = E(g, { left: 96, top: 292, fontFamily: MONO, fontSize: 40, color: C.ink2 }, "Q.1(b)");
+    const q = E(g, { left: 330, top: 270, width: 1200, fontSize: 64, lineHeight: 1.2, letterSpacing: "-0.02em" }, words("How does the iterative nature of Agile development contrast with the linear approach of the waterfall model?"));
+    rise(tl, q, 0.3, 0.035);
+    tl.from(qn, { opacity: 0, x: -20, duration: 0.5, ease: "expo.out" }, 0.25);
+    const m = E(g, { left: 1640, top: 236, fontSize: 180, fontWeight: 700, color: C.pen, lineHeight: 1 }, "3");
+    pen(tl, m, 1.5);
+    const tags = [[330, '<b style="font-weight:700">2024 Final</b>', "paper"], [560, '<span style="font-family:' + MONO.replace(/"/g, "'") + ';color:#6a6a6a">SECTION-A</span>', "section"], [790, '<span style="background:' + C.theory + ';color:' + C.theoryInk + ';padding:4px 14px;font-weight:600">Theory</span>', "type"], [960, '<span style="background:' + C.tealSoft + ';padding:4px 14px;font-weight:600">SDLC Models</span>', "topic"]];
+    let topic;
+    const outs = [qn, q, m];
+    tags.forEach(([x, html, label], i) => {
+      const t = E(g, { left: x, top: 640, fontSize: 34 }, html);
+      const tick = E(g, { left: x + 2, top: 700, width: 2, height: 26, background: C.teal });
+      const lb = E(g, { left: x, top: 734, fontFamily: MONO, fontSize: 20, color: C.teal }, label);
+      tl.from(t, { opacity: 0, scale: 0.8, transformOrigin: "0 50%", duration: 0.3, ease: "back.out(2)" }, 2.0 + i * 0.2)
+        .from([tick, lb], { opacity: 0, y: -8, duration: 0.3 }, 2.15 + i * 0.2);
+      if (i === 3) topic = t; else outs.push(t);
+      outs.push(tick, lb);
+    });
+    const c1 = E(g, { left: 96, top: 244, fontFamily: MONO, fontSize: 20, color: C.teal }, "number");
+    const c2 = E(g, { left: 1640, top: 210, fontFamily: MONO, fontSize: 20, color: C.teal }, "marks");
+    tl.from([c1, c2], { opacity: 0, duration: 0.3 }, 1.8);
+    const prov = E(g, { left: 330, top: 820, fontFamily: MONO, fontSize: 24, color: C.soft }, "provenance kept · paper · section · number · page");
+    tl.from(prov, { opacity: 0, duration: 0.4 }, 3.4);
+    outs.push(c1, c2, prov);
+    tl.to(outs, { opacity: 0, duration: 0.45, ease: "expo.in" }, 4.8)
+      .to(topic, { left: 96, top: 90, scale: 0.75, transformOrigin: "0 0", duration: 0.9, ease: "expo.inOut" }, 4.95);
+  } },
+{ id: 6, title: "The genome map", act: "Act 2 · The genome", dur: 8, intensity: 0.75,
+  vo: "Put them together, and the course shows its shape. Where the ink is dark, the examiner keeps coming back.",
+  kf: [[1.4, "Cells fill paper by paper, from 2018."], [4.6, "All seven papers in: the shape is visible."], [7.6, "Pull back: rows keep going past the frame."]],
+  hits: [30, 32.5, 35, 37.5],
+  shots: [
+    ["SH01", 0, 4.6, "Locked wide", "Genome map from the real SWE data: 24 topics down, 7 papers across. A teal marker walks the columns; each column's cells fill at their true density.", "Rain ticks pitched up per year", "Lift begins, bar 13", "—"],
+    ["SH02", 4.6, 8, "Pull-back 100→72%", "Stats chip sets top right. Camera pulls back to show the rows run on past frame bottom.", "Pad swell", "Lift lands bar 16", "Rows slide and sort into bars"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const cam = E(L, { inset: 0, transformOrigin: "50% 0%" });
+    const t = E(cam, { left: 96, top: 76, fontSize: 64, fontWeight: 800, letterSpacing: "-0.04em" }, words("Genome map"));
+    rise(tl, t, 0.1);
+    const sub = E(cam, { left: 96, top: 152, fontSize: 28, color: C.ink2 }, "Topics down. Papers across. Darker means asked more.");
+    tl.from(sub, { opacity: 0, duration: 0.4 }, 0.4);
+    const X0 = 640, CW = 160, GAP = 10, Y0 = 250, RH = 58;
+    PAPERS.forEach((p, c) => E(cam, { left: X0 + c * (CW + GAP), top: 206, width: CW, textAlign: "center", fontFamily: MONO, fontSize: 22, color: C.ink2 }, p));
+    const sweep = E(cam, { left: X0, top: 238, width: CW, height: 5, background: C.teal });
+    tl.from(sweep, { opacity: 0, duration: 0.2 }, 0.5);
+    const extra = [];
+    GENOME.forEach(([name, vals], r) => {
+      const y = Y0 + r * RH;
+      const lab = E(cam, { left: 96, top: y + 10, width: 520, fontSize: 25, color: r < 12 ? C.ink : C.ink2, whiteSpace: "nowrap" }, name);
+      if (r < 12) tl.from(lab, { opacity: 0, x: -14, duration: 0.4, ease: "expo.out" }, 0.4 + r * 0.03); else extra.push(lab);
+      vals.forEach((v, c) => {
+        const cell = E(cam, { left: X0 + c * (CW + GAP), top: y, width: CW, height: RH - 8, background: C.p3 });
+        if (r >= 12) extra.push(cell);
+        if (!v) return;
+        const fill = E(cell, { inset: 0, background: C.ink, opacity: 0.16 + 0.84 * Math.min(v, 5) / 5 });
+        const n = E(cell, { left: 0, right: 0, top: 9, textAlign: "center", fontFamily: MONO, fontSize: 22, color: v >= 3 ? "#fafafa" : C.ink }, String(v));
+        if (r < 12) tl.from([fill, n], { opacity: 0, scale: 0.4, duration: 0.35, ease: "back.out(1.6)" }, 0.75 + c * 0.5 + r * 0.025);
+      });
+    });
+    tl.from(extra, { opacity: 0, duration: 0.6, stagger: 0.004 }, 4.9);
+    PAPERS.forEach((_, c) => tl.to(sweep, { x: c * (CW + GAP), duration: 0.3, ease: "power2.inOut" }, 0.5 + c * 0.5));
+    tl.to(sweep, { opacity: 0, duration: 0.3 }, 4.3);
+    const stat = E(L, { right: 96, top: 92, fontFamily: MONO, fontSize: 26, padding: "8px 16px", border: "2px solid " + C.ink, background: C.paper }, "57 topics · 7 papers · 154 questions");
+    tl.from(stat, { opacity: 0, y: -10, duration: 0.4, ease: "expo.out" }, 4.7);
+    E(L, { left: 0, right: 0, bottom: 0, height: 260, background: "linear-gradient(transparent, " + C.paper + " 85%)" });
+    tl.fromTo(cam, { scale: 1 }, { scale: 0.72, duration: 2.8, ease: "power2.inOut" }, 5.0);
+  } },
+{ id: 7, title: "Pareto: few topics, most of the paper", act: "Act 2 · The genome", dur: 7, intensity: 0.85,
+  vo: "In this course, twenty-two of fifty-seven topics cover seventy percent of everything ever asked.",
+  kf: [[1.6, "Bars grow, most asked first."], [3.4, "Cumulative line crosses 70% at bar 22."], [6.6, "Headline lands; the tail greys out."]],
+  hits: [40, 41.25],
+  shots: [
+    ["SH01", 0, 2.6, "Locked wide", "57 bars from the real counts grow left to right, 1-frame stagger. Baseline and 70% guide set.", "Rising arpeggio", "Build", "—"],
+    ["SH02", 2.6, 4.2, "Locked wide", "Teal cumulative line draws; at bar 22 it crosses 70%. Marker drops. Bars 23–57 fade to paper grey.", "Bell on crossing", "Hit on bar 17 downbeat", "—"],
+    ["SH03", 4.2, 7, "Slow push 100→104%", "Headline rises; highlighter on “70.8%”.", "Felt-tip squeak", "Hold", "Wipe on the ink rule"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const cam = E(L, { inset: 0 });
+    const sub = E(cam, { left: 96, top: 130, fontFamily: MONO, fontSize: 28, color: C.ink2 }, "Topics, most asked first →");
+    tl.from(sub, { opacity: 0, duration: 0.4 }, 0.2).to(sub, { opacity: 0, duration: 0.3 }, 3.6);
+    const X = 96, W = 1728, B = 960, H = 470, gap = 6, bw = (W - gap * 56) / 57;
+    const bars = PARETO.map((v, i) => E(cam, { left: X + i * (bw + gap), top: B - (v / 10) * 420, width: bw, height: (v / 10) * 420, background: C.ink2, transformOrigin: "50% 100%" }));
+    tl.from(bars, { scaleY: 0, duration: 0.5, stagger: 0.025, ease: "expo.out" }, 0.4);
+    E(cam, { left: X, top: B, width: W, height: 3, background: C.ink });
+    const y70 = B - H * 0.7;
+    const g70 = E(cam, { left: X, top: y70, width: W, height: 0, borderTop: "3px dashed " + C.soft });
+    const l70 = E(cam, { right: 96, top: y70 - 40, fontFamily: MONO, fontSize: 24, color: C.soft }, "70% of questions");
+    tl.from([g70, l70], { opacity: 0, duration: 0.4 }, 1.6);
+    let cum = 0;
+    const pts = PARETO.map((v, i) => { cum += v; return [X + i * (bw + gap) + bw / 2, B - H * (cum / 154)]; });
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 1920 1080"); svg.setAttribute("width", "1920"); svg.setAttribute("height", "1080");
+    svg.style.cssText = "position:absolute;left:0;top:0;overflow:visible";
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("d", "M" + pts.map((p) => p.join(" ")).join(" L"));
+    path.setAttribute("fill", "none"); path.setAttribute("stroke", C.teal); path.setAttribute("stroke-width", "5"); path.setAttribute("pathLength", "1");
+    path.setAttribute("stroke-dasharray", "1"); path.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(path); cam.appendChild(svg);
+    tl.fromTo(path, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 2.2, ease: "power1.inOut" }, 1.0);
+    const [cx, cy] = pts[21];
+    const drop = E(cam, { left: cx - 1, top: cy, width: 3, height: B - cy, background: C.teal, transformOrigin: "50% 0" });
+    const dot = E(cam, { left: cx - 13, top: cy - 13, width: 26, height: 26, borderRadius: "50%", background: C.teal, border: "5px solid " + C.paper });
+    const dl = E(cam, { left: cx + 18, top: cy + 20, fontFamily: MONO, fontSize: 24, color: C.teal, whiteSpace: "nowrap" }, "topic 22 · 70.8%");
+    tl.from(dot, { scale: 0, duration: 0.3, ease: "back.out(2.5)" }, 2.9).from(drop, { scaleY: 0, duration: 0.35, ease: "power2.out" }, 3.0).from(dl, { opacity: 0, x: -10, duration: 0.3 }, 3.1)
+      .to(bars.slice(0, 22), { backgroundColor: C.ink, duration: 0.3 }, 3.2)
+      .to(bars.slice(22), { backgroundColor: "#d7d7d1", duration: 0.5 }, 3.3);
+    const head = E(cam, { left: 96, top: 110, width: 1500, fontSize: 86, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.02 },
+      words("22 of 57 topics cover") + ' <span class="mk"><span class="w hlx">70.8%</span></span> ' + words("of every question."));
+    rise(tl, head, 3.7, 0.045);
+    hl(tl, head.querySelector(".hlx"), 4.6);
+    tl.fromTo(cam, { scale: 1 }, { scale: 1.035, duration: 7, ease: "none" }, 0);
+  } },
+{ id: 8, title: "Lineage: same question, new clothes", act: "Act 2 · The genome", dur: 6, intensity: 0.6,
+  vo: "And it finds the questions that keep coming back, even when the wording changes.",
+  kf: [[0.9, "2020: the original question."], [2.7, "2022 docks to the thread; changed words highlighted."], [5.2, "2023 joins; caption lands."]],
+  hits: [45, 47.5],
+  shots: [
+    ["SH01", 0, 2.6, "Locked mid", "A real lineage card: 2020 variant, then 2022 drops in on a teal thread with an 82% match; changed words get the highlighter.", "Lock click per variant", "Breakdown, bar 19", "—"],
+    ["SH02", 2.6, 6, "Locked mid", "2023 joins. Caption: Same question. New clothes.", "Lock click", "Build back", "Rows fold into plan row 1"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const h = E(L, { left: 96, top: 104, fontSize: 60, fontWeight: 700, letterSpacing: "-0.035em" }, words("Information Systems"));
+    rise(tl, h, 0.05);
+    const meta = E(L, { right: 96, top: 128, fontFamily: MONO, fontSize: 26, color: C.ink2 }, "5 variants in 4 papers");
+    tl.from(meta, { opacity: 0, duration: 0.4 }, 0.3);
+    E(L, { left: 96, top: 206, width: 1728, height: 3, background: C.ink });
+    const thread = E(L, { left: 262, top: 300, width: 4, height: 440, background: C.teal, transformOrigin: "50% 0" });
+    tl.fromTo(thread, { scaleY: 0 }, { scaleY: 0.48, duration: 0.5, ease: "power2.out" }, 1.1).to(thread, { scaleY: 1, duration: 0.5, ease: "power2.out" }, 2.6);
+    const rows = [
+      ["2020", "What are the key considerations involved in feasibility analysis?", "2020 Final", "Section B", "Q7(a)", null, 0.3],
+      ["2022", '<span class="mk"><span class="w hlx">Explain</span></span> ' + words("the key consideration") + ' <span class="mk"><span class="w hlx">which are</span></span> ' + words("involved in the feasibility analysis."), "2022 Final", "Section A", "Q4(b)", 82, 1.3],
+      ["2023", "What are the key considerations involved in feasibility analysis?", "2023 Final", "Section B", "Q.6(a)", 82, 2.8],
+    ];
+    rows.forEach(([yr, text, paper, sec, num, match, at], i) => {
+      const y = 280 + i * 210;
+      const g = E(L, { left: 0, top: y, width: 1920, height: 200 });
+      E(g, { left: 96, top: 6, fontFamily: MONO, fontSize: 44 }, yr);
+      E(g, { left: 254, top: 20, width: 20, height: 20, borderRadius: "50%", background: C.teal, border: "4px solid " + C.paper });
+      const tx = E(g, { left: 330, top: 0, width: 1260, fontSize: 46, lineHeight: 1.25, letterSpacing: "-0.015em" }, text.includes("<span") ? text : words(text));
+      E(g, { left: 330, top: 128, fontSize: 26, color: C.ink2, whiteSpace: "nowrap" }, `<b style="color:${C.ink}">${paper}</b>&nbsp;&nbsp; ${sec} &nbsp;&nbsp;<span style="font-family:${MONO.replace(/"/g, "'")}">${num}</span>`);
+      E(g, { left: 1770, top: 0, fontSize: 64, fontWeight: 700, color: C.pen }, "3");
+      E(g, { left: 96, top: 192, width: 1728, height: 1, background: "#dcdcd6" });
+      tl.from(g, { opacity: 0, y: 40, duration: 0.6, ease: "expo.out" }, at);
+      if (match) {
+        const ch = E(g, { left: 760, top: 128, fontFamily: MONO, fontSize: 24, color: C.teal }, "0% match");
+        count(tl, ch, match, at + 0.3, 0.8, (v) => Math.round(v) + "% match");
+      }
+      tx.querySelectorAll(".hlx").forEach((x, k) => hl(tl, x, at + 0.8 + k * 0.25, 0.4));
+    });
+    const cap = E(L, { left: 96, top: 930, fontSize: 64, fontWeight: 800, letterSpacing: "-0.04em" }, words("Same question. New clothes."));
+    rise(tl, cap, 4.1);
+  } },
+{ id: 9, title: "The answer: study these first", act: "Act 3 · The answer", dur: 8, intensity: 1,
+  vo: "Then, the answer. What to study first, how often it was asked, and the marks it carries. Counted, not guessed.",
+  kf: [[2.2, "Rows rise; highlighter strokes draw to true length."], [4.4, "Red-pen marks written in the margin."], [7.6, "Scroll to rank 22; summary line lands."]],
+  hits: [51.25, 53.75, 56.25, 58.75],
+  shots: [
+    ["SH01", 0, 4.6, "Locked wide", "The Plan tab: rank, topic, “Asked N times” on a highlighter stroke as long as the count, red-pen marks per paper.", "Squeak per stroke, nib per mark", "Full arrangement, bar 21", "—"],
+    ["SH02", 4.6, 6.4, "List scroll", "List scrolls smoothly to rank 22.", "Paper slide", "Drive", "—"],
+    ["SH03", 6.4, 8, "Locked", "Summary: These 22 topics carry ≈64.1 marks a paper and cover 70.8% of the 154 questions asked.", "Nib on ≈64.1", "Hit on bar 24", "2024 Final card lifts out"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const h = E(L, { left: 96, top: 100, fontSize: 120, fontWeight: 800, letterSpacing: "-0.05em" }, words("Study these first"));
+    rise(tl, h, 0.1);
+    E(L, { left: 96, top: 282, width: 1728, height: 3, background: C.ink });
+    E(L, { right: 96, top: 248, fontFamily: MONO, fontSize: 18, color: C.soft }, "marks a paper");
+    const mask = E(L, { left: 96, top: 286, width: 1728, height: 616, overflow: "hidden" });
+    const list = E(mask, { left: 0, top: 0, width: 1728, height: PLAN.length * 112 });
+    PLAN.forEach(([name, n, p, m], i) => {
+      const r = E(list, { left: 0, top: i * 112, width: 1728, height: 112, borderBottom: "1px solid #dcdcd6" });
+      E(r, { left: 0, top: 42, fontFamily: MONO, fontSize: 24, color: C.soft }, String(i + 1));
+      E(r, { left: 80, top: 34, width: 580, fontSize: name.length > 26 ? 32 : 38, fontWeight: 600, letterSpacing: "-0.015em", whiteSpace: "nowrap" }, name);
+      const st = E(r, { left: 680, top: 24, width: (n / 10) * 820, height: 64, background: C.hl, transformOrigin: "0 50%" });
+      E(r, { left: 694, top: 31, fontSize: 40, fontWeight: 800, letterSpacing: "-0.025em", whiteSpace: "nowrap" }, `Asked ${n} times <span style="font-size:26px;font-weight:400;color:${C.ink2};letter-spacing:0">in ${p} paper${p > 1 ? "s" : ""}</span>`);
+      const mk = E(r, { left: 1520, top: 22, width: 208, textAlign: "right", fontSize: 54, fontWeight: 700, color: C.pen }, "≈" + m);
+      if (i < 6) {
+        const at = 0.5 + i * 0.36;
+        tl.from(r, { opacity: 0, y: 30, duration: 0.5, ease: "expo.out" }, at)
+          .from(st, { scaleX: 0, duration: 0.5, ease: "power2.inOut" }, at + 0.15);
+        pen(tl, mk, at + 0.5, 0.35);
+      }
+    });
+    tl.to(list, { y: -(PLAN.length * 112 - 616), duration: 1.8, ease: "power2.inOut" }, 4.6);
+    const sum = E(L, { left: 96, top: 930, width: 1728, fontSize: 36, fontWeight: 600, letterSpacing: "-0.015em" },
+      `These 22 topics carry <span style="color:${C.pen};font-weight:700">≈64.1</span> marks a paper and cover 70.8% of the 154 questions asked.`);
+    tl.from(sum, { opacity: 0, y: 24, duration: 0.6, ease: "expo.out" }, 6.4);
+  } },
+{ id: 10, title: "Proof: the backtest", act: "Act 3 · The answer", dur: 9, intensity: 0.7,
+  vo: "Don't take our word for it. Hide the 2024 final, rank from the rest, then look. Eleven of its twenty-four questions had been asked before.",
+  kf: [[3.1, "The 2024 Final flips face-down."], [5.6, "Revealed: its topics, the ones the ranking named in teal."], [8.6, "11 of 24 lands; the honest small print under it."]],
+  hits: [61.6, 64.2, 65.25],
+  shots: [
+    ["SH01", 0, 4.1, "Locked wide", "Seven paper cards. 2024 Final flips to ink, lifts. The other six take a teal outline: rank from these.", "Card flip", "Drops to motif alone, bar 25", "—"],
+    ["SH02", 4.1, 6.0, "Locked wide", "Card flips back. The held-out paper's real topics appear; the four the ranking named turn teal.", "Flip, chip ticks", "Motif", "—"],
+    ["SH03", 6.0, 9, "Push 100→104%", "Cards clear. “11 of 24” counts up. Small print: 9 of 24 questions on named topics (37.5%).", "Low hit on 11", "Full band returns, bar 27", "White flash to clean page"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const cam = E(L, { inset: 0 });
+    const cap = E(cam, { left: 96, top: 84, fontSize: 58, fontWeight: 700, letterSpacing: "-0.035em" }, words("Hide one paper. Rank from the rest."));
+    rise(tl, cap, 0.15, 0.04);
+    // Everything after the caption waits for the VO's "Hide the 2024 final".
+    const outer = tl;
+    tl = gsap.timeline();
+    outer.add(tl, 1.7);
+    const grp = E(cam, { inset: 0 });
+    const cards = PAPERS.map((p, i) => {
+      const c = E(grp, { left: 96 + i * 246, top: 210, width: 196, height: 268, transformOrigin: "50% 50%" });
+      sheet(c, 0, 0, 190, i === 6 ? "UNDATED" : "FINAL · " + p);
+      const ink = E(c, { left: 0, top: 0, width: 190, height: 268, background: C.ink, opacity: 0 });
+      E(ink, { left: 18, top: 100, fontFamily: MONO, fontSize: 24, color: "#fafafa" }, "2024 Final");
+      E(ink, { left: 18, top: 136, fontFamily: MONO, fontSize: 18, color: "#a8a8a8" }, "hidden");
+      const ol = E(c, { left: -8, top: -8, width: 206, height: 284, border: "4px solid " + C.teal, opacity: 0 });
+      return { c, ink, ol };
+    });
+    const h = cards[5];
+    tl.to(h.c, { scaleX: 0, duration: 0.18, ease: "power2.in" }, 0.9).set(h.ink, { opacity: 1 }, 1.08)
+      .to(h.c, { scaleX: 1, duration: 0.22, ease: "power2.out" }, 1.08).to(h.c, { y: -22, duration: 0.4, ease: "expo.out" }, 1.3);
+    tl.to(cards.filter((_, i) => i !== 5).map((k) => k.ol), { opacity: 1, duration: 0.25, stagger: 0.05 }, 1.5);
+    const rl = E(grp, { left: 96, top: 512, fontFamily: MONO, fontSize: 24, color: C.teal }, "21 topics ranked from these six papers");
+    tl.from(rl, { opacity: 0, duration: 0.3 }, 1.8).to(rl, { opacity: 0, duration: 0.2 }, 2.7);
+    tl.to(h.c, { scaleX: 0, duration: 0.18, ease: "power2.in" }, 2.5).set(h.ink, { opacity: 0 }, 2.68)
+      .to(h.c, { scaleX: 1, duration: 0.22, ease: "power2.out" }, 2.68);
+    const chipsBox = E(grp, { left: 96, top: 590, width: 1728, height: 300 });
+    let x = 0, y = 0;
+    HELD.forEach(([name, hit], i) => {
+      const w = name.length * 15.5 + 34;
+      if (x + w > 1728) { x = 0; y += 66; }
+      const ch = E(chipsBox, { left: x, top: y, padding: "8px 16px", fontSize: 26, whiteSpace: "nowrap", border: "2px solid " + (hit ? C.teal : "#cfcfc8"), background: hit ? C.tealSoft : "transparent", color: hit ? C.ink : C.ink2, fontWeight: hit ? 600 : 400 }, name);
+      tl.from(ch, { opacity: 0, y: 14, duration: 0.3, ease: "expo.out" }, 2.95 + i * 0.04);
+      x += w + 14;
+    });
+    const cl = E(grp, { left: 96, top: 540, fontFamily: MONO, fontSize: 20, color: C.soft }, "topics on the hidden 2024 final · teal = named by the ranking");
+    tl.from(cl, { opacity: 0, duration: 0.3 }, 2.9);
+    tl.to([grp, cap], { opacity: 0, y: -40, duration: 0.45, ease: "expo.in" }, 4.3);
+    const big = E(cam, { left: 88, top: 170, fontSize: 320, fontWeight: 800, letterSpacing: "-0.06em", lineHeight: 0.9, fontVariantNumeric: "tabular-nums" }, '<span>0</span><span style="font-size:128px;color:#8a8a84;letter-spacing:-0.03em"> of 24</span>');
+    tl.from(big, { opacity: 0, y: 30, duration: 0.5, ease: "expo.out" }, 4.55);
+    count(tl, big.querySelector("span"), 11, 4.55, 0.9);
+    const cp = E(cam, { left: 96, top: 520, width: 1400, fontSize: 56, fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.15 }, words("questions on the hidden 2024 final had been asked before, in another form."));
+    rise(tl, cp, 5.0, 0.03);
+    const sp = E(cam, { left: 96, top: 780, width: 1500, fontFamily: MONO, fontSize: 25, color: C.ink2, lineHeight: 1.5 }, "The ranking from the 6 earlier papers named the topic of 9 of its 24 questions (37.5%).<br>A prioritisation check, never a forecast.");
+    tl.from(sp, { opacity: 0, duration: 0.5 }, 5.6);
+    tl.fromTo(cam, { scale: 1 }, { scale: 1.035, duration: 2.7, ease: "none" }, 4.3);
+  } },
+{ id: 11, title: "Practice paper & hints", act: "Act 3 · The answer", dur: 6, intensity: 0.6,
+  vo: "Practise on a paper built in your exam's own shape. Stuck? Get a hint, never the answer.",
+  kf: [[1.8, "A practice paper builds in the corpus's shape."], [3.9, "A question's Hint is pressed."], [5.7, "The approach unfolds; the answer stays yours."]],
+  hits: [69, 71.8],
+  shots: [
+    ["SH01", 0, 3.0, "Locked wide, split", "Left: a paper builds section by section with red-pen marks. Right: measured shape, 5 sections · ~24 questions · 84 marks.", "Nib scratches", "Groove", "Right half wipes"],
+    ["SH02", 3.0, 6, "Locked wide, split", "Right: a real question; Hint pressed; teal panel unfolds with the approach.", "Button click, soft chime", "Groove", "Slide off right; ink rule returns"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl);
+    const s = E(L, { left: 96, top: 120, width: 760, height: 880, background: C.warm, border: "1px solid #ddd8c8", boxShadow: "0 18px 40px rgb(20 20 20 / .14)" });
+    tl.from(s, { opacity: 0, y: 30, duration: 0.6, ease: "expo.out" }, 0.1);
+    E(s, { left: 44, top: 40, fontFamily: MONO, fontSize: 20, color: C.soft, letterSpacing: "0.08em" }, "PRACTICE PAPER · REVISION AID");
+    E(s, { left: 44, top: 76, width: 660, fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.15 }, "Software Engineering &amp; Information System Design");
+    E(s, { left: 44, top: 162, width: 672, height: 2, background: C.ink });
+    "ABCDE".split("").forEach((sec, i) => {
+      const y = 190 + i * 136;
+      const g = E(s, { left: 44, top: y, width: 672, height: 130 });
+      E(g, { left: 0, top: 0, fontFamily: MONO, fontSize: 20, color: C.ink }, "SECTION " + sec);
+      [0, 1].forEach((k) => {
+        E(g, { left: 0, top: 44 + k * 40, width: 360 + rnd() * 220, height: 7, background: "rgb(30 30 30 / .25)" });
+        E(g, { left: 636, top: 30 + k * 40, fontSize: 28, fontWeight: 700, color: C.pen }, String([6, 4, 5, 3, 7, 4, 5, 6, 4, 3][i * 2 + k]));
+      });
+      tl.from(g, { opacity: 0, x: -20, duration: 0.45, ease: "expo.out" }, 0.5 + i * 0.32);
+    });
+    const right = E(L, { left: 960, top: 0, width: 960, height: 1080 });
+    const h = E(right, { left: 0, top: 170, width: 860, fontSize: 80, fontWeight: 800, letterSpacing: "-0.045em", lineHeight: 1 }, words("Built in your exam's own shape."));
+    rise(tl, h, 0.4);
+    const st = E(right, { left: 0, top: 410, fontFamily: MONO, fontSize: 32 }, ["5 sections", "~24 questions", "84 marks"].map((t) => `<span class="mk"><span class="w">${t}</span></span>`).join(" · "));
+    rise(tl, st, 1.2, 0.15);
+    const sub = E(right, { left: 0, top: 480, width: 780, fontSize: 30, color: C.ink2, lineHeight: 1.4 }, "Sections, question counts and mark values are measured from your papers. Only the wording is generated.");
+    tl.from(sub, { opacity: 0, duration: 0.5 }, 1.7);
+    tl.to(right, { opacity: 0, x: 60, duration: 0.4, ease: "expo.in" }, 2.8);
+    const hint = E(L, { left: 960, top: 0, width: 960, height: 1080 });
+    tl.from(hint, { opacity: 0, x: 60, duration: 0.5, ease: "expo.out" }, 3.15);
+    E(hint, { left: 0, top: 180, fontFamily: MONO, fontSize: 28, color: C.ink2 }, "Q.1(c)");
+    E(hint, { left: 120, top: 172, width: 620, fontSize: 40, lineHeight: 1.25, letterSpacing: "-0.015em" }, "Discuss the spiral model with necessary sketches. How does it differ from iterative model?");
+    E(hint, { left: 120, top: 362, fontSize: 26 }, `<b>2024 Final</b>&nbsp;&nbsp; <span style="color:#6a6a6a">SECTION-A</span>`);
+    E(hint, { left: 800, top: 168, fontSize: 52, fontWeight: 700, color: C.pen }, "3");
+    const hb = E(hint, { left: 120, top: 414, padding: "10px 22px", border: "2px solid " + C.ink, borderRadius: 12, fontSize: 26, fontWeight: 600 }, "Hint");
+    tl.to(hb, { scale: 0.92, duration: 0.1 }, 3.8).to(hb, { scale: 1, background: C.ink, color: "#fafafa", duration: 0.2 }, 3.9);
+    const p = E(hint, { left: 120, top: 498, width: 720, height: 400, border: "3px solid " + C.teal, background: "#f3faf9", transformOrigin: "50% 0" });
+    tl.from(p, { scaleY: 0, duration: 0.5, ease: "expo.out" }, 4.05);
+    E(p, { left: 32, top: 28, fontFamily: MONO, fontSize: 20, color: C.teal, letterSpacing: "0.08em" }, "APPROACH");
+    const ap = E(p, { left: 32, top: 70, width: 650, fontSize: 32, lineHeight: 1.4 }, words("Name the four quadrants, then show how risk analysis drives each loop. Contrast that with iterating on fixed requirements."));
+    rise(tl, ap, 4.35, 0.02);
+    const nb = E(p, { left: 32, top: 330, fontFamily: MONO, fontSize: 21, color: C.teal }, "The approach and the principle. Never the final answer.");
+    tl.from(nb, { opacity: 0, duration: 0.4 }, 5.0);
+  } },
+{ id: 12, title: "End card", act: "Act 3 · The answer", dur: 6, intensity: 0.35,
+  vo: "qDNA. The question genome of your course.",
+  kf: [[0.9, "Wordmark rises by letter."], [2.6, "Genome mark fills; last cell turns yellow."], [5.5, "Lock-up holds with URL."]],
+  hits: [76.5],
+  shots: [
+    ["SH01", 0, 3.0, "Locked", "Ink rule returns as top bar. Wordmark rises by letter; tagline and strapline set. Genome mark sweeps in; last cell turns highlighter yellow on the hit.", "Final squeak on yellow cell", "Motif resolves, bar 29", "—"],
+    ["SH02", 3.0, 6, "Locked, hold 2 s", "URL types on with cursor. “Try the samples. No key needed.” Hold for end frame.", "Clean tail", "Ring out", "Fade to black, last 6 frames"],
+  ],
+  build(L, tl) {
+    L.style.background = C.paper;
+    topbar(L, tl, 0);
+    const wm = E(L, { left: 76, top: 150, fontSize: 380, fontWeight: 800, letterSpacing: "-0.065em", lineHeight: 1 }, '<span class="mk">' + "qDNA".split("").map((c) => `<span class="w">${c}</span>`).join("") + "</span>");
+    tl.from(wm.querySelectorAll(".w"), { yPercent: 105, duration: 0.85, stagger: 0.07, ease: "expo.out" }, 0.3);
+    const tg = E(L, { left: 96, top: 590, fontSize: 64, fontWeight: 600, letterSpacing: "-0.03em" }, words("The question genome of your course."));
+    rise(tl, tg, 1.0, 0.05);
+    const r = E(L, { left: 96, top: 712, width: 560, height: 3, background: C.ink, transformOrigin: "0 50%" });
+    tl.from(r, { scaleX: 0, duration: 0.6, ease: "expo.inOut" }, 1.6);
+    const s = E(L, { left: 96, top: 736, fontSize: 34, fontWeight: 600 }, "Evidence-weighted, never a forecast");
+    tl.from(s, { opacity: 0, y: 10, duration: 0.5 }, 1.8);
+    const cells = [];
+    GENOME.slice(0, 3).forEach(([, v], rr) => v.slice(0, 6).forEach((n, cc) => {
+      const last = rr === 2 && cc === 5;
+      const c = E(L, { left: 1390 + cc * 72, top: 220 + rr * 72, width: 64, height: 64, background: last ? C.hl : n ? C.ink : C.p3, opacity: last ? 1 : n ? 0.2 + 0.8 * Math.min(n, 5) / 5 : 1 });
+      cells.push(c);
+      if (last) tl.from(c, { scale: 0, duration: 0.4, ease: "back.out(2.5)" }, 2.5);
+    }));
+    tl.from(cells.slice(0, -1), { scale: 0, duration: 0.3, stagger: 0.035, ease: "back.out(1.8)" }, 1.3);
+    const url = E(L, { left: 96, top: 900, fontFamily: MONO, fontSize: 46 });
+    const ut = document.createElement("span"); url.appendChild(ut);
+    const cur = document.createElement("span"); cur.className = "cur"; url.appendChild(cur);
+    tl.from(cur, { opacity: 0, duration: 0.01 }, 2.65);
+    type(tl, ut, "qdna.vercel.app", 2.7, 1.1);
+    const tr = E(L, { right: 96, top: 914, fontSize: 32, fontWeight: 600 }, "Try the samples. No key needed.");
+    tl.from(tr, { opacity: 0, duration: 0.5 }, 3.8);
+    const out = E(L, { inset: 0, background: "#000", opacity: 0 });
+    tl.to(out, { opacity: 1, duration: 0.2, ease: "none" }, 5.8);
+  } },
+];
+let acc = 0;
+SCENES.forEach((s) => { s.start = acc; acc += s.dur; });
+const TOTAL = acc;
+// When each VO line plays, from audio/vo-timing.json.
+const VO_T = [[2.9, 1.83], [5.5, 3.68], [11.6, 3.5], [16.4, 7.16], [24.3, 4.75], [30.6, 5.96], [38.5, 5.77], [45.4, 4.02], [51.0, 8.15], [59.25, 8.83], [68.45, 5.72], [74.8, 3.74]];
+
+/* ---------- stage plumbing ---------- */
+function fit(vp, st) {
+  const ro = new ResizeObserver(() => { st.style.transform = `scale(${vp.clientWidth / 1920})`; });
+  ro.observe(vp);
+}
+function safeGuides(st) {
+  const g = E(st, { inset: 0, pointerEvents: "none", zIndex: 4, display: "none" });
+  E(g, { left: 96, top: 54, right: 96, bottom: 54, border: "2px dashed rgb(0 160 200 / .7)" });
+  E(g, { left: 192, top: 108, right: 192, bottom: 108, border: "2px dashed rgb(220 60 160 / .6)" });
+  E(g, { left: 100, top: 58, fontFamily: MONO, fontSize: 18, color: "rgb(0 140 180)" }, "action safe 95%");
+  E(g, { left: 196, top: 112, fontFamily: MONO, fontSize: 18, color: "rgb(200 50 140)" }, "title safe 90%");
+  return g;
+}
+function buildScene(stage, s) {
+  const L = E(stage, {}, "", "L");
+  seed = 7 + s.id * 101;
+  const tl = gsap.timeline({ paused: true });
+  s.build(L, tl);
+  tl.set({}, {}, s.dur);
+  return { L, tl };
+}
+
+/* ---------- player ---------- */
+const vp = document.getElementById("player");
+const stage = E(vp, {}, "", "st");
+fit(vp, stage);
+const layers = SCENES.map((s) => buildScene(stage, s));
+const guides = safeGuides(stage);
+const master = gsap.timeline({ paused: true });
+layers.forEach(({ tl }, i) => { tl.paused(false); master.add(tl, SCENES[i].start); });
+const capEl = document.getElementById("cap"), burn = document.getElementById("burn"), tcEl = document.getElementById("tc");
+const fillEl = document.getElementById("fill"), headEl = document.getElementById("head"), scrub = document.getElementById("scrub"), nowEl = document.getElementById("now");
+const playBtn = document.getElementById("play");
+const optCap = document.getElementById("optCap"), optSafe = document.getElementById("optSafe"), optLoop = document.getElementById("optLoop");
+const segs = document.getElementById("segs");
+SCENES.forEach((s) => { const sp = document.createElement("span"); sp.style.setProperty("--d", s.dur); sp.innerHTML = `<i>${String(s.id).padStart(2, "0")}</i>`; sp.title = s.title; segs.appendChild(sp); });
+let cur = -1;
+function sync() {
+  const t = master.time();
+  let idx = SCENES.findIndex((s) => t >= s.start && t < s.start + s.dur);
+  if (idx < 0) idx = SCENES.length - 1;
+  if (idx !== cur) {
+    layers.forEach((l, i) => (l.L.style.visibility = i === idx ? "visible" : "hidden"));
+    cur = idx;
+    const s = SCENES[idx];
+    nowEl.innerHTML = `<span><b>SC${String(s.id).padStart(2, "0")}</b> ${s.title}</span><span>${s.act}</span><span>${tc(s.start)} → ${tc(s.start + s.dur)}</span>`;
+  }
+  const line = VO_T.findIndex(([at, d]) => t >= at && t < at + d + 0.3);
+  capEl.textContent = optCap.checked && line >= 0 ? SCENES[line].vo : "";
+  const code = tc(t);
+  burn.textContent = code; tcEl.textContent = code;
+  const pct = (t / TOTAL) * 100;
+  fillEl.style.width = pct + "%"; headEl.style.left = `calc(${pct}% - 1px)`;
+  scrub.setAttribute("aria-valuenow", t.toFixed(1));
+  scrub.setAttribute("aria-valuetext", code);
+}
+master.eventCallback("onUpdate", sync);
+// The soundtrack is the clock while it plays; without it the timeline runs on its own.
+const audio = document.getElementById("mix"), optSound = document.getElementById("optSound");
+let driving = false;
+function fallback() { if (driving) { driving = false; master.play(); } }
+function setPlay(on) {
+  playBtn.textContent = on ? "❚❚ Pause" : "▶ Play";
+  if (!on) { audio.pause(); master.pause(); driving = false; return; }
+  driving = true;
+  audio.muted = !optSound.checked;
+  const start = () => { audio.currentTime = master.time(); audio.play().catch(fallback); };
+  if (audio.readyState >= 1) start(); else audio.addEventListener("loadedmetadata", start, { once: true });
+}
+gsap.ticker.add(() => { if (driving && !audio.paused) master.time(Math.min(audio.currentTime, TOTAL - 0.001), false); });
+audio.addEventListener("error", fallback);
+audio.addEventListener("ended", () => { if (!driving) return; if (optLoop.checked) { seek(0); setPlay(true); } else setPlay(false); });
+master.eventCallback("onComplete", () => { if (driving) return; if (optLoop.checked) master.restart(); else setPlay(false); });
+optSound.addEventListener("change", () => (audio.muted = !optSound.checked));
+let played = false;
+playBtn.addEventListener("click", () => {
+  if (!played) { played = true; master.seek(0, false); }
+  if (master.progress() >= 1) master.seek(0, false);
+  setPlay(master.paused());
+});
+function seek(t) { master.seek(Math.max(0, Math.min(TOTAL - 0.001, t)), false); played = true; if (driving) audio.currentTime = master.time(); sync(); }
+function scrubAt(e) { const r = scrub.getBoundingClientRect(); seek(((e.clientX - r.left) / r.width) * TOTAL); }
+scrub.addEventListener("pointerdown", (e) => { scrub.setPointerCapture(e.pointerId); scrubAt(e); const mv = (ev) => scrubAt(ev); scrub.addEventListener("pointermove", mv); scrub.addEventListener("pointerup", () => scrub.removeEventListener("pointermove", mv), { once: true }); });
+function keys(e) {
+  if (e.key === " ") { e.preventDefault(); playBtn.click(); }
+  else if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); setPlay(false); seek(master.time() + (e.key === "ArrowRight" ? 1 : -1) * (e.shiftKey ? 1 : 1 / FPS)); }
+}
+vp.addEventListener("keydown", keys); scrub.addEventListener("keydown", keys);
+optCap.addEventListener("change", sync);
+optSafe.addEventListener("change", () => (guides.style.display = optSafe.checked ? "block" : "none"));
+seek(14.4); played = false;
+// Frame-accurate hook for the offline MP4 render (render.mjs).
+window.__render = { seek: (t) => { master.time(t, false); sync(); }, total: TOTAL };
+
+/* grain */
+try {
+  const cv = document.createElement("canvas"); cv.width = cv.height = 220;
+  const cx = cv.getContext("2d"), im = cx.createImageData(220, 220);
+  for (let i = 0; i < im.data.length; i += 4) { const v = 120 + Math.random() * 135; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+  cx.putImageData(im, 0, 0);
+  document.documentElement.style.setProperty("--grain", `url(${cv.toDataURL()})`);
+} catch (e) {}
+
+/* ---------- board ---------- */
+const board = document.getElementById("board");
+let shotN = 0;
+const pending = [];
+SCENES.forEach((s) => {
+  const el = document.createElement("article");
+  el.className = "scene"; el.id = "sc" + s.id;
+  const sid = "SC" + String(s.id).padStart(2, "0");
+  el.innerHTML = `<div class="scene-top"><span class="n">${String(s.id).padStart(2, "0")}</span><h3>${s.title}</h3><span class="meta">${tc(s.start)} – ${tc(s.start + s.dur)}<br>${s.dur * FPS} f · ${s.dur} s</span><span class="act">${s.act}</span></div>`;
+  const panels = document.createElement("div"); panels.className = "panels";
+  s.kf.forEach(([t, cap], k) => {
+    const fig = document.createElement("figure"); fig.className = "panel";
+    const b = document.createElement("button"); b.type = "button"; b.dataset.id = `${sid} · ${String.fromCharCode(65 + k)}`;
+    b.setAttribute("aria-label", `${sid} frame ${String.fromCharCode(65 + k)}: ${cap} Play from here.`);
+    const v = document.createElement("div"); v.className = "vp"; b.appendChild(v);
+    b.addEventListener("click", () => { seek(s.start + t); setPlay(true); vp.scrollIntoView({ behavior: "smooth", block: "center" }); vp.focus({ preventScroll: true }); });
+    fig.appendChild(b);
+    const fc = document.createElement("figcaption"); fc.innerHTML = `<span class="mono">${tc(s.start + t)}</span>${cap}`; fig.appendChild(fc);
+    panels.appendChild(fig);
+    pending.push({ v, s, t });
+  });
+  el.appendChild(panels);
+  const vo = document.createElement("p"); vo.className = "vo-line"; vo.textContent = "VO · “" + s.vo + "”"; el.appendChild(vo);
+  const tw = document.createElement("div"); tw.className = "tablewrap";
+  tw.innerHTML = `<table class="spec"><thead><tr><th>Shot</th><th>TC in</th><th>TC out</th><th>Frames</th><th>Camera</th><th>Action</th><th>SFX</th><th>Music</th><th>Out</th></tr></thead><tbody>${s.shots.map(([id, a, b2, cam, act, sfx, mus, tr]) => { shotN++; return `<tr><td>${sid}-${id}</td><td class="tcc">${tc(s.start + a)}</td><td class="tcc">${tc(s.start + b2)}</td><td class="tcc">${Math.round((b2 - a) * FPS)}</td><td>${cam}</td><td>${act}</td><td>${sfx}</td><td>${mus}</td><td>${tr}</td></tr>`; }).join("")}</tbody></table>`;
+  el.appendChild(tw);
+  board.appendChild(el);
+});
+document.getElementById("shotCount").textContent = `12 / ${shotN}`;
+function renderPanel({ v, s, t }) {
+  const st = E(v, {}, "", "st"); fit(v, st);
+  const { tl } = buildScene(st, s);
+  tl.seek(t, false);
+}
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver((ents) => ents.forEach((en) => {
+    if (!en.isIntersecting) return;
+    const p = pending.find((x) => x.v === en.target);
+    if (p && !p.done) { p.done = true; renderPanel(p); }
+    io.unobserve(en.target);
+  }), { rootMargin: "800px 0px" });
+  pending.forEach((p) => io.observe(p.v));
+} else pending.forEach(renderPanel);
+
+/* ---------- beat map ---------- */
+(() => {
+  const svg = document.getElementById("beatmap"), ns = "http://www.w3.org/2000/svg";
+  const X = (t) => 40 + (t / TOTAL) * 1130, add = (tag, at, txt) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); if (txt) e.textContent = txt; svg.appendChild(e); return e; };
+  SCENES.forEach((s, i) => {
+    add("rect", { x: X(s.start) + 1, y: 20, width: X(s.start + s.dur) - X(s.start) - 2, height: 30, fill: i < 3 || i > 7 ? "var(--bg)" : "color-mix(in oklch, var(--hl) 35%, var(--bg))", stroke: "var(--rule)" });
+    add("text", { x: X(s.start) + 6, y: 40, class: "lbl" }, String(s.id).padStart(2, "0"));
+  });
+  for (let b = 0; b <= 32; b++) {
+    const x = X(b * 2.5);
+    add("line", { x1: x, x2: x, y1: 60, y2: b % 4 === 0 ? 210 : 200, stroke: "var(--rule)" });
+    if (b % 4 === 0 && b < 32) add("text", { x: x + 3, y: 228 }, "bar " + (b + 1));
+  }
+  const y = (v) => 195 - v * 120;
+  const pts = SCENES.map((s) => [X(s.start + s.dur / 2), y(s.intensity)]);
+  const d = "M" + [[X(0), y(0.05)], ...pts, [X(TOTAL), y(0.1)]].map((p) => p.join(" ")).join(" L");
+  add("path", { d, fill: "none", stroke: "var(--fg)", "stroke-width": 2, "stroke-linejoin": "round" });
+  SCENES.forEach((s) => s.hits.forEach((h) => add("circle", { cx: X(h), cy: 68, r: 4, fill: "var(--accent)" })));
+  add("text", { x: 40, y: 246 }, "0 s");
+  add("text", { x: 1140, y: 246 }, "80 s");
+  add("text", { x: 4, y: 72 }, "hit");
+  add("text", { x: 4, y: 196 }, "calm");
+  add("text", { x: 4, y: 80 }, "");
+})();
+
+/* ---------- easing plots ---------- */
+(() => {
+  const box = document.getElementById("eases");
+  [["Enter", "expo.out", "cubic-bezier(0.16, 1, 0.3, 1)", [0.16, 1, 0.3, 1], "Everything that arrives: type, rows, panels."],
+   ["Exit", "expo.in", "cubic-bezier(0.7, 0, 0.84, 0)", [0.7, 0, 0.84, 0], "Everything that leaves before a cut."],
+   ["Move", "power2.inOut", "cubic-bezier(0.65, 0, 0.35, 1)", [0.65, 0, 0.35, 1], "Strokes, scrolls, camera moves between poses."]].forEach(([n, g, css, [a, b, c, d], use]) => {
+    const div = document.createElement("div"); div.className = "ease";
+    div.innerHTML = `<svg viewBox="0 0 120 120" aria-hidden="true"><path class="grid" d="M10 110 H110 M10 10 V110 M10 10 H110 M110 10 V110" fill="none"/><path class="curve" d="M10 110 C ${10 + a * 100} ${110 - b * 100}, ${10 + c * 100} ${110 - d * 100}, 110 10" fill="none" stroke-width="2.5"/><circle class="dot" cx="${10 + a * 100}" cy="${110 - b * 100}" r="3"/><circle class="dot" cx="${10 + c * 100}" cy="${110 - d * 100}" r="3"/></svg><b>${n}</b><span class="mono">${g}<br>${css}</span><span style="font-size:14px;color:var(--fg-2)">${use}</span>`;
+    box.appendChild(div);
+  });
+})();
+
+/* ---------- tables ---------- */
+const OK = '<span class="pill ok">Verified</span>', TODO = (t) => `<span class="pill warn">${t}</span>`;
+document.getElementById("claims").innerHTML = "<thead><tr><th>Claim</th><th>Scene</th><th>Value</th><th>Source</th><th>Status</th></tr></thead><tbody>" + [
+  ["Questions in corpus", "02, 06, 09", "154", "Results header · analyze() over data/swe.json (154 records)", OK],
+  ["Papers / topics / lineages", "06", "7 / 57 / 23", "Results header", OK],
+  ["Pareto coverage", "07, 09", "22 of 57 topics → 70.8%", "Pareto panel; Plan summary", OK],
+  ["Marks carried by top 22", "09", "≈64.1 a paper", "Plan summary line", OK],
+  ["Study plan rows 1–22", "09", "counts, papers, marks", "Plan tab", OK],
+  ["Genome rows 1–24", "06, 12", "cell counts", "How we know → Genome map", OK],
+  ["Lineage match", "08", "82%", "Lineages → Information Systems", OK],
+  ["Backtest: variants", "10", "11 of 24", "Backtest panel; README", OK],
+  ["Backtest: topic coverage", "10", "9 of 24 (37.5%)", "Backtest panel; README", OK],
+  ["Backtest: topics ranked", "10", "21", "README", OK],
+  ["Held-out topics named", "10", "4 of 15 chips", "Backtest panel chip highlighting", OK],
+  ["Practice paper shape", "11", "5 sections · ~24 questions · 84 marks", "Practice tab", OK],
+  ["Privacy & key model", "04", "Pages go browser → Gemini on own key; nothing uploaded to qDNA's server", "README; ADR 0001", OK],
+  ["Samples need no key", "12", "—", "Home page; README", OK],
+  ["Hint wording", "11", "Approach text", "Placeholder in animatic", TODO("Replace with real hint")],
+  ["Practice paper line lengths & marks", "11", "Illustrative", "Animatic stand-in", TODO("Render from generated paper")],
+].map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("") + "</tbody>";
+
+document.getElementById("deliv").innerHTML = "<thead><tr><th>Version</th><th>Duration</th><th>Aspect · size</th><th>Use</th><th>File</th><th>Captions</th></tr></thead><tbody>" + [
+  ["Master", "80 s", "16:9 · 1920×1080", "Website, YouTube, presentations", "ProRes 422 HQ + H.264 20 Mbps", "SRT sidecar"],
+  ["Master 4K", "80 s", "16:9 · 3840×2160", "Hero placements", "ProRes 422 HQ", "SRT sidecar"],
+  ["Cutdown 30", "30 s", "16:9 · 1:1 · 4:5", "LinkedIn, X, paid social", "H.264 12 Mbps", "Burned in"],
+  ["Cutdown 15", "15 s", "9:16 · 1080×1920", "Reels, Shorts, TikTok", "H.264 10 Mbps", "Burned in"],
+  ["Bumper", "6 s", "16:9 · 9:16", "Pre-roll, story end card", "H.264", "None"],
+  ["README loop", "8 s", "16:9 · 960 wide", "GitHub repo, docs", "MP4 + GIF fallback", "None"],
+  ["Stills", "—", "1280×720 · 1200×630", "Thumbnails, Open Graph", "PNG", "—"],
+].map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("") + "</tbody>";
+
+document.getElementById("sched").innerHTML = "<thead><tr><th>Phase</th><th>Days</th><th>Output</th><th>Gate</th></tr></thead><tbody>" + [
+  ["Pre-production", "1–2", "Locked board, VO script, music shortlist", "Board approval"],
+  ["VO & music", "3", "Recorded VO, licensed bed, timed animatic", "Timing lock"],
+  ["Style frames", "4–5", "Three finished frames (SC03, SC06, SC09) in Remotion", "Look approval"],
+  ["Animation", "6–10", "All 12 scenes at final quality", "R1 review"],
+  ["Sound & mix", "11", "SFX pass, −14 LUFS mix", "R2 review"],
+  ["Claims check", "11", "Re-run analysis, tick register", "Engineering sign-off"],
+  ["Versioning & delivery", "12–13", "Cutdowns, captions, stills", "Final delivery"],
+].map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("") + "</tbody>";
+})();
+</script>
