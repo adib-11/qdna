@@ -117,20 +117,55 @@ shown, described as a count over that corpus rather than as recurrence.
 
 ## How it works
 
-```
-Browser (student's own Gemini key)                         Gemini
-──────────────────────────────────                         ──────
-PDF → canvas → JPEG pages, or JPG / PNG / HEIC photos as is
-  → blank-page filter (PDF pages)
-  → batches of 2 pages  ─────────── generateContent ──────▶  structured JSON
-  ◀── questions ─────────────────────────────────────────────
-  → SHA-256 content cache
-  → deterministic analysis (zero API calls)
-  → genome map · Pareto · lineage · dossier
+```mermaid
+flowchart LR
+    subgraph prep["1 · Prepare"]
+        direction TB
+        pdf["📄 PDF papers"] --> raster["pdf.js renders<br/>JPEG pages"]
+        raster --> blank["Blank-page filter"]
+        blank --> batch["Batches of 2 pages"]
+        photos["📷 JPG · PNG · HEIC"] --> batch
+    end
 
-  measured paper shape + ranked topics  ── generateContent ──▶  practice paper
-  one question + its recurrence         ── generateContent ──▶  hint, not solution
+    subgraph read["2 · Extract"]
+        direction TB
+        cache{"SHA-256<br/>cache hit?"} -- "no" --> extract["✨ Gemini vision<br/>structured JSON"]
+        extract --> questions["Questions<br/>marks · paper · topic"]
+        cache -- "yes" --> questions
+    end
+
+    subgraph count["3 · Analyse"]
+        direction TB
+        engine["⚙️ Deterministic engine<br/>zero API calls"] --> outputs["Study plan<br/>Genome map · Pareto<br/>Lineage · Backtest"]
+    end
+
+    subgraph make["4 · Practise"]
+        direction TB
+        shape["Paper shape<br/>+ ranked topics"] --> paper["✨ Gemini<br/>practice paper"]
+        one["One question<br/>+ its recurrence"] --> hint["✨ Gemini<br/>hint, not answer"]
+    end
+
+    prep ==> read ==> count ==> make
+
+    classDef input fill:#ffffff,stroke:#111111,stroke-width:2px,color:#111111
+    classDef step fill:#f4f3ef,stroke:#9a9a9a,color:#111111
+    classDef core fill:#111111,stroke:#111111,color:#ffffff
+    classDef result fill:#f2dd4b,stroke:#111111,stroke-width:2px,color:#111111
+    classDef model fill:#e8f0fe,stroke:#4a6fd1,stroke-width:2px,stroke-dasharray:5 3,color:#111111
+    class pdf,photos input
+    class raster,blank,batch,cache,questions,shape,one step
+    class engine core
+    class outputs result
+    class extract,paper,hint model
+    style prep fill:#fbfaf7,stroke:#111111
+    style read fill:#fbfaf7,stroke:#111111
+    style count fill:#fbfaf7,stroke:#111111
+    style make fill:#fbfaf7,stroke:#111111
 ```
+
+Dashed blue nodes are the only model calls. Each goes from the student's
+browser straight to Gemini on the student's own key. Everything else,
+including all of the analysis, runs locally with no API call.
 
 ### Privacy and keys
 
