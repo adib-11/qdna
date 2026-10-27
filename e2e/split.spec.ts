@@ -34,7 +34,7 @@ test("an import of another course is split into one corpus per course", async ({
   await expect(analyze).toBeDisabled();
   await expectNoAxeViolations(page);
 
-  await page.getByLabel("Course for Final Exam").selectOption({ index: 1 });
+  await page.getByLabel("Course for Final, undated").selectOption({ index: 1 });
   await analyze.click();
 
   // The course with the most papers opens; the other is saved beside it.

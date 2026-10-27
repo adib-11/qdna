@@ -147,3 +147,60 @@ export function corpusTitle(questions: Question[]): { name: string; codes: strin
     : questions;
   return { name: corpusCourses(offering)[0] ?? "your corpus", codes };
 }
+
+export interface PaperInfo {
+  /** Year and sitting, e.g. "2024 Final" or "CT2, undated". */
+  name: string;
+  /** The codes the paper prints ("no code" when none), or null when the corpus has one offering. */
+  code: string | null;
+  /** True when its questions sit in more than one section. */
+  sectioned: boolean;
+}
+
+/** A paper's on-screen name, or its printed label when it has none. */
+export const paperName = (names: Map<string, PaperInfo>, label: string) =>
+  names.get(label)?.name ?? label;
+
+/** "Final", or the class test's number when the label prints one: "CT2" for "CT2 ECE 3121" or "2nd CT". */
+function sittingOf(paper: Question["paper"]): string {
+  if (paper.type === "Final") return "Final";
+  const n = paper.label.match(/CT\s?(\d)/i) ?? paper.label.match(/(\d)(?:st|nd|rd|th)\s*CT/i);
+  return n ? `CT${n[1]}` : "CT";
+}
+
+/**
+ * How each paper is named on screen, by label. Where two papers of one
+ * offering would read the same, the printed label is added to tell them apart.
+ */
+export function describePapers(questions: Question[]): Map<string, PaperInfo> {
+  const { paperCodes, spelling } = readCodes(questions);
+  const multi = new Set([...paperCodes.values()].flatMap((codes) => [...codes])).size > 1;
+
+  const refs = new Map<string, Question["paper"]>();
+  const sections = new Map<string, Set<string>>();
+  for (const q of questions) {
+    refs.set(q.paper.label, refs.get(q.paper.label) ?? q.paper);
+    const seen = sections.get(q.paper.label) ?? new Set<string>();
+    if (q.paper.section) seen.add(q.paper.section);
+    sections.set(q.paper.label, seen);
+  }
+
+  const base = (p: Question["paper"]) =>
+    p.year ? `${p.year} ${sittingOf(p)}` : `${sittingOf(p)}, undated`;
+  const codeOf = (label: string) =>
+    multi ? [...paperCodes.get(label)!].map((key) => spelling.get(key)!).join(" · ") || "no code" : null;
+  const key = (p: Question["paper"]) => `${base(p)}|${codeOf(p.label)}`;
+  const uses = new Map<string, number>();
+  for (const p of refs.values()) uses.set(key(p), (uses.get(key(p)) ?? 0) + 1);
+
+  return new Map(
+    [...refs.values()].map((p) => [
+      p.label,
+      {
+        name: uses.get(key(p))! > 1 ? `${base(p)}, printed “${p.label}”` : base(p),
+        code: codeOf(p.label),
+        sectioned: sections.get(p.label)!.size > 1,
+      },
+    ]),
+  );
+}

@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { STUB_HINT, expect, openSample, rememberKey, test } from "./fixtures";
+import { STUB_HINT, expect, openSample, openTab, rememberKey, test } from "./fixtures";
 
 /** True when the focused element is inside the open dialog. */
 const focusInDialog = (page: Page) =>
@@ -9,6 +9,7 @@ test.describe("hint dialog", () => {
   test.beforeEach(async ({ page }) => {
     await rememberKey(page);
     await openSample(page);
+    await openTab(page, "Questions");
   });
 
   test("takes focus, traps it, makes the page behind inert, and gives focus back", async ({
@@ -56,6 +57,7 @@ test.describe("hint dialog", () => {
 test.describe("key prompt", () => {
   test("focuses the key field, traps focus, and gives focus back on Escape", async ({ page }) => {
     await openSample(page);
+    await openTab(page, "Questions");
     const opener = page.getByRole("button", { name: /^Hint/ }).first();
     await opener.click();
 

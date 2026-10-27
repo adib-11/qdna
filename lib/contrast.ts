@@ -43,3 +43,25 @@ export function readableInk(background: string): string {
     ? "#000000"
     : "#ffffff";
 }
+
+/**
+ * A CSS `oklch(L% C H)` colour as sRGB hex, so a token in app/tokens.css can be
+ * checked for contrast. Out-of-gamut channels are clipped, as browsers do.
+ */
+export function oklchToHex(css: string): string {
+  const [l, c, h] = css.match(/[\d.]+/g)!.map(Number);
+  const L = l / 100;
+  const a = c * Math.cos((h * Math.PI) / 180);
+  const b = c * Math.sin((h * Math.PI) / 180);
+  // OKLab to linear sRGB (Björn Ottosson's matrices).
+  const l_ = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m_ = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s_ = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const linear = [
+    4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
+    -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
+    -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_,
+  ];
+  const gamma = (x: number) => (x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055);
+  return format(linear.map((x) => Math.min(1, Math.max(0, gamma(x))) * 255) as Rgb);
+}
