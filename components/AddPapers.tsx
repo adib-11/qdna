@@ -8,7 +8,13 @@ import { pinTopics } from "@/lib/analysis/topics";
 import { describeAdded } from "@/lib/corpus/addPapers";
 import { mergePapers } from "@/lib/corpus/corpusFile";
 import { corpusCourses } from "@/lib/analysis/papers";
-import { corpusTitle, otherOffering, type Course } from "@/lib/corpus/courses";
+import {
+  corpusTitle,
+  describePapers,
+  otherOffering,
+  paperName,
+  type Course,
+} from "@/lib/corpus/courses";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
 import { corpusChanged } from "@/lib/corpus/useCorpora";
 import {
@@ -96,7 +102,8 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
       const incoming = run.outcome.questions.filter((q) => added.includes(q.paper.label));
       if (added.length === 0) {
         const unchanged = analyzed(corpus);
-        setNotice({ error: false, text: describeAdded(unchanged, unchanged, [], skipped) });
+        const named = onScreen(corpus.outcome.questions, skipped);
+        setNotice({ error: false, text: describeAdded(unchanged, unchanged, [], named) });
         return;
       }
       const other = otherOffering(corpus.outcome.questions, incoming, corpus.sameCourse);
@@ -163,10 +170,11 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
       );
       corpusChanged();
       if (!saved) return;
-      const added = [...new Set(incoming.map((q) => q.paper.label))];
+      const all = saved.outcome.questions;
+      const added = onScreen(all, [...new Set(incoming.map((q) => q.paper.label))]);
       setNotice({
         error: false,
-        text: describeAdded(analyzed(latest), analyzed(saved), added, skipped) + groupingNote,
+        text: describeAdded(analyzed(latest), analyzed(saved), added, onScreen(all, skipped)) + groupingNote,
       });
     } catch (err) {
       setNotice({
@@ -282,7 +290,8 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
             Same course as {title.name}?
           </p>
           <p id="same-course-detail" className="mt-1 text-ink-2">
-            {other.papers.join(", ")} {other.papers.length === 1 ? "is" : "are"} printed{" "}
+            {onScreen(incoming, other.papers).join(", ")}{" "}
+            {other.papers.length === 1 ? "is" : "are"} printed{" "}
             <Codes codes={other.codes} />. Every paper so far is <Codes codes={title.codes} />.{" "}
             {theirName &&
               (sameName ? `Both are titled ${title.name}.` : `${other.papers.length === 1 ? "It is" : "They are"} titled ${theirName}.`)}
@@ -317,6 +326,12 @@ export function useAddPapers(corpus: SavedCorpus | null | undefined): {
 
 function Codes({ codes }: { codes: string[] }) {
   return <span className="font-outlier">{codes.join(" · ") || "no code"}</span>;
+}
+
+/** Papers by their on-screen names, as the paper list shows them. */
+function onScreen(questions: Question[], labels: string[]): string[] {
+  const names = describePapers(questions);
+  return labels.map((label) => paperName(names, label));
 }
 
 /** A corpus's analysis, as the page shows it. */

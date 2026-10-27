@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   corpusTitle,
+  describePapers,
   needsSplit,
   otherOffering,
   splitCorpus,
@@ -193,5 +194,71 @@ describe("otherOffering, for papers added to a corpus", () => {
 
   it("never counts a paper that prints no code as another offering", () => {
     expect(otherOffering(corpus, paper("Undated", [])).papers).toEqual([]);
+  });
+});
+
+/** One question on a paper, with the fields paper names read. */
+function sitting(
+  label: string,
+  type: "CT" | "Final",
+  year: number | null,
+  codes: string[],
+  section: string | null = null,
+): Question {
+  return { ...paper(label, codes)[0], id: `${label}::${section}`, paper: { type, label, section, year } };
+}
+
+describe("describePapers", () => {
+  it("names a paper by year and sitting", () => {
+    const papers = describePapers([
+      sitting("2024 Final ECE 3119", "Final", 2024, ["ECE 3119"]),
+      sitting("2nd CT", "CT", null, ["ECE 3119"]),
+      sitting("CT CAD", "CT", null, ["ECE 3119"]),
+    ]);
+    expect(papers.get("2024 Final ECE 3119")?.name).toBe("2024 Final");
+    expect(papers.get("2nd CT")?.name).toBe("CT2, undated");
+    expect(papers.get("CT CAD")?.name).toBe("CT, undated");
+  });
+
+  it("adds the printed label where two papers would read the same", () => {
+    const papers = describePapers([
+      sitting("2nd CT", "CT", null, ["ECE 3121"]),
+      sitting("CT2 ECE 3121", "CT", null, ["ECE 3121"]),
+      sitting("CT1", "CT", null, ["ECE 3121"]),
+    ]);
+    expect(papers.get("2nd CT")?.name).toBe("CT2, undated, printed “2nd CT”");
+    expect(papers.get("CT2 ECE 3121")?.name).toBe("CT2, undated, printed “CT2 ECE 3121”");
+    expect(papers.get("CT1")?.name).toBe("CT1, undated");
+  });
+
+  it("shows a paper's code only when the corpus has more than one offering", () => {
+    const one = describePapers([sitting("2024 Final", "Final", 2024, ["ECE 3121"])]);
+    expect(one.get("2024 Final")?.code).toBeNull();
+
+    const two = describePapers([
+      sitting("2024 ECE 3121", "Final", 2024, ["ECE 3121"]),
+      sitting("2024 EEE 2107", "Final", 2024, ["EEE 2107"]),
+    ]);
+    expect(two.get("2024 ECE 3121")).toMatchObject({ name: "2024 Final", code: "ECE 3121" });
+    expect(two.get("2024 EEE 2107")).toMatchObject({ name: "2024 Final", code: "EEE 2107" });
+  });
+
+  it("says a paper prints no code when the other offerings do", () => {
+    const papers = describePapers([
+      sitting("2024 ECE 3121", "Final", 2024, ["ECE 3121"]),
+      sitting("2024 EEE 2107", "Final", 2024, ["EEE 2107"]),
+      sitting("Final Exam", "Final", null, []),
+    ]);
+    expect(papers.get("Final Exam")?.code).toBe("no code");
+  });
+
+  it("marks a paper sectioned only when its questions sit in more than one section", () => {
+    const papers = describePapers([
+      sitting("CAD 2024", "Final", 2024, ["ECE 3119"], "A"),
+      sitting("CAD 2024", "Final", 2024, ["ECE 3119"], "B"),
+      sitting("CT4", "CT", null, ["ECE 3119"], "A"),
+    ]);
+    expect(papers.get("CAD 2024")?.sectioned).toBe(true);
+    expect(papers.get("CT4")?.sectioned).toBe(false);
   });
 });

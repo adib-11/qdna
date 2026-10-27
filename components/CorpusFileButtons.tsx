@@ -51,7 +51,7 @@ export function ExportCorpusButton({
   }
 
   return (
-    <Button variant="ghost" onClick={exportCorpus}>
+    <Button variant="text" onClick={exportCorpus}>
       Export corpus file
     </Button>
   );
@@ -86,8 +86,11 @@ export function ImportCorpusButton({
   existingOverrides = [],
   existingSameCourse = [],
   onMerged,
+  variant = "ghost",
 }: {
   existing: Question[];
+  /** Ghost where importing is the screen's own action; text beside the results' other actions. */
+  variant?: "ghost" | "text";
   existingOverrides?: TopicOverride[];
   existingSameCourse?: string[][];
   onMerged: (
@@ -157,7 +160,7 @@ export function ImportCorpusButton({
           e.target.value = "";
         }}
       />
-      <Button variant="ghost" onClick={() => inputRef.current?.click()}>
+      <Button variant={variant} onClick={() => inputRef.current?.click()}>
         Import corpus file
       </Button>
       <p

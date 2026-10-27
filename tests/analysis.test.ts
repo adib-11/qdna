@@ -7,14 +7,14 @@ import {
 import { analyze } from "@/lib/analysis";
 import { backtest, defaultHeldOutPaper } from "@/lib/analysis/backtest";
 import { expectedMarks } from "@/lib/analysis/expectedMarks";
-import { clusterLineages, similarity } from "@/lib/analysis/lineage";
+import { clusterLineages, lineageVariants, similarity } from "@/lib/analysis/lineage";
 import { normalizeText, tokenize } from "@/lib/analysis/normalize";
 import { inferPaperShape, UNSECTIONED } from "@/lib/analysis/paperShape";
 import { corpusCourses } from "@/lib/analysis/papers";
 import { canonicalizeTopics, keepOverriddenTopics } from "@/lib/analysis/topics";
 import { paretoCoverage, topicsToReach } from "@/lib/analysis/pareto";
 import { topicFrequency } from "@/lib/analysis/frequency";
-import type { Question } from "@/lib/types";
+import type { LineageCluster, Question } from "@/lib/types";
 
 const question = (over: Partial<Question> & { id: string }): Question => ({
   course: "Test Course",
@@ -731,5 +731,45 @@ describe("analyze with topic grouping and topic overrides", () => {
       expect(keepOverriddenTopics(corpus, grouping, regrouped, overrides)).toEqual(regrouped);
       expect(keepOverriddenTopics(corpus, grouping, regrouped, [])).toEqual(regrouped);
     });
+  });
+});
+
+describe("lineageVariants", () => {
+  const dated = (label: string, year: number | null): Question["paper"] => ({
+    type: "Final",
+    label,
+    section: null,
+    year,
+  });
+  const cluster = (members: Question[]): LineageCluster => ({
+    id: "l",
+    topic: "Gauss's law",
+    members,
+    cohesion: 0.9,
+    pairwiseSimilarity: members.map(() => 1),
+    courseCodes: [],
+    crossDepartment: false,
+  });
+  const newest = question({ id: "c", paper: dated("2024 Final", 2024), text: "Find D at r = 12 mm for 80 uC." });
+  const undated = question({ id: "u", paper: dated("CT2", null), text: "Find D at r = 10 mm for 80 uC." });
+  const oldest = question({ id: "a", paper: dated("2019 Final", 2019), text: "Find D at r = 10 mm for 60 uC." });
+
+  it("orders variants oldest to newest, undated last", () => {
+    const ids = lineageVariants(cluster([newest, undated, oldest])).map((v) => v.question.id);
+    expect(ids).toEqual(["a", "c", "u"]);
+  });
+
+  it("highlights the numbers that changed from the variant before", () => {
+    const [first, second] = lineageVariants(cluster([oldest, newest]));
+    const changed = (v: typeof first) => v.parts.filter((p) => p.changed).map((p) => p.text);
+    expect(changed(first)).toEqual([]);
+    expect(changed(second)).toEqual(["12", "80"]);
+    expect(second.parts.map((p) => p.text).join("")).toBe(newest.text);
+  });
+
+  it("measures each variant's match against the variant before", () => {
+    const [first, second] = lineageVariants(cluster([oldest, newest]));
+    expect(first.match).toBeNull();
+    expect(second.match).toBe(similarity(oldest.text, newest.text));
   });
 });

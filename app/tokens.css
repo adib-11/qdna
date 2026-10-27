@@ -14,7 +14,8 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --color-error: oklch(52% 0.19 27);
+  /* Errors are ink: red only ever means marks. */
+  --color-error: oklch(16% 0 0);
   --color-success: oklch(50% 0.12 150);
   --color-surface: oklch(99.5% 0.003 100);
   --color-surface-2: oklch(97% 0.004 100);
@@ -29,6 +30,14 @@
   --color-accent-soft: oklch(93% 0.05 190);
   --color-accent-soft-ink: oklch(27% 0.045 190);
   --color-focus: oklch(50% 0.095 188);
+  /* The exam-marking tools, one meaning each (#18). */
+  --color-highlight: oklch(93% 0.15 103); /* yellow highlighter: study this, a changed value */
+  --color-pen: oklch(50% 0.2 27); /* red pen: marks and scores */
+  --color-pen-quiet: oklch(55% 0.08 27); /* red pen, marks not printed: lighter than the mock's 62% to read at 4.5:1 */
+  --color-type-theory: oklch(94.5% 0.025 255);
+  --color-type-theory-ink: oklch(36% 0.07 255);
+  --color-type-numerical: oklch(94.5% 0.03 330);
+  --color-type-numerical-ink: oklch(38% 0.08 330);
   --font-display: var(--font-epilogue), "Epilogue", ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-display);
   --font-outlier: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;

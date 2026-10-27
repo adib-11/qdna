@@ -24,8 +24,9 @@ import type { ParetoPoint } from "@/lib/types";
  */
 const BAR_FILL = "var(--color-surface-3)";
 const BAR_STROKE = "var(--color-muted)";
-const LINE_STROKE = "var(--color-accent)";
-const TARGET_STROKE = "var(--color-ink)";
+// Ink, not teal: teal only ever means a match.
+const LINE_STROKE = "var(--color-ink)";
+const TARGET_STROKE = "var(--color-muted)";
 const AXIS_COLOR = "var(--color-ink-2)";
 const GRID_COLOR = "var(--color-rule)";
 
@@ -54,9 +55,9 @@ export function ParetoChart({ pareto }: { pareto: ParetoPoint[] }) {
 
   return (
     <div>
-      <div className="pb-6">
-        <h3 className="text-xl sm:text-2xl">Pareto coverage</h3>
-        <p className="mt-3 max-w-[65ch] text-ink-2">
+      <div className="pb-4">
+        <h3 className="text-lg tracking-[-0.02em]">Pareto coverage</h3>
+        <p className="mt-2 max-w-[65ch] text-sm text-ink-2">
           Topics ranked by how often they were asked, with cumulative coverage
           overlaid. The dashed line marks {PARETO_TARGET_PCT}% of every question
           in the corpus.

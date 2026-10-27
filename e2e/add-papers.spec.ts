@@ -5,6 +5,7 @@ import {
   expect,
   expectNoAxeViolations,
   openSample,
+  openTab,
   rememberKey,
   test,
 } from "./fixtures";
@@ -20,12 +21,20 @@ const TITLE = "Software Engineering & Information System Design";
 const removeButtons = (page: Page) =>
   page.getByRole("button", { name: /^Remove / });
 
+/** The papers figure in the header opens the paper list on the Plan tab. */
+async function showPapers(page: Page) {
+  const toggle = page.getByRole("button", { name: /^\d+ papers?$/ });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+}
+
 test("a paper from another offering asks first, then joins the corpus on yes", async ({
   page,
   gemini,
 }) => {
   await rememberKey(page);
   await openSample(page);
+  await showPapers(page);
   await expect(removeButtons(page)).toHaveCount(7);
 
   await addStubPaper(page);
@@ -54,6 +63,7 @@ test("a paper from another offering asks first, then joins the corpus on yes", a
 test("a paper from another offering is saved as its own corpus on no", async ({ page }) => {
   await rememberKey(page);
   await openSample(page);
+  await showPapers(page);
 
   await addStubPaper(page);
   await page.getByRole("button", { name: "No, save it on its own" }).click();
@@ -66,7 +76,8 @@ test("a paper from another offering is saved as its own corpus on no", async ({ 
 
 test("a paper can be removed after confirmation", async ({ page }) => {
   await openSample(page);
-  const paper = "2018 Final ECE 3117";
+  await showPapers(page);
+  const paper = "2018 Final";
 
   await page.getByRole("button", { name: `Remove ${paper}` }).click();
   const confirm = page.getByRole("alertdialog", { name: new RegExp(`^Remove ${paper}\\?`) });
@@ -80,4 +91,14 @@ test("a paper can be removed after confirmation", async ({ page }) => {
   await page.getByRole("button", { name: `Remove ${paper}`, exact: true }).last().click();
   await expect(page.getByRole("status").filter({ hasText: `Removed ${paper}.` })).toBeVisible();
   await expect(removeButtons(page)).toHaveCount(6);
+});
+
+test("the papers figure opens the paper list on the Plan tab from any tab", async ({ page }) => {
+  await openSample(page);
+  await openTab(page, "Questions");
+
+  await page.getByRole("button", { name: "7 papers" }).click();
+  await expect(page).toHaveURL(/\?tab=plan$/);
+  await expect(page.getByRole("heading", { name: "Papers in this corpus" })).toBeVisible();
+  await expect(removeButtons(page)).toHaveCount(7);
 });

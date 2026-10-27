@@ -1,4 +1,4 @@
-import { PAGE_PHOTO, STUB_KEY, STUB_PAPER, expect, test } from "./fixtures";
+import { PAGE_PHOTO, STUB_KEY, STUB_PAPER, expect, openTab, test } from "./fixtures";
 
 test("upload and extraction status is announced as it changes", async ({ page, gemini }) => {
   gemini.holdExtraction();
@@ -21,6 +21,7 @@ test("upload and extraction status is announced as it changes", async ({ page, g
 
   gemini.releaseExtraction();
   await expect(page).toHaveURL(/\/analyze$/);
+  await openTab(page, "Questions");
   await expect(page.getByText(STUB_PAPER).first()).toBeVisible();
   expect(gemini.calls).toEqual(["verify-key", "extract", "group-topics"]);
 });

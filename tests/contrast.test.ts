@@ -1,6 +1,7 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CELL_GROUND, CELL_INK } from "@/components/GenomeMap";
-import { contrastRatio, mixOver, readableInk } from "@/lib/contrast";
+import { contrastRatio, mixOver, oklchToHex, readableInk } from "@/lib/contrast";
 
 // Expected ratios are the published WCAG / WebAIM figures, not recomputed here.
 describe("contrastRatio", () => {
@@ -40,5 +41,46 @@ describe("readableInk", () => {
       const cell = mixOver(CELL_INK, alpha, CELL_GROUND);
       expect(contrastRatio(readableInk(cell), cell)).toBeGreaterThanOrEqual(4.5);
     }
+  });
+});
+
+describe("oklchToHex", () => {
+  // Expected values from the CSS Color 4 reference conversion (oklch.com).
+  it("converts OKLCH to sRGB hex", () => {
+    expect(oklchToHex("oklch(100% 0 0)")).toBe("#ffffff");
+    expect(oklchToHex("oklch(0% 0 0)")).toBe("#000000");
+    expect(oklchToHex("oklch(62.8% 0.2577 29.23)")).toBe("#ff0000");
+    expect(oklchToHex("oklch(45.2% 0.3132 264.05)")).toBe("#0000ff");
+  });
+});
+
+/** Every `--color-*: oklch(…)` in app/tokens.css, by name. */
+const TOKENS = Object.fromEntries(
+  [...readFileSync("app/tokens.css", "utf8").matchAll(/--color-([\w-]+):\s*(oklch\([^)]*\))/g)].map(
+    ([, name, value]) => [name, oklchToHex(value)],
+  ),
+);
+
+describe("the exam-marking colours", () => {
+  // Text colour on the ground it is set on, as the pages use them.
+  it.each([
+    ["pen", "surface"],
+    ["pen", "surface-2"],
+    ["pen-quiet", "surface"],
+    ["pen-quiet", "surface-2"],
+    ["ink", "highlight"],
+    ["ink-2", "highlight"],
+    ["type-theory-ink", "type-theory"],
+    ["type-numerical-ink", "type-numerical"],
+    ["accent", "surface"],
+    ["accent-soft-ink", "accent-soft"],
+  ])("%s on %s reaches 4.5:1", (text, ground) => {
+    expect(TOKENS[text], text).toBeDefined();
+    expect(TOKENS[ground], ground).toBeDefined();
+    expect(contrastRatio(TOKENS[text], TOKENS[ground])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("writes errors in ink, so red only ever means marks", () => {
+    expect(TOKENS.error).toBe(TOKENS.ink);
   });
 });

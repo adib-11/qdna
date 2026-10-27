@@ -4,16 +4,25 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { browserCorpusStore, type SavedCorpus } from "@/lib/corpus/store";
 import { corpusChanged } from "@/lib/corpus/useCorpora";
-import type { PaperRef } from "@/lib/types";
+import { paperName, type PaperInfo } from "@/lib/corpus/courses";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /**
- * The corpus's papers, each with its question count and a Remove action that
- * asks first. A corpus keeps at least one paper; deleting the whole corpus is
+ * The corpus's papers, by on-screen name, each with its question count and
+ * a Remove action that asks first. A corpus keeps at least one paper; deleting the whole corpus is
  * done from the saved corpora list.
  */
-export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: PaperRef[] }) {
+export function PaperList({
+  corpus,
+  papers,
+  names,
+}: {
+  corpus: SavedCorpus;
+  /** Paper labels, in the order to list them. */
+  papers: string[];
+  names: Map<string, PaperInfo>;
+}) {
   const [confirming, setConfirming] = useState<string | null>(null);
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
 
@@ -22,15 +31,15 @@ export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: Pap
     counts.set(q.paper.label, (counts.get(q.paper.label) ?? 0) + 1);
   }
 
-  function remove(label: string) {
+  function remove(label: string, name: string) {
     try {
       browserCorpusStore()?.removePaper(corpus, label);
       corpusChanged();
-      setMessage({ error: false, text: `Removed ${label}.` });
+      setMessage({ error: false, text: `Removed ${name}.` });
     } catch (err) {
       setMessage({
         error: true,
-        text: err instanceof Error ? err.message : `${label} could not be removed.`,
+        text: err instanceof Error ? err.message : `${name} could not be removed.`,
       });
     }
     setConfirming(null);
@@ -40,7 +49,10 @@ export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: Pap
     <div>
       <h2 className="text-lg">Papers in this corpus</h2>
       <ul className="mt-3 border-t border-ink">
-        {papers.map(({ label, type }) => {
+        {papers.map((label) => {
+          const code = names.get(label)?.code;
+          // With several offerings, the code tells two "2024 Final"s apart.
+          const name = code ? `${paperName(names, label)} · ${code}` : paperName(names, label);
           const count = plural(counts.get(label) ?? 0, "question");
           return (
             <li
@@ -48,15 +60,16 @@ export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: Pap
               className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-1 border-b border-rule py-2 sm:grid-cols-[minmax(0,1fr)_10rem_auto] ${confirming === label ? "bg-surface-2" : ""}`}
             >
               <span className="min-w-0 break-words">
-                {label}
-                <span className="text-ink-2">{type === "CT" ? " · CT" : " · Final"}</span>
+                {paperName(names, label)}
+                {code && <span className="font-outlier text-sm text-ink-2"> · {code}</span>}
               </span>
               <span className="col-start-1 text-sm text-ink-2 sm:col-start-auto">{count}</span>
-              {papers.length > 1 && confirming !== label && (
-                <span className="col-start-2 row-span-2 row-start-1 justify-self-end sm:col-start-auto sm:row-span-1 sm:row-start-auto print:hidden">
+              {/* Always there, so the count keeps its column while a row confirms. */}
+              <span className="col-start-2 row-span-2 row-start-1 justify-self-end sm:col-start-auto sm:row-span-1 sm:row-start-auto print:hidden">
+                {papers.length > 1 && confirming !== label && (
                   <Button
                     variant="text"
-                    aria-label={`Remove ${label}`}
+                    aria-label={`Remove ${name}`}
                     onClick={() => {
                       setMessage(null);
                       setConfirming(label);
@@ -64,8 +77,8 @@ export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: Pap
                   >
                     Remove
                   </Button>
-                </span>
-              )}
+                )}
+              </span>
               {confirming === label && (
                 <div
                   role="alertdialog"
@@ -73,12 +86,12 @@ export function PaperList({ corpus, papers }: { corpus: SavedCorpus; papers: Pap
                   className="col-span-full flex flex-wrap items-center gap-x-6 gap-y-3 pt-2 pb-3"
                 >
                   <p id="remove-paper-heading" className="flex-[1_1_24rem]">
-                    <b>Remove {label}?</b> Its {count}{" "}
+                    <b>Remove {name}?</b> Its {count}{" "}
                     {counts.get(label) === 1 ? "leaves" : "leave"} every count, the plan and the
                     lineages. You can add the paper again later.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <Button onClick={() => remove(label)}>Remove {label}</Button>
+                    <Button onClick={() => remove(label, name)}>Remove {name}</Button>
                     {/* The question blocks the removal, so it takes focus, on the safe answer. */}
                     <Button variant="ghost" autoFocus onClick={() => setConfirming(null)}>
                       Keep it

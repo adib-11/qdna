@@ -194,6 +194,12 @@ export async function openSample(page: Page, name = "Software Engineering") {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 }
 
+/** Open one of the results' tabs from the results nav. */
+export async function openTab(page: Page, name: string) {
+  await page.getByRole("navigation", { name: "Results" }).getByRole("link", { name, exact: true }).click();
+  await expect(page.getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
+}
+
 /** Start the page with the stub key already remembered in this browser. */
 export async function rememberKey(page: Page) {
   await page.addInitScript((key) => {

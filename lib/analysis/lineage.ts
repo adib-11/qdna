@@ -6,6 +6,7 @@ import {
   VARIANT_THRESHOLD,
 } from "@/lib/config";
 import { numericLiterals, stem, stemSet } from "@/lib/analysis/normalize";
+import { paperOrder } from "@/lib/analysis/papers";
 import { codeKey } from "@/lib/corpus/courses";
 import type { LineageCluster, Question } from "@/lib/types";
 
@@ -167,4 +168,43 @@ export function clusterLineages(
       };
     })
     .sort((a, b) => b.members.length - a.members.length || b.cohesion - a.cohesion);
+}
+
+const NUMBER_SPLIT = /(\d+(?:\.\d+)?)/g;
+
+export interface LineageVariant {
+  question: Question;
+  /** Similarity to the variant before, 0–1; null for the first. */
+  match: number | null;
+  /** The question's text in runs; `changed` marks a number the variant before did not print. */
+  parts: { text: string; changed: boolean }[];
+}
+
+/**
+ * A lineage's members as read on screen: oldest paper first, undated last,
+ * each compared with the variant before it, as a student reads down the list.
+ *
+ * Numbers are read straight off the text rather than through
+ * `numericLiterals`, whose normalisation splits `3.5` into two tokens. That is
+ * right for scoring and wrong for highlighting, which has to line up with the
+ * characters on screen.
+ */
+export function lineageVariants(cluster: LineageCluster): LineageVariant[] {
+  const order = paperOrder(cluster.members).map((p) => p.label);
+  const members = [...cluster.members].sort(
+    (a, b) => order.indexOf(a.paper.label) - order.indexOf(b.paper.label),
+  );
+  return members.map((question, i) => {
+    const prev = members[i - 1];
+    const had = new Set(prev?.text.match(NUMBER_SPLIT) ?? []);
+    return {
+      question,
+      match: prev ? similarity(prev.text, question.text) : null,
+      // split() with a capture group puts the numbers at the odd indexes.
+      parts: question.text
+        .split(NUMBER_SPLIT)
+        .map((text, j) => ({ text, changed: !!prev && j % 2 === 1 && !had.has(text) }))
+        .filter((part) => part.text !== ""),
+    };
+  });
 }
